@@ -1,0 +1,21 @@
+Terminal args
+---------------
+[X] Compile a unique folder --simple
+[X] Destination folder --destination
+[X] Sprite name --spritename
+[X] Support less --less
+[X] Don't compile css files --nocss
+[X] Override css namespace --namespace
+[ ] Seeting types
+
+Paddings
+--------------
+
+Default
+
+Config
+
+Filename
+
+--padding
+
