@@ -442,15 +442,16 @@ class Sprite(object):
         less_filename = os.path.join(self.output_path, '%s.less' % self.filename)
         less_file = open(less_filename, 'w')
 
-        less_file.write('@%s-base-url: "%s";\n' % (self.namespace,
-                                                   self.image_url))
+        less_file.write('.%s(@padding){background-image:"%s"; padding:@padding; background-repeat:no-repeat;}\n' % (self.namespace, self.image_url))
 
         # Create all the necessary class names
         for image in self.images:
+            less_file.write(('.%(image_class_name)s(@padding: 0px){ '
+                             'background-position: %(top)ipx %(left)ipx; '
+                             '.%(namespace)s(@padding);}\n') % image.stylesheet_data)
             less_file.write(('.%(image_class_name)s{ '
-                             'background:url("@{%(namespace)s-base-url}");'
-                             ' top:%(top)i; left:%(left)i;'
-                             ' no-repeat;}\n') % image.stylesheet_data)
+                             'background-position: %(top)ipx %(left)ipx; '
+                             '.%(namespace)s(0px);}\n') % image.stylesheet_data)
         less_file.close()
 
     @property
