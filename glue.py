@@ -169,6 +169,10 @@ class Image(object):
         image_file = open(image_path, "rb")
         self.image = PImage.open(image_file)
         self.image.load()
+
+        if self.image.mode == 'P':
+            print yellow(("Warning: Image '%s' is a Palette image, probably "
+                          "the transparency will look ugly.") % name)
         image_file.close()
 
         if self.sprite.get_conf('crop'):
@@ -388,7 +392,7 @@ class Sprite(object):
 
     def save_image(self):
         """Create the image file for this sprite."""
-        print "Generating '%s' image file..." % self.name
+        print green("Generating '%s' image file..." % self.name)
         sprite_output_path = self.manager.output_path(self.name)
         # Search for the max x and y neccesary to generate the canvas.
         width = height = 0
@@ -412,11 +416,11 @@ class Sprite(object):
         # Save png
         sprite_filename = '%s.png' % self.filename
         sprite_image_path = os.path.join(sprite_output_path, sprite_filename)
-        canvas.save(sprite_image_path, optimize=True)
+        canvas.save(sprite_image_path)
 
     def save_css(self):
         """Create the css file for this sprite."""
-        print "Generating '%s' css file..." % self.name
+        print green("Generating '%s' css file..." % self.name)
 
         # Generate css files
         css_filename = os.path.join(self.output_path, '%s.css' % self.filename)
@@ -432,7 +436,7 @@ class Sprite(object):
 
     def save_less(self):
         """Create the less file for this sprite."""
-        print "Generating '%s' less file..." % self.name
+        print green("Generating '%s' less file..." % self.name)
 
         # Generate less files
         less_filename = os.path.join(self.output_path, '%s.less' % self.filename)
@@ -527,7 +531,7 @@ class BaseManager(object):
         :param path: Sprite path.
         :param name: Sprite name.
         """
-        print "Processing '%s':" % name
+        print cyan("Processing '%s':" % name)
         sprite = Sprite(name=name, path=path, manager=self)
         self.sprites.append(sprite)
 
@@ -597,6 +601,26 @@ class MultipleSpriteManager(BaseManager):
         self.save()
 
 
+def _wrap_with(code):
+    """Copy & Pasted from fabric.
+    https://github.com/fabric/fabric/blob/master/fabric/colors.py"""
+
+    def inner(text, bold=False):
+        c = code
+        if bold:
+            c = "1;%s" % c
+        return "\033[%sm%s\033[0m" % (c, text)
+    return inner
+
+red = _wrap_with('31')
+green = _wrap_with('32')
+yellow = _wrap_with('33')
+blue = _wrap_with('34')
+magenta = _wrap_with('35')
+cyan = _wrap_with('36')
+white = _wrap_with('37')
+
+
 class SimpleSpriteManager(BaseManager):
 
     def process(self):
@@ -649,13 +673,16 @@ def main():
     try:
         manager.process()
     except MultipleImagesWithSameNameError, e:
-        print "Conflict: Two or more images will have the same class name:"
+        print
+        print red("Conflict: Two or more images will have the same class name:")
         for image in e.args[0]:
-            print '\t %s => %s' % (image.name, image.class_name)
+            print '\t %s => .%s' % (image.name, image.class_name)
     except SourceImagesNotFoundError, e:
-        print "Error: No images found."
+        print
+        print red("Error: No images found.")
     except NoSpritesFoldersFoundError, e:
-        print "Error: No sprite folders found."
+        print
+        print red("Error: No sprite folders found.")
 
 
 if __name__ == "__main__":
