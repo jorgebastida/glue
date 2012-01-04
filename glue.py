@@ -3,6 +3,7 @@ import sys
 import re
 import os
 import copy
+import subprocess
 import ConfigParser
 from optparse import OptionParser
 
@@ -401,7 +402,11 @@ class Sprite(object):
         # Save png
         sprite_filename = '%s.png' % self.filename
         sprite_image_path = os.path.join(sprite_output_path, sprite_filename)
-        canvas.save(sprite_image_path)
+        canvas.save(sprite_image_path, optimize=True)
+
+        if self.manager.options.optipng:
+            print green("Optimizing '%s' using optipng..." % self.name)
+            subprocess.call(["optipng %s" % sprite_image_path], shell=True)
 
     def save_css(self):
         """Create the css file for this sprite."""
@@ -673,6 +678,8 @@ def main():
                 help="Crop images removing unnecessary transparent margins")
     parser.add_option("--less", dest="less", action='store_true',
                 help="The output stylesheets will be .less and not .css")
+    parser.add_option("--optipng", dest="optipng", action='store_true',
+                help="Postprocess images using optipng.")
     parser.add_option("-i", "--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
                       help="Ignore filename paddings.", default=False)
