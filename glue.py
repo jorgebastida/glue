@@ -651,6 +651,8 @@ PImage.Image.load = patched_load
 
 def main():
     parser = OptionParser(usage="usage: %prog [options] folder")
+    parser.add_option("-s", "--simple", action="store_true", dest="simple",
+                      help="Only generate sprites for one folder")
     parser.add_option("-o", "--output", dest="dir", default='sprites',
                     help="Output directory for the sprites and css files")
     parser.add_option("--cssdir", dest="cssdir", default='',
@@ -659,8 +661,6 @@ def main():
                     help="Output directory for the img files")
     parser.add_option("-u", "--url", dest="url", default=None,
                       help="Prepend this url to the sprites urls")
-    parser.add_option("-s", "--simple", action="store_true", dest="simple",
-                      help="Only generate sprites for one folder")
     parser.add_option("--namespace", dest="namespace",  default=None,
                       help="Namespace for the css")
     parser.add_option("-f", "--name", dest="name", default=None,
