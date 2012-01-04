@@ -6,8 +6,8 @@ import copy
 import ConfigParser
 from optparse import OptionParser
 
-
 from PIL import Image as PImage
+
 
 TRANSPARENT = (255, 255, 255, 0)
 
@@ -229,16 +229,6 @@ class Image(object):
         return map(int, padding)
 
     @property
-    def stylesheet_data(self):
-        """Return all the stylesheet information needed to generate both
-        the css and the less files."""
-        return {'namespace': self.sprite.namespace,
-                'sprite_url': self.sprite.image_url,
-                'image_class_name': self.class_name,
-                'top': self.node.y * -1 if self.node.y else 0,
-                'left': self.node.x * -1 if self.node.x else 0}
-
-    @property
     def class_name(self):
         """Return the css class name for this file.
 
@@ -319,8 +309,6 @@ class Sprite(object):
                         'algorithm': 'maxside',
                         'name': '',
                         'namespace': '',
-                        'less': False,
-                        'css': True,
                         'crop': False,
                         'url': ''}
 
@@ -393,7 +381,8 @@ class Sprite(object):
     def save_image(self):
         """Create the image file for this sprite."""
         print green("Generating '%s' image file..." % self.name)
-        sprite_output_path = self.manager.output_path(self.name)
+
+        sprite_output_path = self.manager.output_path('img')
         # Search for the max x and y neccesary to generate the canvas.
         width = height = 0
 
@@ -423,36 +412,23 @@ class Sprite(object):
         print green("Generating '%s' css file..." % self.name)
 
         # Generate css files
-        css_filename = os.path.join(self.output_path, '%s.css' % self.filename)
+        output_path = self.manager.output_path('css')
+        css_filename = os.path.join(output_path, '%s.css' % self.filename)
         css_file = open(css_filename, 'w')
 
         # Create all the necessary class names
         for image in self.images:
+            data = {'namespace': image.sprite.namespace,
+                    'sprite_url': image.sprite.image_url,
+                    'image_class_name': image.class_name,
+                    'top': image.node.y * -1 if image.node.y else 0,
+                    'left': image.node.x * -1 if image.node.x else 0}
+
             css_file.write((".%(image_class_name)s{ "
                             "background:url('%(sprite_url)s');"
                             " top:%(top)i; left:%(left)i;"
-                            " no-repeat;}\n") % image.stylesheet_data)
+                            " no-repeat;}\n") % data)
         css_file.close()
-
-    def save_less(self):
-        """Create the less file for this sprite."""
-        print green("Generating '%s' less file..." % self.name)
-
-        # Generate less files
-        less_filename = os.path.join(self.output_path, '%s.less' % self.filename)
-        less_file = open(less_filename, 'w')
-
-        less_file.write('.%s(@padding){background-image:"%s"; padding:@padding; background-repeat:no-repeat;}\n' % (self.namespace, self.image_url))
-
-        # Create all the necessary class names
-        for image in self.images:
-            less_file.write(('.%(image_class_name)s(@padding: 0px){ '
-                             'background-position: %(top)ipx %(left)ipx; '
-                             '.%(namespace)s(@padding);}\n') % image.stylesheet_data)
-            less_file.write(('.%(image_class_name)s{ '
-                             'background-position: %(top)ipx %(left)ipx; '
-                             '.%(namespace)s(0px);}\n') % image.stylesheet_data)
-        less_file.close()
 
     @property
     def namespace(self):
@@ -472,12 +448,8 @@ class Sprite(object):
     @property
     def image_path(self):
         """Return the output path for the image file."""
-        return os.path.join(self.output_path, '%s.png' % self.filename)
-
-    @property
-    def output_path(self):
-        """Return the output path for this sprite."""
-        return self.manager.output_path(self.name)
+        return os.path.join(self.manager.output_path('img'),
+                            '%s.png' % self.filename)
 
     @property
     def image_url(self):
@@ -505,8 +477,6 @@ class Sprite(object):
         except ConfigParser.NoSectionError:
             value = self.DEFAULT_SETTINGS.get(name)
 
-        if name in ['css', 'less'] and not isinstance(value, bool):
-            return {'true': True, 'false': False}.get(value.lower())
         return value
 
 
@@ -540,17 +510,19 @@ class BaseManager(object):
         """Save all the sprites inside this manager."""
         for sprite in self.sprites:
             sprite.save_image()
-            if sprite.get_conf('css'):
-                sprite.save_css()
-            if sprite.get_conf('less'):
-                sprite.save_less()
+            sprite.save_css()
 
-    def output_path(self, name):
+    def output_path(self, format):
         """Return the path where all the generated files will be saved.
 
         :param name: Sprite name
         """
-        sprite_output_path = os.path.join(self.options.dir, name)
+        if format == 'css' and self.options.cssdir:
+            sprite_output_path = self.options.cssdir
+        elif format == 'img' and self.options.imgdir:
+            sprite_output_path = self.options.imgdir
+        else:
+            sprite_output_path = self.options.dir
         if not os.path.exists(sprite_output_path):
             os.makedirs(sprite_output_path)
         return sprite_output_path
@@ -635,22 +607,65 @@ class SimpleSpriteManager(BaseManager):
         self.save()
 
 
+#########################################################################
+# PIL currently doesn't support full alpha for PNG8 so it's necessary to
+# monkey patch PIL to support them.
+# http://mail.python.org/pipermail/image-sig/2010-October/006533.html
+#########################################################################
+from PIL import ImageFile, PngImagePlugin
+
+
+def patched_chunk_tRNS(self, pos, len):
+    i16 = PngImagePlugin.i16
+    s = ImageFile._safe_read(self.fp, len)
+    if self.im_mode == "P":
+        self.im_info["transparency"] = map(ord, s)
+    elif self.im_mode == "L":
+        self.im_info["transparency"] = i16(s)
+    elif self.im_mode == "RGB":
+        self.im_info["transparency"] = i16(s), i16(s[2:]), i16(s[4:])
+    return s
+PngImagePlugin.PngStream.chunk_tRNS = patched_chunk_tRNS
+
+
+def patched_load(self):
+    if self.im and self.palette and self.palette.dirty:
+        apply(self.im.putpalette, self.palette.getdata())
+        self.palette.dirty = 0
+        self.palette.rawmode = None
+        try:
+            trans = self.info["transparency"]
+        except KeyError:
+            self.palette.mode = "RGB"
+        else:
+            try:
+                for i, a in enumerate(trans):
+                    self.im.putpalettealpha(i, a)
+            except TypeError:
+                self.im.putpalettealpha(trans, 0)
+            self.palette.mode = "RGBA"
+    if self.im:
+        return self.im.pixel_access(self.readonly)
+PImage.Image.load = patched_load
+#########################################################################
+
+
 def main():
     parser = OptionParser(usage="usage: %prog [options] folder")
     parser.add_option("-o", "--output", dest="dir", default='sprites',
-                    help="Output directory for the sprites, css and less files")
-    parser.add_option("-l", "--less", action="store_true", dest="less",
-                      help="Generate .less files", default=None)
+                    help="Output directory for the sprites and css files")
+    parser.add_option("--cssdir", dest="cssdir", default='',
+                    help="Output directory for the css files")
+    parser.add_option("--imgdir", dest="imgdir", default='',
+                    help="Output directory for the img files")
     parser.add_option("-u", "--url", dest="url", default=None,
                       help="Prepend this url to the sprites urls")
-    parser.add_option("-n", "--nocss", action="store_false", dest="css",
-                      default=None, help="Don't create css files")
     parser.add_option("-s", "--simple", action="store_true", dest="simple",
                       help="Only generate sprites for one folder")
     parser.add_option("--namespace", dest="namespace",  default=None,
-                      help="Namespace for the css and less styles")
+                      help="Namespace for the css")
     parser.add_option("-f", "--name", dest="name", default=None,
-                      help="Force sprite, css and less file names")
+                      help="Force sprite and css file names")
     parser.add_option("-a", "--algorithm", dest="algorithm", default=None,
                     help="Ordering algorithm: maxside, width, height or area")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
