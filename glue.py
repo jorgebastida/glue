@@ -409,7 +409,9 @@ class Sprite(object):
 
         # Generate css files
         output_path = self.manager.output_path('css')
-        css_filename = os.path.join(output_path, '%s.css' % self.filename)
+        format = 'less' if self.manager.options.less else 'css'
+        css_filename = os.path.join(output_path, '%s.%s' % (self.filename,
+                                                            format))
         css_file = open(css_filename, 'w')
 
         # Create all the necessary class names
@@ -669,6 +671,8 @@ def main():
                     help="Ordering algorithm: maxside, width, height or area")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
                 help="Crop images removing unnecessary transparent margins")
+    parser.add_option("--less", dest="less", action='store_true',
+                help="The output stylesheets will be .less and not .css")
     parser.add_option("-i", "--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
                       help="Ignore filename paddings.", default=False)
