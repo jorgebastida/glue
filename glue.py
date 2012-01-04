@@ -169,10 +169,6 @@ class Image(object):
         image_file = open(image_path, "rb")
         self.image = PImage.open(image_file)
         self.image.load()
-
-        if self.image.mode == 'P':
-            print yellow(("Warning: Image '%s' is a Palette image, probably "
-                          "the transparency will look ugly.") % name)
         image_file.close()
 
         if self.sprite.get_conf('crop'):
@@ -422,12 +418,14 @@ class Sprite(object):
                     'sprite_url': image.sprite.image_url,
                     'image_class_name': image.class_name,
                     'top': image.node.y * -1 if image.node.y else 0,
-                    'left': image.node.x * -1 if image.node.x else 0}
+                    'left': image.node.x * -1 if image.node.x else 0,
+                    'width': image.width,
+                    'height': image.height}
 
             css_file.write((".%(image_class_name)s{ "
-                            "background:url('%(sprite_url)s');"
-                            " top:%(top)i; left:%(left)i;"
-                            " no-repeat;}\n") % data)
+                            "background:url('%(sprite_url)s') no-repeat "
+                            "%(top)ipx %(left)ipx;"
+                            "width:%(width)spx; height:%(height)spx;}\n") % data)
         css_file.close()
 
     @property
