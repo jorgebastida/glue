@@ -574,10 +574,23 @@ class MultipleSpriteManager(BaseManager):
         self.save()
 
 
-def _wrap_with(code):
-    """Copy & Pasted from fabric.
-    https://github.com/fabric/fabric/blob/master/fabric/colors.py"""
+class SimpleSpriteManager(BaseManager):
 
+    def process(self):
+        """Process an unique folder and create one sprite. It works in the
+        same way than :class:`~MultipleSpriteManager` but for only one folder.
+
+        This is not the default manager. It is only used if you use
+        the ``--simple`` default argument.
+        """
+        self.process_sprite(path=self.path, name=os.path.basename(self.path))
+        self.save()
+
+
+def _wrap_with(code):
+    """ Functions for wrapping strings in ANSI color codes.
+    Copy & Pasted from fabric.
+    """
     def inner(text, bold=False):
         c = code
         if bold:
@@ -592,20 +605,6 @@ blue = _wrap_with('34')
 magenta = _wrap_with('35')
 cyan = _wrap_with('36')
 white = _wrap_with('37')
-
-
-class SimpleSpriteManager(BaseManager):
-
-    def process(self):
-        """Process an unique folder and create one sprite. It works in the
-        same way than :class:`~MultipleSpriteManager` but for only one folder.
-
-        This is not the default manager. It is only used if you use
-        the ``--simple`` default argument.
-        """
-        self.process_sprite(path=self.path, name=os.path.basename(self.path))
-        self.save()
-
 
 #########################################################################
 # PIL currently doesn't support full alpha for PNG8 so it's necessary to
