@@ -441,7 +441,7 @@ class Sprite(object):
 
             css_file.write((".%(image_class_name)s{ "
                           "background:url('%(sprite_url)s') no-repeat "
-                          "%(top)ipx %(left)ipx;"
+                          "%(left)ipx %(top)ipx;"
                           "width:%(width)spx; height:%(height)spx;}\n") % data)
         css_file.close()
 
