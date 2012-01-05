@@ -5,7 +5,7 @@ import os
 import copy
 import subprocess
 import ConfigParser
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
@@ -233,9 +233,9 @@ class Image(object):
 
         ``.[namespace]-[sprite_name]-[image_name]{ ... }``
 
-        The image_name will only contain the alphanumeric characters, ``-`` and ``_``
-        The default namespace is ``sprite``, it but could be overrided
-          using the ``--namespace`` optional argument.
+        The image_name will only contain the alphanumeric characters,
+        ``-`` and ``_``. The default namespace is ``sprite``, it but could
+        be overrided using the ``--namespace`` optional argument.
 
 
         * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
@@ -263,10 +263,10 @@ class Image(object):
         """Return the padding for this image based on the filename and
         sprite settings file preferences.
 
-        * ``filename.png`` wil have the default padding ``10px``.
-        * ``filename-20-.png`` will have ``20px`` all arround the image.
-        * ``filename-1-2-3.png`` will have ``1px 2px 3px 2px`` arround the image.
-        * ``filename-1-2-3-4.png`` will have ``1px 2px 3px 4px`` arround the image.
+        * ``filename.png`` will have the default padding ``10px``.
+        * ``filename-20-.png`` -> ``20px`` all arround the image.
+        * ``filename-1-2-3.png`` -> ``1px 2px 3px 2px`` arround the image.
+        * ``filename-1-2-3-4.png`` -> ``1px 2px 3px 4px`` arround the image.
 
         """
         padding = self._padding_info
@@ -360,9 +360,9 @@ class Sprite(object):
         extensions = '|'.join(self.manager.VALID_IMAGE_EXTENSIONS)
         extension_re = re.compile('.+\.(%s)$' % extensions, re.IGNORECASE)
 
-        images = [Image(name, sprite=self) for name in os.listdir(self.path) if \
-                                    not name.startswith('.') and \
-                                    extension_re.match(name)]
+        images = [Image(n, sprite=self) for n in os.listdir(self.path) if \
+                                    not n.startswith('.') and \
+                                    extension_re.match(n)]
 
         if len(images) == 0:
             raise SourceImagesNotFoundError()
@@ -402,11 +402,20 @@ class Sprite(object):
         # Save png
         sprite_filename = '%s.png' % self.filename
         sprite_image_path = os.path.join(sprite_output_path, sprite_filename)
-        canvas.save(sprite_image_path, optimize=True)
+        save = lambda: canvas.save(sprite_image_path, optimize=True)
+        save()
 
         if self.manager.options.optipng:
             print green("Optimizing '%s' using optipng..." % self.name)
-            subprocess.call(["optipng %s" % sprite_image_path], shell=True)
+            command = ["%s %s" % (self.manager.options.optipngpath,
+                                  sprite_image_path)]
+
+            error = subprocess.call(command, shell=True, stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE)
+            if error:
+                print red("Error: optipng has fail, reverting to the "
+                          "original file.")
+                save()
 
     def save_css(self):
         """Create the css file for this sprite."""
@@ -430,9 +439,9 @@ class Sprite(object):
                     'height': image.height}
 
             css_file.write((".%(image_class_name)s{ "
-                            "background:url('%(sprite_url)s') no-repeat "
-                            "%(top)ipx %(left)ipx;"
-                            "width:%(width)spx; height:%(height)spx;}\n") % data)
+                          "background:url('%(sprite_url)s') no-repeat "
+                          "%(top)ipx %(left)ipx;"
+                          "width:%(width)spx; height:%(height)spx;}\n") % data)
         css_file.close()
 
     @property
@@ -558,16 +567,16 @@ class MultipleSpriteManager(BaseManager):
 
         ``.[namespace]-[sprite_name]-[image_name]{ ... }``
 
-        The image_name will only contain the alphanumeric characters, ``-`` and ``_``
-        The default namespace is ``sprite``, it but could be overrided
-        using the ``--namespace`` optional argument.
+        The image_name will only contain the alphanumeric characters,
+        ``-`` and ``_``. The default namespace is ``sprite``, it but could be
+        overrided using the ``--namespace`` optional argument.
 
 
         * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
         * ``animals/cow-20.png`` css class will be ``.sprite-animals-cow``
 
-        If two images has the same name, a :class:`~MultipleImagesWithSameNameError`
-        error will be raised.
+        If two images has the same name, a
+        :class:`~MultipleImagesWithSameNameError` error will be raised.
         """
         for sprite_name in os.listdir(self.path):
             # Only process folders
@@ -594,8 +603,18 @@ class SimpleSpriteManager(BaseManager):
         self.save()
 
 
+def command_exists(command):
+    """ Check if a command exists running it."""
+    try:
+        subprocess.check_call([command], shell=True, stdin=subprocess.PIPE,
+                              stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    except subprocess.CalledProcessError:
+        return False
+    return True
+
+
 def _wrap_with(code):
-    """ Functions for wrapping strings in ANSI color codes.
+    """ Function for wrap strings in ANSI color codes.
     Copy & Pasted from fabric.
     """
     def inner(text, bold=False):
@@ -657,37 +676,51 @@ PImage.Image.load = patched_load
 
 
 def main():
-    parser = OptionParser(usage="usage: %prog [options] folder")
+    parser = OptionParser(usage="usage: %prog [options] dir")
     parser.add_option("-s", "--simple", action="store_true", dest="simple",
-                      help="Only generate sprites for one folder")
-    parser.add_option("-o", "--output", dest="dir", default='sprites',
-                    help="Output directory for the sprites and css files")
-    parser.add_option("--cssdir", dest="cssdir", default='',
-                    help="Output directory for the css files")
-    parser.add_option("--imgdir", dest="imgdir", default='',
-                    help="Output directory for the img files")
-    parser.add_option("-u", "--url", dest="url", default=None,
-                      help="Prepend this url to the sprites urls")
-    parser.add_option("--namespace", dest="namespace",  default=None,
-                      help="Namespace for the css")
-    parser.add_option("-f", "--name", dest="name", default=None,
-                      help="Force sprite and css file names")
-    parser.add_option("-a", "--algorithm", dest="algorithm", default=None,
-                    help="Ordering algorithm: maxside, width, height or area")
+                      help="Only generate sprites for one folder.")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
-                help="Crop images removing unnecessary transparent margins")
+                help="Crop images removing unnecessary transparent margins.")
     parser.add_option("--less", dest="less", action='store_true',
-                help="The output stylesheets will be .less and not .css")
-    parser.add_option("--optipng", dest="optipng", action='store_true',
-                help="Postprocess images using optipng.")
+                help="The output stylesheets will be .less and not .css .")
+    parser.add_option("-u", "--url", dest="url", default=None,
+                      help="Prepend this url to the sprites urls.")
+    parser.add_option("--namespace", dest="namespace",  default=None,
+                      help="Namespace for the css.")
+    parser.add_option("-f", "--name", dest="name", default=None,
+                      help="Force sprite and css file names.")
+    parser.add_option("-a", "--algorithm", dest="algorithm", default=None,
+                    help="Ordering algorithm: maxside, width, height or area.")
     parser.add_option("-i", "--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
                       help="Ignore filename paddings.", default=False)
+
+    group = OptionGroup(parser, "Output Options")
+    group.add_option("-o", "--output", dest="dir", default='sprites',
+                    help="Output directory for the sprites and css files.")
+    group.add_option("--cssdir", dest="cssdir", default='',
+                    help="Output directory for the css files. (overrides -o).")
+    group.add_option("--imgdir", dest="imgdir", default='',
+                    help="Output directory for the img files. (overrides -o).")
+    parser.add_option_group(group)
+
+    group = OptionGroup(parser, "Optipng Options",
+                        "You must install optipng before using this options.")
+    group.add_option("--optipng", dest="optipng", action='store_true',
+                help="Postprocess images using optipng.")
+    group.add_option("--optipngpath", dest="optipngpath", default='optipng',
+                    help="Path to optipng (default: optipng).")
+    parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
 
     if len(args) != 1:
         parser.error("You must choose the folder that contains the sprites.")
+
+    if options.optipng and not command_exists(options.optipngpath):
+        parser.error("'optipng' seems to not be available. You must "
+                     "install it before using the --optipng option or "
+                     "provide a path using --optipngpath.")
 
     if options.simple:
         manager_cls = SimpleSpriteManager
@@ -700,7 +733,7 @@ def main():
         manager.process()
     except MultipleImagesWithSameNameError, e:
         print
-        print red("Conflict: Two or more images will have the same class name:")
+        print red("Conflict: Some images will have the same class name:")
         for image in e.args[0]:
             print '\t %s => .%s' % (image.name, image.class_name)
     except SourceImagesNotFoundError, e:
