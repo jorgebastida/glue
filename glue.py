@@ -3,6 +3,7 @@ import sys
 import re
 import os
 import copy
+import hashlib
 import subprocess
 import ConfigParser
 from optparse import OptionParser, OptionGroup
@@ -469,8 +470,15 @@ class Sprite(object):
     def image_url(self):
         """Return the sprite image url."""
         if self.get_conf('url'):
-            return os.path.join(self.get_conf('url'), '%s.png' % self.filename)
-        return os.path.join(self.image_path)
+            url = os.path.join(self.get_conf('url'), '%s.png' % self.filename)
+        url = os.path.join(self.image_path)
+
+        if self.manager.options.queryargcache:
+            sprite_file = open(self.image_path, 'rb')
+            sprite_hash = hashlib.sha1(sprite_file.read()).hexdigest()
+            sprite_file.close()
+            url = "%s?%s" % (url, sprite_hash[:6])
+        return url
 
     @property
     def config(self):
@@ -710,6 +718,14 @@ def main():
                 help="Postprocess images using optipng.")
     group.add_option("--optipngpath", dest="optipngpath", default='optipng',
                     help="Path to optipng (default: optipng).")
+    parser.add_option_group(group)
+
+    group = OptionGroup(parser, "Browser Cache Invalidation Options")
+    group.add_option("--queryargcache", dest="queryargcache",
+                    action='store_true',
+                    help=("Use the sprite's sha1 6 first characters as a "
+                          "queryarg everywhere that file is used on the "
+                          "css sprite."))
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
