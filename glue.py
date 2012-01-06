@@ -469,9 +469,10 @@ class Sprite(object):
     @property
     def image_url(self):
         """Return the sprite image url."""
+        url = os.path.join(self.image_path)
+
         if self.get_conf('url'):
             url = os.path.join(self.get_conf('url'), '%s.png' % self.filename)
-        url = os.path.join(self.image_path)
 
         if self.manager.options.queryargcache:
             sprite_file = open(self.image_path, 'rb')
