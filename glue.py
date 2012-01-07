@@ -195,7 +195,7 @@ class Image(object):
         """Crop the image searching for the smallest possible bounding box
         without lossing any non-transparent pixel.
 
-        This crop is only used if the crop preference is present.
+        This crop is only used if the crop flag is present in the config.
         """
         width, height = self.image.size
         maxx = maxy = 0
@@ -427,11 +427,11 @@ class Sprite(object):
                 save()
 
     def save_css(self):
-        """Create the css file for this sprite."""
-        self.manager.log("Creating '%s' css file..." % self.name)
+        """Create the css or less file for this sprite."""
+        format = 'less' if self.config.less else 'css'
+        self.manager.log("Creating '%s' %s file..." % (self.name, format))
 
         output_path = self.manager.output_path('css')
-        format = 'less' if self.config.less else 'css'
         css_filename = os.path.join(output_path, '%s.%s' % (self.filename,
                                                             format))
         css_file = open(css_filename, 'w')
@@ -482,6 +482,30 @@ class Sprite(object):
         return url
 
 
+class ConfigManager(object):
+    """ Manage all the available configuration from RawConfigParser, dicts
+    or command line options.
+
+    If no config is available, return the default one."""
+
+    def __init__(self, *args, **kwargs):
+        self.defaults = kwargs.get('defaults', {})
+        self.priority = kwargs.get('priority', {})
+        self.sources = list(args)
+
+    def extend(self, config):
+        return self.__class__(config, *self.sources, priority=self.priority,
+                              defaults=self.defaults)
+
+    def __getattr__(self, name):
+        sources = [self.priority] + self.sources
+        for source in sources:
+            value = source.get(name)
+            if value is not None:
+                break
+        return value or self.defaults.get(name)
+
+
 class BaseManager(object):
 
     VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
@@ -490,8 +514,9 @@ class BaseManager(object):
         """ BaseManager constructor.
 
         :param path: Sprite path.
-        :param name: OptionParser instance with all the preferences for this
-                     sprite.
+        :param config: :class:`~ConfigManager` instance with all the
+                       configuration for this sprite.
+        :param output: output dir.
         """
         self.path = path
         self.config = config
@@ -518,7 +543,7 @@ class BaseManager(object):
     def output_path(self, format):
         """Return the path where all the generated files will be saved.
 
-        :param name: Sprite name
+        :param format: File format.
         """
         if format == 'css' and self.config.css_dir:
             sprite_output_path = self.config.css_dir
@@ -531,6 +556,7 @@ class BaseManager(object):
         return sprite_output_path
 
     def log(self, message):
+        """ Prints the message if it's necessary. """
         if not self.config.quiet:
             print(message)
 
@@ -564,7 +590,7 @@ class MultipleSpriteManager(BaseManager):
 
 
         * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
-        * ``animals/cow-20.png`` css class will be ``.sprite-animals-cow``
+        * ``animals/cow_20.png`` css class will be ``.sprite-animals-cow``
 
         If two images has the same name, a
         :class:`~MultipleImagesWithSameNameError` error will be raised.
@@ -594,31 +620,14 @@ class SimpleSpriteManager(BaseManager):
         self.save()
 
 
-class ConfigManager(object):
-    """ Manage all the available configuration from RawConfigParser, dicts
-    or command line options.
-
-    If no config is available, return the default one."""
-
-    def __init__(self, *args, **kwargs):
-        self.defaults = kwargs.get('defaults', {})
-        self.priority = kwargs.get('priority', {})
-        self.sources = list(args)
-
-    def extend(self, config):
-        return self.__class__(config, *self.sources, priority=self.priority,
-                              defaults=self.defaults)
-
-    def __getattr__(self, name):
-        sources = [self.priority] + self.sources
-        for source in sources:
-            value = source.get(name)
-            if value is not None:
-                break
-        return value or self.defaults.get(name)
-
-
 def get_file_config(path, section='sprite'):
+    """ Return as a dictionary all the available configuration inside the
+    sprite configuration file on this path
+
+    :param path: Path where the configuration file is.
+    :param section: The configuration file section que need to read.
+    """
+
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, CONFIG_FILENAME))
     try:
@@ -629,7 +638,10 @@ def get_file_config(path, section='sprite'):
 
 
 def command_exists(command):
-    """ Check if a command exists running it."""
+    """ Check if a command exists running it.
+
+    :param command: command name.
+    """
     try:
         subprocess.check_call([command], shell=True, stdin=subprocess.PIPE,
                               stderr=subprocess.PIPE, stdout=subprocess.PIPE)
