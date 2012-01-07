@@ -387,7 +387,7 @@ class Sprite(object):
 
     def save_image(self):
         """Create the image file for this sprite."""
-        self.manager.log(green("Generating '%s' image file..." % self.name))
+        self.manager.log("Creating '%s' image file..." % self.name)
 
         sprite_output_path = self.manager.output_path('img')
 
@@ -422,13 +422,13 @@ class Sprite(object):
             error = subprocess.call(command, shell=True, stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE)
             if error:
-                self.manager.log(red("Error: optipng has fail, reverting to "
-                                     "the original file."))
+                self.manager.log("Error: optipng has fail, reverting to "
+                                 "the original file.")
                 save()
 
     def save_css(self):
         """Create the css file for this sprite."""
-        self.manager.log(green("Generating '%s' css file..." % self.name))
+        self.manager.log("Creating '%s' css file..." % self.name)
 
         output_path = self.manager.output_path('css')
         format = 'less' if self.config.less else 'css'
@@ -638,25 +638,6 @@ def command_exists(command):
     return True
 
 
-def _wrap_with(code):
-    """ Function for wrap strings in ANSI color codes.
-    Copy & Pasted from fabric.
-    """
-    def inner(text, bold=False):
-        c = code
-        if bold:
-            c = "1;%s" % c
-        return "\033[%sm%s\033[0m" % (c, text)
-    return inner
-
-red = _wrap_with('31')
-green = _wrap_with('32')
-yellow = _wrap_with('33')
-blue = _wrap_with('34')
-magenta = _wrap_with('35')
-cyan = _wrap_with('36')
-white = _wrap_with('37')
-
 #########################################################################
 # PIL currently doesn't support full alpha for PNG8 so it's necessary to
 # monkey patch PIL to support them.
@@ -701,7 +682,8 @@ PImage.Image.load = patched_load
 
 
 def main():
-    parser = OptionParser(usage="usage: %prog [options] source_dir [<output> | --css=<dir> --img=<dir>]")
+    parser = OptionParser(usage=("usage: %prog [options] source_dir [<output> "
+                                 "| --css=<dir> --img=<dir>]"))
     parser.add_option("-s", "--simple", action="store_true", dest="simple",
                       help="only generate sprites for one folder")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
@@ -790,16 +772,13 @@ def main():
     try:
         manager.process()
     except MultipleImagesWithSameNameError, e:
-        print
-        print red("Conflict: Some images will have the same class name:")
+        sys.stderr.write("Error: Some images will have the same class name:\n")
         for image in e.args[0]:
-            print '\t %s => .%s' % (image.name, image.class_name)
+            sys.stderr.write('\t %s => .%s\n' % (image.name, image.class_name))
     except SourceImagesNotFoundError, e:
-        print
-        print red("Error: No images found.")
+        sys.stderr.write("Error: No images found.\n")
     except NoSpritesFoldersFoundError, e:
-        print
-        print red("Error: No sprites folders found.")
+        sys.stderr.write("Error: No sprites folders found.\n")
 
 
 if __name__ == "__main__":
