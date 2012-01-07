@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import sys
 import re
 import os
+import sys
 import copy
 import hashlib
 import subprocess
@@ -265,7 +265,7 @@ class Image(object):
         sprite settings file preferences.
 
         * ``filename.png`` will have the default padding ``10px``.
-        * ``filename-20-.png`` -> ``20px`` all arround the image.
+        * ``filename-20.png`` -> ``20px`` all arround the image.
         * ``filename-1-2-3.png`` -> ``1px 2px 3px 2px`` arround the image.
         * ``filename-1-2-3-4.png`` -> ``1px 2px 3px 4px`` arround the image.
 
@@ -305,7 +305,6 @@ class Sprite(object):
 
     DEFAULT_SETTINGS = {'padding': '0',
                         'algorithm': 'maxside',
-                        'name': '',
                         'namespace': '',
                         'crop': False,
                         'url': ''}
@@ -455,10 +454,7 @@ class Sprite(object):
     @property
     def filename(self):
         """Return the desired filename for this sprite generated files."""
-        output_name = self.get_conf('name')
-        if not output_name:
-            output_name = self.name
-        return output_name
+        return self.name
 
     @property
     def image_path(self):
@@ -471,9 +467,10 @@ class Sprite(object):
         """Return the sprite image url."""
         if self.get_conf('url'):
             url = os.path.join(self.get_conf('url'), '%s.png' % self.filename)
+
         url = os.path.join(self.image_path)
 
-        if self.manager.options.queryargcache:
+        if self.manager.options.cachebuster:
             sprite_file = open(self.image_path, 'rb')
             sprite_hash = hashlib.sha1(sprite_file.read()).hexdigest()
             sprite_file.close()
@@ -508,7 +505,7 @@ class BaseManager(object):
 
     VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
-    def __init__(self, path, options):
+    def __init__(self, path, options, output=None):
         """ BaseManager constructor.
 
         :param path: Sprite path.
@@ -517,6 +514,7 @@ class BaseManager(object):
         """
         self.path = path
         self.options = options
+        self.output = output
         self.sprites = []
 
     def process_sprite(self, path, name):
@@ -541,12 +539,12 @@ class BaseManager(object):
 
         :param name: Sprite name
         """
-        if format == 'css' and self.options.cssdir:
-            sprite_output_path = self.options.cssdir
-        elif format == 'img' and self.options.imgdir:
-            sprite_output_path = self.options.imgdir
+        if format == 'css' and self.options.css_dir:
+            sprite_output_path = self.options.css_dir
+        elif format == 'img' and self.options.img_dir:
+            sprite_output_path = self.options.img_dir
         else:
-            sprite_output_path = self.options.dir
+            sprite_output_path = self.output
         if not os.path.exists(sprite_output_path):
             os.makedirs(sprite_output_path)
         return sprite_output_path
@@ -684,32 +682,32 @@ PImage.Image.load = patched_load
 
 
 def main():
-    parser = OptionParser(usage="usage: %prog [options] dir")
+    parser = OptionParser(usage="usage: %prog [options] dir [output]")
     parser.add_option("-s", "--simple", action="store_true", dest="simple",
                       help="Only generate sprites for one folder.")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
                 help="Crop images removing unnecessary transparent margins.")
-    parser.add_option("--less", dest="less", action='store_true',
+    parser.add_option("-l", "--less", dest="less", action='store_true',
                 help="The output stylesheets will be .less and not .css .")
     parser.add_option("-u", "--url", dest="url", default=None,
-                      help="Prepend this url to the sprites urls.")
-    parser.add_option("--namespace", dest="namespace",  default=None,
-                      help="Namespace for the css.")
-    parser.add_option("-f", "--name", dest="name", default=None,
-                      help="Force sprite and css file names.")
-    parser.add_option("-a", "--algorithm", dest="algorithm", default=None,
-                    help="Ordering algorithm: maxside, width, height or area.")
-    parser.add_option("-i", "--ignore-filename-paddings",
-                      dest="ignore_filename_paddings", action='store_true',
-                      help="Ignore filename paddings.", default=False)
+                      help="Prepend this url to the sprites filename.")
 
     group = OptionGroup(parser, "Output Options")
-    group.add_option("-o", "--output", dest="dir", default='sprites',
-                    help="Output directory for the sprites and css files.")
-    group.add_option("--cssdir", dest="cssdir", default='',
-                    help="Output directory for the css files. (overrides -o).")
-    group.add_option("--imgdir", dest="imgdir", default='',
-                    help="Output directory for the img files. (overrides -o).")
+    group.add_option("--css", dest="css_dir", default='',
+                    help="Output directory for the css files.")
+    group.add_option("--img", dest="img_dir", default='',
+                    help="Output directory for the img files.")
+    parser.add_option_group(group)
+
+    group = OptionGroup(parser, "Advanced Options")
+    group.add_option("-a", "--algorithm", dest="algorithm", default=None,
+                    help=("Ordering algorithm: maxside, width, height or "
+                          "area (default: maxside)."))
+    group.add_option("--namespace", dest="namespace",  default=None,
+                      help="Namespace for the css (default: sprite).")
+    group.add_option("--ignore-filename-paddings",
+                      dest="ignore_filename_paddings", action='store_true',
+                      help="Ignore filename paddings.", default=False)
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Optipng Options",
@@ -721,29 +719,40 @@ def main():
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Browser Cache Invalidation Options")
-    group.add_option("--queryargcache", dest="queryargcache",
+    group.add_option("--cachebuster", dest="cachebuster",
                     action='store_true',
                     help=("Use the sprite's sha1 6 first characters as a "
                           "queryarg everywhere that file is used on the "
-                          "css sprite."))
+                          "css."))
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
 
-    if len(args) != 1:
+    if len(args) == 0:
         parser.error("You must choose the folder that contains the sprites.")
+
+    if len(args) == 1 and not (options.css_dir and options.img_dir):
+        parser.error(("You must choose the output folder using the output "
+                      "argument or --img and --css."))
+
+    if len(args) == 2 and (options.css_dir and options.img_dir):
+        parser.error(("You must choose between using an unique output dir or "
+                      "using --css and --img."))
 
     if options.optipng and not command_exists(options.optipngpath):
         parser.error("'optipng' seems to not be available. You must "
                      "install it before using the --optipng option or "
                      "provide a path using --optipngpath.")
 
+    source = os.path.abspath(args[0])
+    output = os.path.abspath(args[1]) if len(args) == 2 else None
+
     if options.simple:
         manager_cls = SimpleSpriteManager
     else:
         manager_cls = MultipleSpriteManager
 
-    manager = manager_cls(path=os.path.abspath(args[0]), options=options)
+    manager = manager_cls(path=source, output=output, options=options)
 
     try:
         manager.process()
@@ -757,7 +766,7 @@ def main():
         print red("Error: No images found.")
     except NoSpritesFoldersFoundError, e:
         print
-        print red("Error: No sprite folders found.")
+        print red("Error: No sprites folders found.")
 
 
 if __name__ == "__main__":
