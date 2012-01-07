@@ -348,7 +348,7 @@ class Sprite(object):
 
         # Loot all over the images creating a binary tree
         for image in self.images:
-            print "\t %s => .%s" % (image.name, image.class_name)
+            self.manager.log("\t %s => .%s" % (image.name, image.class_name))
             node = root.find(root, image.width, image.height)
             if node:  # Use this node
                 image.node = root.split(node, image.width, image.height)
@@ -387,7 +387,7 @@ class Sprite(object):
 
     def save_image(self):
         """Create the image file for this sprite."""
-        print green("Generating '%s' image file..." % self.name)
+        self.manager.log(green("Generating '%s' image file..." % self.name))
 
         sprite_output_path = self.manager.output_path('img')
 
@@ -416,20 +416,19 @@ class Sprite(object):
         save()
 
         if self.config.optipng:
-            print green("Optimizing '%s' using optipng..." % self.name)
             command = ["%s %s" % (self.config.optipngpath,
                                   sprite_image_path)]
 
             error = subprocess.call(command, shell=True, stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE)
             if error:
-                print red("Error: optipng has fail, reverting to the "
-                          "original file.")
+                self.manager.log(red("Error: optipng has fail, reverting to "
+                                     "the original file."))
                 save()
 
     def save_css(self):
         """Create the css file for this sprite."""
-        print green("Generating '%s' css file..." % self.name)
+        self.manager.log(green("Generating '%s' css file..." % self.name))
 
         output_path = self.manager.output_path('css')
         format = 'less' if self.config.less else 'css'
@@ -506,7 +505,7 @@ class BaseManager(object):
         :param path: Sprite path.
         :param name: Sprite name.
         """
-        print "Processing '%s':" % name
+        self.log("Processing '%s':" % name)
         sprite = Sprite(name=name, path=path, manager=self)
         self.sprites.append(sprite)
 
@@ -530,6 +529,10 @@ class BaseManager(object):
         if not os.path.exists(sprite_output_path):
             os.makedirs(sprite_output_path)
         return sprite_output_path
+
+    def log(self, message):
+        if not self.config.quiet:
+            print(message)
 
     def process(self):
         raise NotImplementedError()
