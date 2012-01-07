@@ -305,7 +305,7 @@ class Sprite(object):
 
     DEFAULT_SETTINGS = {'padding': '0',
                         'algorithm': 'maxside',
-                        'namespace': '',
+                        'namespace': 'sprite',
                         'crop': False,
                         'url': ''}
 
@@ -447,9 +447,7 @@ class Sprite(object):
     @property
     def namespace(self):
         """Return the namespace for this sprite."""
-        if self.get_conf('namespace'):
-            return self.get_conf('namespace')
-        return 'sprite-%s' % self.name
+        return '%s-%s' % (self.get_conf('namespace'), self.name)
 
     @property
     def filename(self):
@@ -465,12 +463,9 @@ class Sprite(object):
     @property
     def image_url(self):
         """Return the sprite image url."""
-        url = os.path.join(self.image_path)
-
+        url = os.path.relpath(self.image_path, self.manager.output_path('css'))
         if self.get_conf('url'):
             url = os.path.join(self.get_conf('url'), '%s.png' % self.filename)
-
-        url = os.path.join(self.image_path)
 
         if self.manager.options.cachebuster:
             sprite_file = open(self.image_path, 'rb')
