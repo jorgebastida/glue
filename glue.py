@@ -506,7 +506,7 @@ class BaseManager(object):
         :param path: Sprite path.
         :param name: Sprite name.
         """
-        print cyan("Processing '%s':" % name)
+        print "Processing '%s':" % name
         sprite = Sprite(name=name, path=path, manager=self)
         self.sprites.append(sprite)
 
@@ -698,50 +698,52 @@ PImage.Image.load = patched_load
 
 
 def main():
-    parser = OptionParser(usage="usage: %prog [options] dir [output]")
+    parser = OptionParser(usage="usage: %prog [options] source_dir [<output> | --css=<dir> --img=<dir>]")
     parser.add_option("-s", "--simple", action="store_true", dest="simple",
-                      help="Only generate sprites for one folder.")
+                      help="only generate sprites for one folder")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
-                help="Crop images removing unnecessary transparent margins.")
-    parser.add_option("-p", "--padding", dest="padding", default=None,
-                      help="Force this paddig to all the images.")
+                help="crop images removing unnecessary transparent margins")
     parser.add_option("-l", "--less", dest="less", action='store_true',
-                help="The output stylesheets will be .less and not .css .")
+                help="the output stylesheets will be .less and not .css")
     parser.add_option("-u", "--url", dest="url", default=None,
-                      help="Prepend this url to the sprites filename.")
+                      help="prepend this url to the sprites filename")
+    parser.add_option("-q", "--quiet", dest="quiet", action='store_true',
+                      help="suppress all normal output")
+    parser.add_option("-p", "--padding", dest="padding", default=None,
+                      help="force this paddig to all the images")
 
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='',
-                    help="Output directory for the css files.")
-    group.add_option("--img", dest="img_dir", default='',
-                    help="Output directory for the img files.")
+                    help="output directory for the css files", metavar='DIR')
+    group.add_option("--img", dest="img_dir", default='', metavar='DIR',
+                    help="output directory for the img files")
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Advanced Options")
     group.add_option("-a", "--algorithm", dest="algorithm", default=None,
-                    help=("Ordering algorithm: maxside, width, height or "
-                          "area (default: maxside)."))
+                    help=("ordering algorithm: maxside, width, height or "
+                          "area (default: maxside)"), metavar='NAME')
     group.add_option("--namespace", dest="namespace",  default=None,
-                      help="Namespace for the css (default: sprite).")
+                      help="namespace for the css (default: sprite)")
     group.add_option("--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
-                      help="Ignore filename paddings.")
+                      help="ignore filename paddings")
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Optipng Options",
-                        "You must install optipng before using this options.")
+                        "You must install optipng before using this options")
     group.add_option("--optipng", dest="optipng", action='store_true',
-                help="Postprocess images using optipng.")
+                help="postprocess images using optipng")
     group.add_option("--optipngpath", dest="optipngpath", default='optipng',
-                    help="Path to optipng (default: optipng).")
+                    help="path to optipng (default: optipng)", metavar='PATH')
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Browser Cache Invalidation Options")
     group.add_option("--cachebuster", dest="cachebuster",
                     action='store_true',
-                    help=("Use the sprite's sha1 6 first characters as a "
+                    help=("use the sprite's sha1 6 first characters as a "
                           "queryarg everywhere that file is used on the "
-                          "css."))
+                          "css"))
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
@@ -753,8 +755,8 @@ def main():
         parser.error(("You must choose the output folder using the output "
                       "argument or --img and --css."))
 
-    if len(args) == 2 and (options.css_dir and options.img_dir):
-        parser.error(("You must choose between using an unique output dir or "
+    if len(args) == 2 and (options.css_dir or options.img_dir):
+        parser.error(("You must choose between using an unique output dir, or "
                       "using --css and --img."))
 
     if options.optipng and not command_exists(options.optipngpath):
