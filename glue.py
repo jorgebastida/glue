@@ -12,6 +12,12 @@ from PIL import Image as PImage
 
 
 TRANSPARENT = (255, 255, 255, 0)
+CONFIG_FILENAME = 'sprite.cfg'
+DEFAULT_SETTINGS = {'padding': '0',
+                    'algorithm': 'maxside',
+                    'namespace': 'sprite',
+                    'crop': False,
+                    'url': ''}
 
 
 class MultipleImagesWithSameNameError(Exception):
@@ -173,7 +179,7 @@ class Image(object):
         self.image.load()
         image_file.close()
 
-        if self.sprite.get_conf('crop'):
+        if self.sprite.config.crop:
             self._crop_image()
 
         self.width, self.height = self.image.size
@@ -243,7 +249,7 @@ class Image(object):
         * ``animals/cow_20.png`` css class will be ``.sprite-animals-cow``
         """
         name = self.filename
-        if not self.sprite.manager.options.ignore_filename_paddings:
+        if not self.sprite.manager.config.ignore_filename_paddings:
             padding_info_name = '-'.join(self._padding_info)
             if padding_info_name:
                 padding_info_name = '_%s' % padding_info_name
@@ -272,8 +278,8 @@ class Image(object):
         """
         padding = self._padding_info
         if len(padding) == 0 or \
-           self.sprite.manager.options.ignore_filename_paddings:
-            padding = self.sprite.get_conf('padding')
+           self.sprite.manager.config.ignore_filename_paddings:
+            padding = self.sprite.config.padding
         return self._generate_padding(padding)
 
     @property
@@ -290,7 +296,7 @@ class Image(object):
         """Use the maxside, width, height or area as ordering algorithm.
 
         :param img: Another :class:`~Image`."""
-        algorithm = self.sprite.get_conf('algorithm')
+        algorithm = self.sprite.config.algorithm
         if algorithm == 'width':
             return self.width <= img.width
         elif algorithm == 'height':
@@ -321,7 +327,11 @@ class Sprite(object):
         self.images = []
         self.path = path
 
-        algorithm = self.get_conf('algorithm')
+        config = ConfigParser.RawConfigParser()
+        config.read(os.path.join(self.path, CONFIG_FILENAME))
+        self.config = manager.config.extend(config)
+
+        algorithm = self.config.algorithm
         if algorithm not in Image.ORDERINGS:
             raise InvalidImageOrderingAlgorithmError(algorithm)
 
@@ -385,9 +395,8 @@ class Sprite(object):
         width = height = 0
 
         for image in self.images:
-            padding = image.padding
-            x = image.node.x + image.width + padding[1] + padding[3]
-            y = image.node.y + image.height + padding[0] + padding[2]
+            x = image.node.x + image.width
+            y = image.node.y + image.height
             if width < x:
                 width = x
             if height < y:
@@ -406,9 +415,9 @@ class Sprite(object):
         save = lambda: canvas.save(sprite_image_path, optimize=True)
         save()
 
-        if self.manager.options.optipng:
+        if self.manager.config.optipng:
             print green("Optimizing '%s' using optipng..." % self.name)
-            command = ["%s %s" % (self.manager.options.optipngpath,
+            command = ["%s %s" % (self.manager.config.optipngpath,
                                   sprite_image_path)]
 
             error = subprocess.call(command, shell=True, stdin=subprocess.PIPE,
@@ -423,7 +432,7 @@ class Sprite(object):
         print green("Generating '%s' css file..." % self.name)
 
         output_path = self.manager.output_path('css')
-        format = 'less' if self.manager.options.less else 'css'
+        format = 'less' if self.manager.config.less else 'css'
         css_filename = os.path.join(output_path, '%s.%s' % (self.filename,
                                                             format))
         css_file = open(css_filename, 'w')
@@ -446,7 +455,7 @@ class Sprite(object):
     @property
     def namespace(self):
         """Return the namespace for this sprite."""
-        return '%s-%s' % (self.get_conf('namespace'), self.name)
+        return '%s-%s' % (self.config.namespace, self.name)
 
     @property
     def filename(self):
@@ -463,45 +472,22 @@ class Sprite(object):
     def image_url(self):
         """Return the sprite image url."""
         url = os.path.relpath(self.image_path, self.manager.output_path('css'))
-        if self.get_conf('url'):
-            url = os.path.join(self.get_conf('url'), '%s.png' % self.filename)
+        if self.config.url:
+            url = os.path.join(self.config.url, '%s.png' % self.filename)
 
-        if self.manager.options.cachebuster:
+        if self.manager.config.cachebuster:
             sprite_file = open(self.image_path, 'rb')
             sprite_hash = hashlib.sha1(sprite_file.read()).hexdigest()
             sprite_file.close()
             url = "%s?%s" % (url, sprite_hash[:6])
         return url
 
-    @property
-    def config(self):
-        """Return a ConfigParser instance with this sprite preferences."""
-        if not getattr(self, '_config', None):
-            self._config = ConfigParser.RawConfigParser(self.DEFAULT_SETTINGS)
-            self._config.read(os.path.join(self.path, 'sprite.conf'))
-        return self._config
-
-    def get_conf(self, name):
-        """Return the desired preference for this sprite. If the preference
-        was overrided from the command line, use that value, else use the
-        settings file. If neither the file or command line sets that property,
-        return the default value.
-
-        :param name: The preference name."""
-        try:
-            value = getattr(self.manager.options, name, None) or \
-               self.config.get('defaults', name)
-        except ConfigParser.NoSectionError:
-            value = self.DEFAULT_SETTINGS.get(name)
-
-        return value
-
 
 class BaseManager(object):
 
     VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
-    def __init__(self, path, options, output=None):
+    def __init__(self, path, config, output=None):
         """ BaseManager constructor.
 
         :param path: Sprite path.
@@ -509,7 +495,7 @@ class BaseManager(object):
                      sprite.
         """
         self.path = path
-        self.options = options
+        self.config = config
         self.output = output
         self.sprites = []
 
@@ -535,10 +521,10 @@ class BaseManager(object):
 
         :param name: Sprite name
         """
-        if format == 'css' and self.options.css_dir:
-            sprite_output_path = self.options.css_dir
-        elif format == 'img' and self.options.img_dir:
-            sprite_output_path = self.options.img_dir
+        if format == 'css' and self.config.css_dir:
+            sprite_output_path = self.config.css_dir
+        elif format == 'img' and self.config.img_dir:
+            sprite_output_path = self.config.img_dir
         else:
             sprite_output_path = self.output
         if not os.path.exists(sprite_output_path):
@@ -603,6 +589,37 @@ class SimpleSpriteManager(BaseManager):
         """
         self.process_sprite(path=self.path, name=os.path.basename(self.path))
         self.save()
+
+
+class ConfigManager(object):
+    """ Manage all the available configuration from RawConfigParser, dicts
+    or command line options.
+
+    If no config is available, return the default one."""
+
+    def __init__(self, *args, **kwargs):
+        self.defaults = kwargs.get('defaults', {})
+        self.priority = kwargs.get('priority', {})
+        self.sources = list(args)
+
+    def extend(self, config):
+        return ConfigManager(config, self.sources, priority=self.priority)
+
+    def __getattr__(self, name):
+        sources = [self.priority] + self.sources
+        for source in sources:
+            if isinstance(source, ConfigParser.RawConfigParser):
+                try:
+                    value = source.get('defaults', name)
+                except ConfigParser.Error:
+                    value = None
+            elif isinstance(source, dict):
+                value = source.get(name)
+            else:
+                value = getattr(source, name, None)
+            if value is not None:
+                break
+        return value or self.defaults.get(name)
 
 
 def command_exists(command):
@@ -687,6 +704,8 @@ def main():
                 help="The output stylesheets will be .less and not .css .")
     parser.add_option("-u", "--url", dest="url", default=None,
                       help="Prepend this url to the sprites filename.")
+    parser.add_option("-p", "--padding", dest="padding", default=None,
+                      help="Force this paddig to all the images.")
 
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='',
@@ -748,7 +767,11 @@ def main():
     else:
         manager_cls = MultipleSpriteManager
 
-    manager = manager_cls(path=source, output=output, options=options)
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(source, CONFIG_FILENAME))
+
+    config = ConfigManager(config, priority=options, defaults=DEFAULT_SETTINGS)
+    manager = manager_cls(path=source, output=output, config=config)
 
     try:
         manager.process()
