@@ -40,8 +40,8 @@ class Node(object):
                  down=None, right=None):
         """Node constructor.
 
-        :param x: X coordinates.
-        :param y: Y coordinates.
+        :param x: X coordinate.
+        :param y: Y coordinate.
         :param width: Image width.
         :param height: Image height.
         :param used: Flag to determine if the node is used.
@@ -57,7 +57,7 @@ class Node(object):
         self.down = down
 
     def find(self, node, width, height):
-        """Find a node to allocate this image size.
+        """Find a node to allocate this image size (width, height).
 
         :param node: The node to search in.
         :param width: The amount of pixel to grow down (width).
@@ -184,7 +184,7 @@ class Image(object):
 
     def _crop_image(self):
         """Crop the image searching for the smallest possible bounding box
-        without lossing any non-alpha pixel.
+        without lossing any non-transparent pixel.
 
         This crop is only used if the crop preference is present.
         """
@@ -240,7 +240,7 @@ class Image(object):
 
 
         * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
-        * ``animals/cow-20.png`` css class will be ``.sprite-animals-cow``
+        * ``animals/cow_20.png`` css class will be ``.sprite-animals-cow``
         """
         name = self.filename
         if not self.sprite.manager.options.ignore_filename_paddings:
@@ -255,7 +255,7 @@ class Image(object):
     def _padding_info(self):
         """Return the padding information from the filename. """
         padding_info = self.filename.rsplit('_', 1)[-1]
-        if re.match(r"^(\d+-?){,4}\d+$", padding_info):
+        if re.match(r"^(\d+-?){,3}\d+$", padding_info):
             return padding_info.split('-')
         return []
 
@@ -265,9 +265,9 @@ class Image(object):
         sprite settings file preferences.
 
         * ``filename.png`` will have the default padding ``10px``.
-        * ``filename-20.png`` -> ``20px`` all arround the image.
-        * ``filename-1-2-3.png`` -> ``1px 2px 3px 2px`` arround the image.
-        * ``filename-1-2-3-4.png`` -> ``1px 2px 3px 4px`` arround the image.
+        * ``filename_20.png`` -> ``20px`` all arround the image.
+        * ``filename_1-2-3.png`` -> ``1px 2px 3px 2px`` arround the image.
+        * ``filename_1-2-3-4.png`` -> ``1px 2px 3px 4px`` arround the image.
 
         """
         padding = self._padding_info
@@ -380,7 +380,8 @@ class Sprite(object):
         print green("Generating '%s' image file..." % self.name)
 
         sprite_output_path = self.manager.output_path('img')
-        # Search for the max x and y neccesary to generate the canvas.
+
+        # Search for the max x and y (Neccesary to generate the canvas).
         width = height = 0
 
         for image in self.images:
@@ -421,14 +422,12 @@ class Sprite(object):
         """Create the css file for this sprite."""
         print green("Generating '%s' css file..." % self.name)
 
-        # Generate css files
         output_path = self.manager.output_path('css')
         format = 'less' if self.manager.options.less else 'css'
         css_filename = os.path.join(output_path, '%s.%s' % (self.filename,
                                                             format))
         css_file = open(css_filename, 'w')
 
-        # Create all the necessary class names
         for image in self.images:
             data = {'namespace': image.sprite.namespace,
                     'sprite_url': image.sprite.image_url,
