@@ -12,12 +12,15 @@ from PIL import Image as PImage
 
 
 TRANSPARENT = (255, 255, 255, 0)
-CONFIG_FILENAME = 'sprite.cfg'
+CONFIG_FILENAME = 'sprite.conf'
 DEFAULT_SETTINGS = {'padding': '0',
                     'algorithm': 'maxside',
                     'namespace': 'sprite',
                     'crop': False,
-                    'url': ''}
+                    'url': '',
+                    'less': False,
+                    'optipng': False,
+                    'ignore_filename_paddings': True}
 
 
 class MultipleImagesWithSameNameError(Exception):
@@ -327,13 +330,10 @@ class Sprite(object):
         self.images = []
         self.path = path
 
-        config = ConfigParser.RawConfigParser()
-        config.read(os.path.join(self.path, CONFIG_FILENAME))
-        self.config = manager.config.extend(config)
+        self.config = manager.config.extend(get_file_config(self.path))
 
-        algorithm = self.config.algorithm
-        if algorithm not in Image.ORDERINGS:
-            raise InvalidImageOrderingAlgorithmError(algorithm)
+        if self.config.algorithm not in Image.ORDERINGS:
+            raise InvalidImageOrderingAlgorithmError(self.config.algorithm)
 
         self.process()
 
@@ -415,9 +415,9 @@ class Sprite(object):
         save = lambda: canvas.save(sprite_image_path, optimize=True)
         save()
 
-        if self.manager.config.optipng:
+        if self.config.optipng:
             print green("Optimizing '%s' using optipng..." % self.name)
-            command = ["%s %s" % (self.manager.config.optipngpath,
+            command = ["%s %s" % (self.config.optipngpath,
                                   sprite_image_path)]
 
             error = subprocess.call(command, shell=True, stdin=subprocess.PIPE,
@@ -432,7 +432,7 @@ class Sprite(object):
         print green("Generating '%s' css file..." % self.name)
 
         output_path = self.manager.output_path('css')
-        format = 'less' if self.manager.config.less else 'css'
+        format = 'less' if self.config.less else 'css'
         css_filename = os.path.join(output_path, '%s.%s' % (self.filename,
                                                             format))
         css_file = open(css_filename, 'w')
@@ -475,7 +475,7 @@ class Sprite(object):
         if self.config.url:
             url = os.path.join(self.config.url, '%s.png' % self.filename)
 
-        if self.manager.config.cachebuster:
+        if self.config.cachebuster:
             sprite_file = open(self.image_path, 'rb')
             sprite_hash = hashlib.sha1(sprite_file.read()).hexdigest()
             sprite_file.close()
@@ -603,23 +603,26 @@ class ConfigManager(object):
         self.sources = list(args)
 
     def extend(self, config):
-        return ConfigManager(config, self.sources, priority=self.priority)
+        return self.__class__(config, *self.sources, priority=self.priority,
+                              defaults=self.defaults)
 
     def __getattr__(self, name):
         sources = [self.priority] + self.sources
         for source in sources:
-            if isinstance(source, ConfigParser.RawConfigParser):
-                try:
-                    value = source.get('defaults', name)
-                except ConfigParser.Error:
-                    value = None
-            elif isinstance(source, dict):
-                value = source.get(name)
-            else:
-                value = getattr(source, name, None)
+            value = source.get(name)
             if value is not None:
                 break
         return value or self.defaults.get(name)
+
+
+def get_file_config(path, section='sprite'):
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, CONFIG_FILENAME))
+    try:
+        keys = config.options(section)
+    except ConfigParser.NoSectionError:
+        return {}
+    return dict([[k, config.get(section, k)] for k in keys])
 
 
 def command_exists(command):
@@ -700,12 +703,12 @@ def main():
                       help="Only generate sprites for one folder.")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
                 help="Crop images removing unnecessary transparent margins.")
+    parser.add_option("-p", "--padding", dest="padding", default=None,
+                      help="Force this paddig to all the images.")
     parser.add_option("-l", "--less", dest="less", action='store_true',
                 help="The output stylesheets will be .less and not .css .")
     parser.add_option("-u", "--url", dest="url", default=None,
                       help="Prepend this url to the sprites filename.")
-    parser.add_option("-p", "--padding", dest="padding", default=None,
-                      help="Force this paddig to all the images.")
 
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='',
@@ -722,7 +725,7 @@ def main():
                       help="Namespace for the css (default: sprite).")
     group.add_option("--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
-                      help="Ignore filename paddings.", default=False)
+                      help="Ignore filename paddings.")
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Optipng Options",
@@ -762,13 +765,19 @@ def main():
     source = os.path.abspath(args[0])
     output = os.path.abspath(args[1]) if len(args) == 2 else None
 
+    if not os.path.isdir(source):
+        parser.error("Directory not found: '%s'" % source)
+
     if options.simple:
         manager_cls = SimpleSpriteManager
     else:
         manager_cls = MultipleSpriteManager
 
-    config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(source, CONFIG_FILENAME))
+    # Get configuration from file
+    config = get_file_config(source)
+
+    # Convert options to dict
+    options = options.__dict__
 
     config = ConfigManager(config, priority=options, defaults=DEFAULT_SETTINGS)
     manager = manager_cls(path=source, output=output, config=config)
