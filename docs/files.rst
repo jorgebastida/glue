@@ -1,2 +1,64 @@
 Configuration files
 ==========================
+
+Introduction
+------------
+``Glue`` has around fifteen optional arguments, so adding all of them every time
+you need to create your sprites could be really annoying.
+
+You can add to your sprites container or to your sprite folder a configuration file named ``sprite.conf`` and add inside
+all your configuration you need::
+
+    images
+        ├── actions
+        │   ├── add.png
+        │   └── remove.png
+        └── icons
+        │   ├── comment.png
+        │   ├── new.png
+        │   └── rss.png
+        └── sprite.conf
+
+If for example you want to change the namespace and the default padding to all your sprites you can add this to your ``sprite.conf``::
+
+    [sprite]
+    namespace=my-sprites
+    padding=20
+
+
+If the ``actions`` images needs to be cropped and have a different padding, you can create a new ``sprite.conf`` file inside your ``actions`` folder::
+
+    images
+        ├── actions
+        │   ├── add.png
+        │   ├── remove.png
+        │   └── sprite.conf
+        └── icons
+        │   ├── comment.png
+        │   ├── new.png
+        │   └── rss.png
+        └── sprite.conf
+
+So all the configuration you add there will override the first configuration file::
+
+    [sprite]
+    crop=true
+    padding=10
+
+Available configuration
+-----------------------
+
+This is all the available configuration you can add to your ``sprite.conf`` files.
+
+======================== =========================
+name                     default value
+======================== =========================
+padding                  '0'
+algorithm                'maxside'
+namespace                'sprite'
+crop                     False
+url                      ''
+less                     False
+optipng                  False
+ignore_filename_paddings False
+======================== =========================

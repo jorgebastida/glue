@@ -11,7 +11,7 @@ Requirements
 OSX
 ^^^
 
-Before installing ``PIL`` you'll need to install Xcode, then you can install the jpeg codecs using:
+Before installing ``PIL`` you'll need to install Xcode, then you can install the jpeg codecs using `Homebrew <http://mxcl.github.com/homebrew/>`_:
 
 .. code-block:: bash
 

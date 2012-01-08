@@ -1,9 +1,9 @@
-Command line options
+Command line arguments
 ======================
 
 -s --simple
 -----------
-As it's explained in the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is handle multi-sprite apps.
+As it's explained in the :doc:`quickstart page <quickstart>` the default behaviour of ``Glue`` is handle multi-sprite apps.
 
 The suggested setup is create a new folder for every sprite, and add inside all the images you need for each one. ``Glue`` will create a new sprite for every folder::
 
@@ -54,7 +54,7 @@ This files contains exactly the same CSS code. This option only changes the file
 
 -u --url
 ---------
-By default ``glue`` adds as url to the PNG file the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use the ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace it's suggested one with your url.
+By default ``Glue`` adds as url to the PNG file the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use the ``url=<your-static-url-to-the-png-file>`` and ``Glue`` will replace it's suggested one with your url.
 
 .. code-block:: bash
 
@@ -62,7 +62,7 @@ By default ``glue`` adds as url to the PNG file the relative url between the CSS
 
 -q --quiet
 ----------
-This flag will make ``glue`` suppress all console output.
+This flag will make ``Glue`` suppress all console output.
 
 .. code-block:: bash
 
@@ -89,7 +89,7 @@ Usually both CSS and PNG files reside on different folders, `css` and `img` for 
 
 -a --algorithm
 --------------
-The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside` but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
+The criteria that ``Glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside` but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
 
 The ordering algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
 
@@ -121,7 +121,7 @@ OptiPNG is a PNG optimizer that recompresses image files to a smaller size, with
 
 OptiPNG is not a glue requirement but is hardly recomended to optimize the output PNG files to make them as small as possible.
 
-If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. if you don't know how to install it, read the :doc:`optipng page <optipng>`.
+If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``Glue`` generates. if you don't know how to install it, read the :doc:`optipng page <optipng>`.
 
 .. code-block:: bash
 
