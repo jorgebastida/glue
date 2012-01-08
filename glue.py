@@ -178,7 +178,15 @@ class Image(object):
         image_path = os.path.join(sprite.path, name)
 
         image_file = open(image_path, "rb")
-        self.image = PImage.open(image_file)
+        try:
+            self.image = PImage.open(image_file)
+        except IOError, e:
+            sys.stderr.write(("ERROR: PIL %s decoder isn't available. "
+                              "Please read the documentation and "
+                              "install it before spriting this kind of "
+                              "images.\n" % e.args[0].split()[1]))
+            sys.exit(1)
+
         self.image.load()
         image_file.close()
 
