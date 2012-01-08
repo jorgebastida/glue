@@ -19,7 +19,7 @@ setup(
     name='glue',
     version='0.1.2',
     url='https://github.com/jorgebastida/glue',
-    dowload_url='https://nodeload.github.com/jorgebastida/glue/zipball/master',
+    download_url='https://nodeload.github.com/jorgebastida/glue/zipball/master',
     license='BSD',
     author='Jorge Bastida',
     author_email='me@jorgebastida.com',
