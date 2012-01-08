@@ -1,2 +1,2 @@
-Glue configuration files
+Configuration files
 ==========================

@@ -13,10 +13,9 @@ Contents:
 
    installation
    quickstart
-   multiplesprites
-   arguments
    paddings
    files
+   options
    api
 
 Indices and tables

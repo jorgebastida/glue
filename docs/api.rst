@@ -27,6 +27,13 @@ Sprite Object
    :members:
    :inherited-members:
 
+ConfigManager Object
+--------------------
+
+.. autoclass:: glue.ConfigManager
+   :members:
+   :inherited-members:
+
 BaseManager Object
 ------------------
 
@@ -47,3 +54,23 @@ SimpleSpriteManager Object
 .. autoclass:: glue.SimpleSpriteManager
    :members:
    :inherited-members:
+
+Exceptions
+----------
+
+.. autoclass:: glue.MultipleImagesWithSameNameError
+   :members:
+   :inherited-members:
+
+.. autoclass:: glue.SourceImagesNotFoundError
+   :members:
+   :inherited-members:
+
+.. autoclass:: glue.NoSpritesFoldersFoundError
+   :members:
+   :inherited-members:
+
+.. autoclass:: glue.InvalidImageOrderingAlgorithmError
+   :members:
+   :inherited-members:
+
