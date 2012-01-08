@@ -17,7 +17,7 @@ except ImportError:
 
 setup(
     name='glue',
-    version='0.1.1',
+    version='0.1.2',
     url='https://github.com/jorgebastida/glue',
     dowload_url='https://nodeload.github.com/jorgebastida/glue/zipball/master',
     license='BSD',
