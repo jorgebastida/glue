@@ -3,9 +3,9 @@ Command line arguments
 
 -s --simple
 -----------
-As it's explained in the :doc:`quickstart page <quickstart>` the default behaviour of ``Glue`` is handle multi-sprite apps.
+As it's explained at the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is handle multi-sprite apps.
 
-The suggested setup is create a new folder for every sprite, and add inside all the images you need for each one. ``Glue`` will create a new sprite for every folder::
+The suggested setup is create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder::
 
     images
     ├── actions
@@ -34,7 +34,7 @@ The ``--simple`` argument ignores that behaviour and only expect that the ``sour
 -c --crop
 ---------
 
-Usually designers add some unnecessary transparent space around the images because it is easier for them work with a larger canvas. ``Glue`` can optimize our sprite croping all the unnecessary transparent spaces that the original images could have.
+Usually designers add some unnecessary transparent space around the images because it is easier for them work with a larger canvas. ``glue`` can optimize our sprite croping all the unnecessary transparent spaces that the original images could have.
 
 .. image:: _static/crop.png
 
@@ -45,7 +45,7 @@ Usually designers add some unnecessary transparent space around the images becau
 -l --less
 ---------
 `less <http://lesscss.org/>`_  is a dynamic stylesheet language that extends CSS with dynamic behaviors.
-``Glue`` can also create ``.less`` files adding the ``--less`` option.
+``glue`` can also create ``.less`` files adding the ``--less`` option.
 This files contains exactly the same CSS code. This option only changes the file format.
 
 .. code-block:: bash
@@ -54,7 +54,7 @@ This files contains exactly the same CSS code. This option only changes the file
 
 -u --url
 ---------
-By default ``Glue`` adds as url to the PNG file the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use the ``url=<your-static-url-to-the-png-file>`` and ``Glue`` will replace it's suggested one with your url.
+By default ``glue`` adds as url to the PNG file the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use the ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace it's suggested one with your url.
 
 .. code-block:: bash
 
@@ -62,7 +62,7 @@ By default ``Glue`` adds as url to the PNG file the relative url between the CSS
 
 -q --quiet
 ----------
-This flag will make ``Glue`` suppress all console output.
+This flag will make ``glue`` suppress all console output.
 
 .. code-block:: bash
 
@@ -89,7 +89,7 @@ Usually both CSS and PNG files reside on different folders, `css` and `img` for 
 
 -a --algorithm
 --------------
-The criteria that ``Glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside` but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
+The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside` but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
 
 The ordering algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
 
@@ -100,7 +100,7 @@ The ordering algorithm was inspired by the `Binary Tree Bin Packing Algorithm Ar
 
 --namespace
 -----------
-By default ``Glue`` adds the namespace ``sprite`` to all the generated CSS class names. if you want to use your own namespace you can override the default one using the ``--namespace`` option.
+By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class names. if you want to use your own namespace you can override the default one using the ``--namespace`` option.
 
 .. code-block:: bash
 
@@ -108,7 +108,7 @@ By default ``Glue`` adds the namespace ``sprite`` to all the generated CSS class
 
 --ignore-filename-paddings
 --------------------------
-``Glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior for legacy purporses, you can use the ``--ignore-filename-paddings`` option to disable it.
+``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior for legacy purporses, you can use the ``--ignore-filename-paddings`` option to disable it.
 
 .. code-block:: bash
 
@@ -117,11 +117,11 @@ By default ``Glue`` adds the namespace ``sprite`` to all the generated CSS class
 --optipng
 ---------
 
-OptiPNG is a PNG optimizer that recompresses image files to a smaller size, without losing any information. This program also converts external formats (BMP, GIF, PNM and TIFF) to optimized PNG, and performs PNG integrity checks and corrections.
+OptiPNG is a PNG optimizer that recompresses image files to a smaller size, without losing any information.
 
 OptiPNG is not a glue requirement but is hardly recomended to optimize the output PNG files to make them as small as possible.
 
-If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``Glue`` generates. if you don't know how to install it, read the :doc:`optipng page <optipng>`.
+If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. if you don't know how to install it, read the :doc:`optipng page <optipng>`.
 
 .. code-block:: bash
 
@@ -140,11 +140,11 @@ If ``optipng`` is not in your computer ``PATH``, you can choose the optipng path
 -------------
 If you decide to add an expires header to your static resources (and if you haven't already you really should), you need to worry about cache busting these resources every time you change one of them.
 
-Cache busting is technique that prevents a browser from reusing a resource that was already downloaded and cached. Cache in general is good, but in some situations could be annoying if it's duration is too long and we want to update a resource **now**.
+Cache busting is a technique that prevents a browser from reusing a resource that was already downloaded and cached. Cache in general is good, but in some situations could be annoying if it's duration is too long and we want to update a resource **now**.
 
-This technique adds a flag to every url that links an external resource (PNG in this case). This flag usually is the last modified time of the file or the ``hash``.
+This technique adds a flag to every url that links an external resource (PNG in this case). This flag usually is the last modified time or the ``hash`` of the file.
 
-``Glue`` can use this technique to automatically add the ``hash`` of the PNG file to the CSS url that links the file, so as soon as the file change (add/remove an image) the ``hash`` will be different and the browser will re-dowload the image.
+``glue`` can use this technique to automatically add the ``hash`` of the PNG file to the CSS url, so as soon as the file change (add/remove an image) the ``hash`` will be different and the browser will re-dowload the image.
 
 
 .. code-block:: bash

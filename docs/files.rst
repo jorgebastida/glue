@@ -3,11 +3,11 @@ Configuration files
 
 Introduction
 ------------
-``Glue`` has around fifteen optional arguments, so adding all of them every time
-you need to create your sprites could be really annoying.
+``glue`` has around fifteen command line arguments, so adding all of them every time
+you need to rebuild your sprites could be really annoying.
 
 You can add to your sprites container or to your sprite folder a configuration file named ``sprite.conf`` and add inside
-all your configuration you need::
+all the configuration you need::
 
     images
         ├── actions
@@ -39,11 +39,14 @@ If the ``actions`` images needs to be cropped and have a different padding, you 
         │   └── rss.png
         └── sprite.conf
 
-So all the configuration you add there will override the first configuration file::
+All the configuration you add there will override the first configuration file::
 
     [sprite]
     crop=true
     padding=10
+
+.. note::
+    All the configuration you specify using the command line will override the configuration that comes from any configuration file.
 
 Available configuration
 -----------------------

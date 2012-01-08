@@ -51,7 +51,7 @@ copyright = u'2012, Jorge Bastida'
 
 import pkg_resources
 try:
-    release = pkg_resources.get_distribution('Flask').version
+    release = pkg_resources.get_distribution('glue').version
 except pkg_resources.DistributionNotFound:
     print 'To build the documentation, The distribution information of glue'
     print 'Has to be available.  Either install the package into your'
