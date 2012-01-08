@@ -50,7 +50,7 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'PIL>=1.1.6'
+        'PIL>=1.1.7'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
