@@ -5,9 +5,8 @@ Glue is a simple command line tool to generate CSS sprites::
 
     $ glue source output
 
-The latest documentation is available on http://glue.readthedocs.org
-
-Installation instructions: http://glue.readthedocs.org/en/latest/installation.html
+* The latest documentation is available on http://glue.readthedocs.org
+* Installation instructions: http://glue.readthedocs.org/en/latest/installation.html
 
 Features
 --------
