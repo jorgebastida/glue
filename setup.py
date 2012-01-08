@@ -18,7 +18,7 @@ except ImportError:
 
 setup(
     name='glue',
-    version='0.1.6',
+    version='0.1.7',
     url='http://github.com/jorgebastida/glue',
     license='BSD',
     author='Jorge Bastida',

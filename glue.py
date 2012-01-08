@@ -180,6 +180,7 @@ class Image(object):
         image_file = open(image_path, "rb")
         try:
             self.image = PImage.open(image_file)
+            self.image.load()
         except IOError, e:
             sys.stderr.write(("ERROR: PIL %s decoder isn't available. "
                               "Please read the documentation and "
@@ -187,7 +188,6 @@ class Image(object):
                               "images.\n" % e.args[0].split()[1]))
             sys.exit(1)
 
-        self.image.load()
         image_file.close()
 
         if self.sprite.config.crop:
