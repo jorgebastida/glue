@@ -6,7 +6,7 @@ Glue is a simple command line tool to generate CSS sprites.
 
 """
 
-VERSION = '0.1.4'
+VERSION = '0.1.5'
 
 try:
     from setuptools import setup
@@ -20,8 +20,8 @@ except ImportError:
 setup(
     name='glue',
     version=VERSION,
-    url='https://github.com/jorgebastida/glue',
-    download_url='https://github.com/jorgebastida/glue/zipball/%s' % VERSION,
+    url='http://github.com/jorgebastida/glue',
+    download_url='http://github.com/jorgebastida/glue/tarball/%s' % VERSION,
     license='BSD',
     author='Jorge Bastida',
     author_email='me@jorgebastida.com',
