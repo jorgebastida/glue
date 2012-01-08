@@ -2,29 +2,7 @@
 Glue
 -----
 
-Glue is a command line tool to generate css sprites.
-
-123 glue!
-````````````````
-
-::
-
-    $ glue images
-
-Easy to Setup
-`````````````````
-
-::
-
-    $ easy_install glue
-    or
-    $ pip install glue
-
-Links
-`````
-
-* `website <http://glue.github.com/>`_
-* `documentation <http://glue.github.com/docs/>`_
+Glue is a simple command line tool to generate CSS sprites.
 
 """
 
@@ -44,13 +22,14 @@ setup(
     license='BSD',
     author='Jorge Bastida',
     author_email='me@jorgebastida.com',
-    description='A command line tool to generate css sprites.',
-    long_description=__doc__,
+    description='Glue is a simple command line tool to generate CSS sprites.',
+    long_description=('Glue is a simple command line tool to generate CSS '
+                      'sprites.'),
     py_modules=['glue'],
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'PIL>=1.1.7'
+        'PIL>=1.1.6'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
