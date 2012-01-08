@@ -68,9 +68,9 @@ class Node(object):
     def find(self, node, width, height):
         """Find a node to allocate this image size (width, height).
 
-        :param node: The node to search in.
-        :param width: The amount of pixel to grow down (width).
-        :param height: The amount of pixel to grow down (height).
+        :param node: Node to search in.
+        :param width: Amount of pixel to grow down (width).
+        :param height: Amount of pixel to grow down (height).
         """
         if node.used:
             return self.find(node.right, width, height) or \
@@ -105,8 +105,8 @@ class Node(object):
     def grow_right(self, width, height):
         """Grow the canvas to the right.
 
-        :param width: The amount of pixel to grow down (width).
-        :param height: The amount of pixel to grow down (height).
+        :param width: Amount of pixel to grow down (width).
+        :param height: Amount of pixel to grow down (height).
         """
         old_self = copy.copy(self)
         self.used = True
@@ -126,8 +126,8 @@ class Node(object):
     def grow_down(self, width, height):
         """Grow the canvas down.
 
-        :param width: The amount of pixel to grow down (width).
-        :param height: The amount of pixel to grow down (height).
+        :param width: Amount of pixel to grow down (width).
+        :param height: Amount of pixel to grow down (height).
         """
         old_self = copy.copy(self)
         self.used = True
@@ -147,9 +147,9 @@ class Node(object):
     def split(self, node, width, height):
         """Split the node to allocate a new one of this size.
 
-        :param node: The node to be splited.
-        :param width: The new node width.
-        :param height: The new node height.
+        :param node: Node to be splited.
+        :param width: New node width.
+        :param height: New node height.
         """
         node.used = True
         node.down = Node(x=node.x,
@@ -219,7 +219,7 @@ class Image(object):
     def _generate_padding(self, padding):
         """Return a four element list with the desired padding.
 
-        :param padding: The padding as a list or a raw string representing
+        :param padding: Padding as a list or a raw string representing
                         the padding for this image."""
 
         if type(padding) == str:
@@ -287,12 +287,12 @@ class Image(object):
 
     @property
     def x(self):
-        """The y coordinate for this image."""
+        """Y coordinate for this image."""
         return self.node.x + self.padding[3]
 
     @property
     def y(self):
-        """The x coordinate for this image."""
+        """X coordinate for this image."""
         return self.node.y + self.padding[0]
 
     def __lt__(self, img):
@@ -321,9 +321,9 @@ class Sprite(object):
     def __init__(self, name, path, manager):
         """Sprite constructor.
 
-        :param name: The sprite name.
-        :param path: The sprite path
-        :param manager: The sprite manager. :class:`~MultipleSpriteManager` or
+        :param name: Sprite name.
+        :param path: Sprite path
+        :param manager: Sprite manager. :class:`~MultipleSpriteManager` or
                         :class:`SimpleSpriteManager`"""
         self.name = name
         self.manager = manager
@@ -483,27 +483,47 @@ class Sprite(object):
 
 
 class ConfigManager(object):
-    """ Manage all the available configuration from RawConfigParser, dicts
-    or command line options.
+    """Manage all the available configuration.
 
     If no config is available, return the default one."""
 
     def __init__(self, *args, **kwargs):
+        """ConfigManager constructor.
+
+        :param *args: List of config dictionaries. The order of this list is
+                      important because as soon as one config property
+                      is available it will be returned.
+        :param defaults: Dictionary with the default configuration.
+        :param priority: Dictionary with the command line configuration. This
+                         configuration will overrida any other from any source.
+        """
         self.defaults = kwargs.get('defaults', {})
         self.priority = kwargs.get('priority', {})
         self.sources = list(args)
 
     def extend(self, config):
+        """Return a new :class:`~ConfigManager` instance with this new config
+                         inside the sources list.
+
+        :param config: Dictionary with the new config.
+        """
         return self.__class__(config, *self.sources, priority=self.priority,
                               defaults=self.defaults)
 
     def __getattr__(self, name):
+        """Return the first available configuration value for this key. This
+        method always priorize the command line configuration. If this key
+        is not available within any configuration dictionary return the
+        default value
+
+        :param name: Configuration property name.
+        """
         sources = [self.priority] + self.sources
         for source in sources:
             value = source.get(name)
             if value is not None:
-                break
-        return value or self.defaults.get(name)
+                return value
+        return self.defaults.get(name)
 
 
 class BaseManager(object):
