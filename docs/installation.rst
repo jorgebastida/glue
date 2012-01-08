@@ -8,32 +8,16 @@ By default some Linux distributions and OSX doesn't have the required codecs to 
 
 OSX
 ---
-If you are using OSX The easiest way to install ``PIL`` is using `Homebrew <http://mxcl.github.com/homebrew/>`_.
+If you are using OSX The easiest way to install the jpeg decoder is using `Homebrew <http://mxcl.github.com/homebrew/>`_.
 Before installing ``Homebrew`` you'll need to install Xcode, then you can follow this steps:
 
-Snow Leopard
-^^^^^^^^^^^^
 .. code-block:: bash
 
-    $ brew install pil
-    $ sudo brew link pil
-    $ sudo ln -s /usr/local/Cellar/pil/1.1.7/lib/python2.6/site-packages/PIL/ /Library/Python/2.6/site-packages/PIL
+    $ sudo brew install jpeg
 
-    $ sudo pip install glue --no-deps
+    $ sudo pip install glue
     # or
-    $ sudo easy_install glue --no-deps
-
-Snow Leopard
-^^^^^^^^^^^^
-.. code-block:: bash
-
-    $ brew install pil
-    $ sudo brew link pil
-    $ sudo ln -s /usr/local/Cellar/pil/1.1.7/lib/python2.7/site-packages/PIL/ /Library/Python/2.7/site-packages/PIL
-
-    $ sudo pip install glue --no-deps
-    # or
-    $ sudo easy_install glue --no-deps
+    $ sudo easy_install glue
 
 Debian/Ubuntu
 -------------
