@@ -121,7 +121,7 @@ OptiPNG is a PNG optimizer that recompresses image files to a smaller size, with
 
 OptiPNG is not a glue requirement but is hardly recomended to optimize the output PNG files to make them as small as possible.
 
-If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. if you don't know how to install it, read the :doc:`installation page <installation>`.
+If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. if you don't know how to install it, read the :doc:`optipng page <optipng>`.
 
 .. code-block:: bash
 

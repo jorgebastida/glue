@@ -17,6 +17,7 @@ Contents:
    files
    options
    api
+   optipng
 
 Indices and tables
 ==================
