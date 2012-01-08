@@ -29,8 +29,9 @@ Documentation
    paddings
    files
    options
-   api
    optipng
+   faq
+   api
 
 Indices and tables
 ==================
