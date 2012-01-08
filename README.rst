@@ -6,6 +6,7 @@ Glue is a simple command line tool to generate CSS sprites::
     $ glue source output
 
 The latest documentation is available on http://glue.readthedocs.org
+
 Installation instructions: http://glue.readthedocs.org/en/latest/installation.html
 
 Features
@@ -34,3 +35,6 @@ And also a ``icons.css`` with all the neccesary CSS classes for this sprite::
     .sprite-icons-zoom{ background:url('sprites/icons/icons.png'); top:-16; left:0; no-repeat;}
     .sprite-icons-xhtml_valid{ background:url('sprites/icons/icons.png'); top:-16; left:-16; no-repeat;}
     ...
+
+
+Do you want to know more? Visit http://glue.readthedocs.org
