@@ -89,6 +89,13 @@ Usually both CSS and PNG files reside on different folders, `css` and `img` for 
 
 -a --algorithm
 --------------
+The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside` but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
+
+The ordering algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
+
+.. code-block:: bash
+
+    $ glue source output --algorithm=[maxside|width|height|area]
 
 
 --namespace
