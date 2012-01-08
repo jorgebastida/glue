@@ -16,9 +16,10 @@ except ImportError:
     kw = {'scripts': ['glue.py']}
 
 setup(
-    name='Glue',
-    version='0.1',
-    url='http://glue.github.com/',
+    name='glue',
+    version='0.1.1',
+    url='https://github.com/jorgebastida/glue',
+    dowload_url='https://nodeload.github.com/jorgebastida/glue/zipball/master',
     license='BSD',
     author='Jorge Bastida',
     author_email='me@jorgebastida.com',
