@@ -36,4 +36,4 @@ And also a ``icons.css`` with all the neccesary CSS classes for this sprite::
     ...
 
 
-Do you want to know more? Visit http://glue.readthedocs.org
+Do you want to know more? Visit the quickstart guide: http://glue.readthedocs.org/en/latest/quickstart.html
