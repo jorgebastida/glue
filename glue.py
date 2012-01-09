@@ -520,7 +520,7 @@ class ConfigManager(object):
 
     def __getattr__(self, name):
         """Return the first available configuration value for this key. This
-        method always priorize the command line configuration. If this key
+        method always prioritize the command line configuration. If this key
         is not available within any configuration dictionary return the
         default value
 
@@ -735,7 +735,7 @@ def main():
     parser.add_option("-q", "--quiet", dest="quiet", action='store_true',
                       help="suppress all normal output")
     parser.add_option("-p", "--padding", dest="padding", default=None,
-                      help="force this paddig to all the images")
+                      help="force this padding to all the images")
 
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='',

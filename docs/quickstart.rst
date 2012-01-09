@@ -70,7 +70,7 @@ If for any reason two images are going to use the same CSS class name, and error
 Crop unnecessary transparent spaces
 -----------------------------------
 
-Usually designers add some unnecessary transparent space around the images because it is easier for them work with a larger canvas. ``glue`` can optimize our sprite croping all the unnecessary transparent spaces that the original images could have before merging the images into the sprite.
+Usually designers add some unnecessary transparent space around the images because it is easier for them work with a larger canvas. ``glue`` can optimize our sprite cropping all the unnecessary transparent spaces that the original images could have before merging the images into the sprite.
 
 .. image:: _static/crop.png
 
