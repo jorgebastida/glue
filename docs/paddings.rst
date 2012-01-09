@@ -34,7 +34,7 @@ This padding information will not be used as part of the css class name so you c
     ...
 
 .. note::
-    If you use the ``--crop`` option, the padding is applied after croping the image, so you can crop all the unnecesary space around the images and then add the same padding to all of them uniformly.
+    If you use the ``--crop`` option, the padding is applied after croping the image, so you can crop all the unnecessary space around the images and then add the same padding to all of them uniformly.
 
 Using static files or the command line
 --------------------------------------
