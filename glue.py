@@ -20,7 +20,8 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'url': '',
                     'less': False,
                     'optipng': False,
-                    'ignore_filename_paddings': True}
+                    'ignore_filename_paddings': True,
+                    'size': True}
 
 
 class MultipleImagesWithSameNameError(Exception):
@@ -453,10 +454,16 @@ class Sprite(object):
                     'width': image.width,
                     'height': image.height}
 
-            css_file.write((".%(image_class_name)s{ "
-                          "background:url('%(sprite_url)s') no-repeat "
-                          "%(left)ipx %(top)ipx;"
-                          "width:%(width)spx; height:%(height)spx;}\n") % data)
+            style = (".%(image_class_name)s{ "
+                     "background:url('%(sprite_url)s') no-repeat "
+                     "%(left)ipx %(top)ipx; ")
+
+            if self.config.size:
+                style += "width:%(width)spx; height:%(height)spx;"
+
+            style += "}\n"
+            css_file.write(style % data)
+
         css_file.close()
 
     @property
@@ -655,6 +662,8 @@ def get_file_config(path, section='sprite'):
     :param path: Path where the configuration file is.
     :param section: The configuration file section que need to read.
     """
+    def clean(value):
+        return {'true': True, 'false': False}.get(value.lower(), value)
 
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, CONFIG_FILENAME))
@@ -662,7 +671,7 @@ def get_file_config(path, section='sprite'):
         keys = config.options(section)
     except ConfigParser.NoSectionError:
         return {}
-    return dict([[k, config.get(section, k)] for k in keys])
+    return dict([[k, clean(config.get(section, k))] for k in keys])
 
 
 def command_exists(command):
@@ -736,6 +745,8 @@ def main():
                       help="suppress all normal output")
     parser.add_option("-p", "--padding", dest="padding", default=None,
                       help="force this padding to all the images")
+    parser.add_option("-z", "--no-size", action="store_false", dest="size",
+                      help="don't add the image size to the sprite")
 
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='',

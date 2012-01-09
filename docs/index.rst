@@ -32,6 +32,7 @@ Documentation
    optipng
    faq
    api
+   changelog
 
 Indices and tables
 ==================
