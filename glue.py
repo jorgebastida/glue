@@ -147,7 +147,7 @@ class Node(object):
     def split(self, node, width, height):
         """Split the node to allocate a new one of this size.
 
-        :param node: Node to be splited.
+        :param node: Node to be splitted.
         :param width: New node width.
         :param height: New node height.
         """
@@ -201,7 +201,7 @@ class Image(object):
 
     def _crop_image(self):
         """Crop the image searching for the smallest possible bounding box
-        without lossing any non-transparent pixel.
+        without losing any non-transparent pixel.
 
         This crop is only used if the crop flag is present in the config.
         """
@@ -253,7 +253,7 @@ class Image(object):
 
         The image_name will only contain the alphanumeric characters,
         ``-`` and ``_``. The default namespace is ``sprite``, it but could
-        be overrided using the ``--namespace`` optional argument.
+        be overridden using the ``--namespace`` optional argument.
 
 
         * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
@@ -282,9 +282,9 @@ class Image(object):
         sprite settings file preferences.
 
         * ``filename.png`` will have the default padding ``10px``.
-        * ``filename_20.png`` -> ``20px`` all arround the image.
-        * ``filename_1-2-3.png`` -> ``1px 2px 3px 2px`` arround the image.
-        * ``filename_1-2-3-4.png`` -> ``1px 2px 3px 4px`` arround the image.
+        * ``filename_20.png`` -> ``20px`` all around the image.
+        * ``filename_1-2-3.png`` -> ``1px 2px 3px 2px`` around the image.
+        * ``filename_1-2-3-4.png`` -> ``1px 2px 3px 4px`` around the image.
 
         """
         padding = self._padding_info
@@ -346,7 +346,7 @@ class Sprite(object):
         self.process()
 
     def process(self):
-        """Process a sprite path searchig for all the images and then
+        """Process a sprite path searching for all the images and then
         allocate all of them in the more appropriate position.
         """
         self.images = self._locate_images()
@@ -382,7 +382,7 @@ class Sprite(object):
                                     not n.startswith('.') and \
                                     extension_re.match(n)]
 
-        if len(images) == 0:
+        if not len(images):
             raise SourceImagesNotFoundError()
 
         # Check if there are duplicate class names
@@ -399,7 +399,7 @@ class Sprite(object):
 
         sprite_output_path = self.manager.output_path('img')
 
-        # Search for the max x and y (Neccesary to generate the canvas).
+        # Search for the max x and y (Necessary to generate the canvas).
         width = height = 0
 
         for image in self.images:
@@ -503,7 +503,7 @@ class ConfigManager(object):
                       is available it will be returned.
         :param defaults: Dictionary with the default configuration.
         :param priority: Dictionary with the command line configuration. This
-                         configuration will overrida any other from any source.
+                         configuration will override any other from any source.
         """
         self.defaults = kwargs.get('defaults', {})
         self.priority = kwargs.get('priority', {})
@@ -599,12 +599,12 @@ class MultipleSpriteManager(BaseManager):
         Every folder will be a new sprite with all the images inside.
 
         The filename of the image also can contain information about the
-        padding needed arround the image.
+        padding needed around the image.
 
         * ``filename.png`` wil have the default padding (10px).
-        * ``filename_20.png`` will have 20px all arround the image.
-        * ``filename_1-2-3.png`` will have 1px 2px 3px 2px arround the image.
-        * ``filename_1-2-3-4.png`` will have 1px 2px 3px 4px arround the image.
+        * ``filename_20.png`` will have 20px all around the image.
+        * ``filename_1-2-3.png`` will have 1px 2px 3px 2px around the image.
+        * ``filename_1-2-3-4.png`` will have 1px 2px 3px 4px around the image.
 
         The generated css file will have a css class for every image found
         inside the sprite folder. This css class names will have the
@@ -614,7 +614,7 @@ class MultipleSpriteManager(BaseManager):
 
         The image_name will only contain the alphanumeric characters,
         ``-`` and ``_``. The default namespace is ``sprite``, it but could be
-        overrided using the ``--namespace`` optional argument.
+        overridden using the ``--namespace`` optional argument.
 
 
         * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
@@ -629,7 +629,7 @@ class MultipleSpriteManager(BaseManager):
             if os.path.isdir(path):
                 self.process_sprite(path=path, name=sprite_name)
 
-        if len(self.sprites) == 0:
+        if not len(self.sprites):
             raise NoSpritesFoldersFoundError()
 
         self.save()
@@ -773,7 +773,7 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    if len(args) == 0:
+    if not len(args):
         parser.error("You must choose the folder that contains the sprites.")
 
     if len(args) == 1 and not (options.css_dir and options.img_dir):
