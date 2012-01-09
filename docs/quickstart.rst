@@ -2,7 +2,7 @@ Quickstart
 ==========
 
 After :doc:`installing <installation>` Glue you will have a new command named ``glue``.
-You can check if it was correclty installed calling ``glue`` with the ``--help`` option to get the list of all the available :doc:`command line arguments <options>`::
+You can check if it was correctly installed calling ``glue`` with the ``--help`` option to get the list of all the available :doc:`command line arguments <options>`::
 
     $ glue --help
 
@@ -27,7 +27,7 @@ the following ``icons.png`` (401Kb).
 
 .. image:: _static/famfamfam1.png
 
-The other file, ``icons.css`` will have all the neccesary css classes for this sprite:
+The other file, ``icons.css`` will have all the necessary css classes for this sprite:
 
 .. code-block:: css
 
