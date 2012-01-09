@@ -108,7 +108,7 @@ By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class
 
 --ignore-filename-paddings
 --------------------------
-``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior for legacy purporses, you can use the ``--ignore-filename-paddings`` option to disable it.
+``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior for legacy purposes, you can use the ``--ignore-filename-paddings`` option to disable it.
 
 .. code-block:: bash
 
@@ -119,7 +119,7 @@ By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class
 
 OptiPNG is a PNG optimizer that recompresses image files to a smaller size, without losing any information.
 
-OptiPNG is not a glue requirement but is hardly recomended to optimize the output PNG files to make them as small as possible.
+OptiPNG is not a glue requirement but is hardly recommended to optimize the output PNG files to make them as small as possible.
 
 If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. if you don't know how to install it, read the :doc:`optipng page <optipng>`.
 
@@ -144,7 +144,7 @@ Cache busting is a technique that prevents a browser from reusing a resource tha
 
 This technique adds a flag to every url that links an external resource (PNG in this case). This flag usually is the last modified time or the ``hash`` of the file.
 
-``glue`` can use this technique to automatically add the ``hash`` of the PNG file to the CSS url, so as soon as the file change (add/remove an image) the ``hash`` will be different and the browser will re-dowload the image.
+``glue`` can use this technique to automatically add the ``hash`` of the PNG file to the CSS url, so as soon as the file change (add/remove an image) the ``hash`` will be different and the browser will re-download the image.
 
 
 .. code-block:: bash

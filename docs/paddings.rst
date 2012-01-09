@@ -8,11 +8,11 @@ In some situations it's really useful add some padding to an image. ``glue`` wil
     $ mv rainbow.png rainbow_10.png
     $ glue icons sprites --simple
 
-This small change means that the ``rainbow.png`` image needs a ``10px`` padding all arround the image.
+This small change means that the ``rainbow.png`` image needs a ``10px`` padding all around the image.
 
 .. image:: _static/famfamfam3.png
 
-If you don't need the same padding all arround the image, you can use ``_10_20`` for a ``10px 20px 10px 20px`` padding or
+If you don't need the same padding all around the image, you can use ``_10_20`` for a ``10px 20px 10px 20px`` padding or
 ``_10_20_30_40`` for a ``10px 20px 30px 40px`` padding as this table shows:
 
 =================== =========================
@@ -34,7 +34,7 @@ This padding information will not be used as part of the css class name so you c
     ...
 
 .. note::
-    If you use the ``--crop`` option, the padding is applied after croping the image, so you can crop all the unnecessary space around the images and then add the same padding to all of them uniformly.
+    If you use the ``--crop`` option, the padding is applied after cropping the image, so you can crop all the unnecessary space around the images and then add the same padding to all of them uniformly.
 
 Using static files or the command line
 --------------------------------------

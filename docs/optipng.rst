@@ -1,7 +1,7 @@
 OptiPNG
 =======
 
-OptiPNG is not a ``glue`` requirement but is hardly recomended to optimize the output PNG files to make them as small as possible. OptiPNG is a PNG optimizer that recompresses image files to a smaller size, without losing any information.
+OptiPNG is not a ``glue`` requirement but is hardly recommended to optimize the output PNG files to make them as small as possible. OptiPNG is a PNG optimizer that recompresses image files to a smaller size, without losing any information.
 
 OSX
 ---
