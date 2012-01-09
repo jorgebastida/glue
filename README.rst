@@ -27,7 +27,7 @@ the following ``icons.png`` (401Kb).
 .. image:: https://github.com/jorgebastida/glue/raw/master/docs/_static/famfamfam1.png
 
 
-And also a ``icons.css`` with all the neccesary CSS classes for this sprite::
+And also a ``icons.css`` with all the necessary CSS classes for this sprite::
 
     .sprite-icons-zoom_out{ background:url('icons.png'); top:0; left:0; no-repeat;}
     .sprite-icons-zoom_in{ background:url('icons.png'); top:0; left:-16; no-repeat;}
