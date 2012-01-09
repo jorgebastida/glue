@@ -239,7 +239,7 @@ class Image(object):
             padding = padding * 2
         elif len(padding) == 1:
             padding = padding * 4
-        elif len(padding) == 0:
+        elif not len(padding):
             padding = [self.DEFAULT_PADDING] * 4
         return map(int, padding)
 
@@ -265,7 +265,7 @@ class Image(object):
             if padding_info_name:
                 padding_info_name = '_%s' % padding_info_name
             name = name[:len(padding_info_name) * -1 or None]
-        name = re.sub(r'[^\w\-\_]', '', name)
+        name = re.sub(r'[^\w\-_]', '', name)
         return '%s-%s' % (self.sprite.namespace, name)
 
     @property
@@ -815,9 +815,9 @@ def main():
         sys.stderr.write("Error: Some images will have the same class name:\n")
         for image in e.args[0]:
             sys.stderr.write('\t %s => .%s\n' % (image.name, image.class_name))
-    except SourceImagesNotFoundError, e:
+    except SourceImagesNotFoundError:
         sys.stderr.write("Error: No images found.\n")
-    except NoSpritesFoldersFoundError, e:
+    except NoSpritesFoldersFoundError:
         sys.stderr.write("Error: No sprites folders found.\n")
 
 
