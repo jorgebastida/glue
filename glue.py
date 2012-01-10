@@ -21,7 +21,8 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'less': False,
                     'optipng': False,
                     'ignore_filename_paddings': True,
-                    'size': True}
+                    'size': True,
+                    'png8': False}
 
 
 class MultipleImagesWithSameNameError(Exception):
@@ -421,7 +422,23 @@ class Sprite(object):
         # Save png
         sprite_filename = '%s.png' % self.filename
         sprite_image_path = os.path.join(sprite_output_path, sprite_filename)
-        save = lambda: canvas.save(sprite_image_path, optimize=True)
+
+        args, kwargs = [sprite_image_path], dict(optimize=True)
+
+        if self.config.png8:
+            # Get the alpha band
+            alpha = canvas.split()[-1]
+            canvas = canvas.convert('RGB'
+                        ).convert('P', palette=PImage.ADAPTIVE, colors=255)
+
+            # Set all pixel values below 128 to 255, and the rest to 0
+            mask = PImage.eval(alpha, lambda a: 255 if a <= 128 else 0)
+
+            # Paste the color of index 255 and use alpha as a mask
+            canvas.paste(255, mask)
+            kwargs.update({'transparency': 255})
+
+        save = lambda: canvas.save(*args, **kwargs)
         save()
 
         if self.config.optipng:
@@ -761,6 +778,9 @@ def main():
                           "area (default: maxside)"), metavar='NAME')
     group.add_option("--namespace", dest="namespace",  default=None,
                       help="namespace for the css (default: sprite)")
+    group.add_option("--png8", action="store_true", dest="png8",
+                      help=("the output image format will be png8 "
+                            "instead of png32"))
     group.add_option("--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
                       help="ignore filename paddings")
