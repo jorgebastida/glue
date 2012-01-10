@@ -33,13 +33,15 @@ If you are using Debian/Ubuntu installing ``glue`` is really easy:
 
 Windows
 -------
-If you try to compile ``PIL`` on a fresh Windows installation you'll probably get this error:
+If you try to compile ``PIL`` on a fresh Windows machine you'll probably get this error:
 
 ``Unable to find vcvarsall.bat``
 
-It's possible to compile ``PIL`` using `MinGW <http://sourceforge.net/projects/mingw/files/>`_, or you can go through the easy way...
+It's possible to compile ``PIL`` using `MinGW <http://sourceforge.net/projects/mingw/files/>`_, but you can also go through the easy way.
 
-Fortunately, `Unofficial Windows Binaries for Python Extension Packages <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ provides 32- and 64-bit Windows binaries of many open-source extension packages (including ``PIL`).
+Fortunately `Unofficial Windows Binaries for Python Extension Packages <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ provides 32- and 64-bit Windows binaries of many open-source extension packages, including ``PIL``.
+
+After installing the ``PIL`` package you can simply install ``glue`` using:
 
 .. code-block:: bash
 

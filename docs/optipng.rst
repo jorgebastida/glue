@@ -22,7 +22,7 @@ You can install optipng form source or using apt:
 
 Windows
 -------
-You can download a `optipng Windows executable<http://sourceforge.net/projects/optipng/files/OptiPNG/optipng-0.6.5/>`_.
+OptiPNG distributes an executable version for Windows, so you can download it from the `optipng sourceforge page <http://sourceforge.net/projects/optipng/files/OptiPNG/optipng-0.6.5/>`_.
 
 From source
 -----------
