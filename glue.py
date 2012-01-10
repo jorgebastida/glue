@@ -241,8 +241,8 @@ class Image(object):
             padding = padding * 2
         elif len(padding) == 1:
             padding = padding * 4
-        elif not len(padding):
-            padding = [self.DEFAULT_PADDING] * 4
+        else:
+            padding = [DEFAULT_SETTINGS['padding']] * 4
         return map(int, padding)
 
     @property
