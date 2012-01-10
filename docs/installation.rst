@@ -31,6 +31,25 @@ If you are using Debian/Ubuntu installing ``glue`` is really easy:
     # or
     $ sudo easy_install glue
 
+Windows
+-------
+If you try to compile ``PIL`` on a fresh Windows installation you'll probably get this error:
+
+``Unable to find vcvarsall.bat``
+
+It's possible to compile ``PIL`` using `MinGW <http://sourceforge.net/projects/mingw/files/>`_, or you can go through the easy way...
+
+Fortunately, `Unofficial Windows Binaries for Python Extension Packages <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ provides 32- and 64-bit Windows binaries of many open-source extension packages (including ``PIL`).
+
+.. code-block:: bash
+
+    $ pip install glue
+    # or
+    $ easy_install glue
+
+.. note::
+    Remember to not use the ``pip -U`` because that will override the PIL package.
+
 
 Development version
 -------------------

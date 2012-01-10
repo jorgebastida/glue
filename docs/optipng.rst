@@ -20,6 +20,10 @@ You can install optipng form source or using apt:
 
     $ apt-get install optipng
 
+Windows
+-------
+You can download a `optipng Windows executable<http://sourceforge.net/projects/optipng/files/OptiPNG/optipng-0.6.5/>`_.
+
 From source
 -----------
 To install optipng from source, `download the last available version <http://sourceforge.net/projects/optipng/files/OptiPNG/optipng-0.6.5/>`_ and then you can install it doing:
