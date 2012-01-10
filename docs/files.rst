@@ -65,4 +65,5 @@ less                     False
 optipng                  False
 ignore_filename_paddings False
 size                     True
+png8                     False
 ======================== =========================

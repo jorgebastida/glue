@@ -86,6 +86,9 @@ If you don't want to add the ``width`` and  ``height`` properties to the sprite 
 
     $ glue source output --no-size
 
+.. note::
+    New in version 0.1.9
+
 --css --img
 -----------
 Usually both CSS and PNG files reside on different folders, `css` and `img` for example. If you want to choose an individual folder for each kind of file you can use the ``--img=<dir> --css=<dir>`` options together to customize where the output files will be created.
@@ -120,6 +123,9 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 .. code-block:: bash
 
     $ glue source output --png8
+
+.. note::
+    New in version 0.1.9
 
 --ignore-filename-paddings
 --------------------------
