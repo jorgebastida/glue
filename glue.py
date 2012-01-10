@@ -458,8 +458,12 @@ class Sprite(object):
         self.manager.log("Creating '%s' %s file..." % (self.name, format))
 
         output_path = self.manager.output_path('css')
-        css_filename = os.path.join(output_path, '%s.%s' % (self.filename,
-                                                            format))
+        filename = '%s.%s' % (self.filename, format)
+        css_filename = os.path.join(output_path, filename)
+
+        # Fix css urls on Windows
+        css_filename = '/'.join(css_filename.split('\\'))
+
         css_file = open(css_filename, 'w')
 
         for image in self.images:
