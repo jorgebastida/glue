@@ -80,7 +80,7 @@ If you want to add the same padding around all the images you can use the ``--pa
 
 -z --no-size
 ------------
-If you don't want to add the ``width`` and  ``height`` properties to the sprite CSS you can remove them using the flag ``--no-size'' from the command line or using the ``size`` property in the config files.
+If you don't want to add the ``width`` and  ``height`` properties to the sprite CSS you can remove them using the flag ``--no-size`` from the command line or using the ``size`` property in the config files.
 
 .. code-block:: bash
 
