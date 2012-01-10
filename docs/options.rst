@@ -113,6 +113,14 @@ By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class
 
     $ glue source output --namespace=my-namespace
 
+--png8
+-----------
+By using the flag ``-png8`` the output image format will be png8  instead of png32.
+
+.. code-block:: bash
+
+    $ glue source output --png8
+
 --ignore-filename-paddings
 --------------------------
 ``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior for legacy purposes, you can use the ``--ignore-filename-paddings`` option to disable it.
