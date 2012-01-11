@@ -3,9 +3,9 @@ Command line arguments
 
 -s --simple
 -----------
-As it's explained at the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is handle multi-sprite apps.
+As it's explained at the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is to handle multi-sprite apps.
 
-The suggested setup is create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder::
+The suggested setup is to create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder::
 
     images
     ├── actions
@@ -19,7 +19,7 @@ The suggested setup is create a new folder for every sprite, and add inside all 
         ├── new.png
         └── rss.png
 
-The ``--simple`` argument ignores that behaviour and only expect that the ``source`` folder contains images like::
+The ``--simple`` argument ignores that behaviour and only expects that the ``source`` folder contains images like::
 
     animals
         ├── cat.css
@@ -34,7 +34,7 @@ The ``--simple`` argument ignores that behaviour and only expect that the ``sour
 -c --crop
 ---------
 
-Usually designers add some unnecessary transparent space around the images because it is easier for them work with a larger canvas. ``glue`` can optimize our sprite croping all the unnecessary transparent spaces that the original images could have.
+Usually designers add some unnecessary transparent space around the images because it is easier for them to work with a larger canvas. ``glue`` can optimize our sprite by croping all the unnecessary transparent spaces that the original images could have.
 
 .. image:: _static/crop.png
 
@@ -46,7 +46,7 @@ Usually designers add some unnecessary transparent space around the images becau
 ---------
 `less <http://lesscss.org/>`_  is a dynamic stylesheet language that extends CSS with dynamic behaviors.
 ``glue`` can also create ``.less`` files adding the ``--less`` option.
-This files contains exactly the same CSS code. This option only changes the file format.
+This files contain exactly the same CSS code. This option only changes the file format.
 
 .. code-block:: bash
 
@@ -54,7 +54,7 @@ This files contains exactly the same CSS code. This option only changes the file
 
 -u --url
 ---------
-By default ``glue`` adds as url to the PNG file the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use the ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace it's suggested one with your url.
+By default ``glue`` adds to the PNG file the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace its default one with your url.
 
 .. code-block:: bash
 
@@ -70,7 +70,7 @@ This flag will make ``glue`` suppress all console output.
 
 -p --padding
 ------------
-If you want to add the same padding around all the images you can use the ``--padding`` option to set the padding to all of them:
+If you want to add the same padding around all images you can use the ``--padding`` option:
 
 .. code-block:: bash
 
@@ -91,7 +91,7 @@ If you don't want to add the ``width`` and  ``height`` properties to the sprite 
 
 --css --img
 -----------
-Usually both CSS and PNG files reside on different folders, `css` and `img` for example. If you want to choose an individual folder for each kind of file you can use the ``--img=<dir> --css=<dir>`` options together to customize where the output files will be created.
+Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`. If you want to choose an individual folder for each type of file you can use the ``--img=<dir> --css=<dir>`` options together to customize where the output files will be created.
 
 .. code-block:: bash
 
@@ -99,7 +99,7 @@ Usually both CSS and PNG files reside on different folders, `css` and `img` for 
 
 -a --algorithm
 --------------
-The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside` but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
+The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside`, but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
 
 The ordering algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
 
@@ -110,7 +110,7 @@ The ordering algorithm was inspired by the `Binary Tree Bin Packing Algorithm Ar
 
 --namespace
 -----------
-By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class names. if you want to use your own namespace you can override the default one using the ``--namespace`` option.
+By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class names. If you want to use your own namespace you can override the default one using the ``--namespace`` option.
 
 .. code-block:: bash
 
@@ -129,7 +129,7 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 
 --ignore-filename-paddings
 --------------------------
-``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior for legacy purposes, you can use the ``--ignore-filename-paddings`` option to disable it.
+``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior (e.g. legacy purposes), you can use the ``--ignore-filename-paddings`` option to disable it.
 
 .. code-block:: bash
 
@@ -142,7 +142,7 @@ OptiPNG is a PNG optimizer that recompresses image files to a smaller size, with
 
 OptiPNG is not a glue requirement but is hardly recommended to optimize the output PNG files to make them as small as possible.
 
-If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. if you don't know how to install it, read the :doc:`optipng page <optipng>`.
+If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. If you don't know how to install it, read the :doc:`optipng page <optipng>`.
 
 .. code-block:: bash
 
