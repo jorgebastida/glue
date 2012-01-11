@@ -1,7 +1,7 @@
 FAQ
 ===
 
-Errors compiling PIL on Snow Leopard
+Errors compiling PIL in Snow Leopard
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
@@ -33,7 +33,7 @@ Errors compiling PIL on Snow Leopard
 
     error: command 'gcc-4.2' failed with exit status 1
 
-The reason for this error is that Apple has remove from Xcode the assembler for PPC, while the core system retains their PPC images in the fat binaries.  If you were to run ``file /usr/bin/python`` you would most likely find the following::
+The reason for this error is that Apple has removed from Xcode the assembler for PPC, while the core system retains their PPC images in the fat binaries.  If you run ``file /usr/bin/python`` you will likely find the following::
 
     /usr/bin/python: Mach-O universal binary with 3 architectures
     /usr/bin/python (for architecture x86_64):  Mach-O 64-bit executable x86_64

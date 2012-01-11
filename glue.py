@@ -26,22 +26,22 @@ DEFAULT_SETTINGS = {'padding': '0',
 
 
 class MultipleImagesWithSameNameError(Exception):
-    """Raised if two images are going to have the same css class name."""
+    """Raised if two images pretend to generate the same CSS class name."""
     pass
 
 
 class SourceImagesNotFoundError(Exception):
-    """Raised if one folder doesn't contain any valid image."""
+    """Raised if a folder doesn't contain a valid image."""
     pass
 
 
 class NoSpritesFoldersFoundError(Exception):
-    """Raised if there is not any valid sprites folder."""
+    """Raised if no sprites folders could be found."""
     pass
 
 
 class InvalidImageOrderingAlgorithmError(Exception):
-    """Raised if the ordering algorithm is invalid."""
+    """Raised if the provided algorithm name is invalid."""
     pass
 
 
@@ -71,8 +71,8 @@ class Node(object):
         """Find a node to allocate this image size (width, height).
 
         :param node: Node to search in.
-        :param width: Amount of pixel to grow down (width).
-        :param height: Amount of pixel to grow down (height).
+        :param width: Pixels to grow down (width).
+        :param height: Pixels to grow down (height).
         """
         if node.used:
             return self.find(node.right, width, height) or \
@@ -82,10 +82,10 @@ class Node(object):
         return None
 
     def grow(self, width, height):
-        """ Grow the canvas to the more appropriate direction.
+        """ Grow the canvas to the most appropriate direction.
 
-        :param width: Amount of pixel to grow down (width).
-        :param height: Amount of pixel to grow down (height).
+        :param width: Pixels to grow down (width).
+        :param height: Pixels to grow down (height).
         """
         can_grow_d = width <= self.width
         can_grow_r = height <= self.height
@@ -107,8 +107,8 @@ class Node(object):
     def grow_right(self, width, height):
         """Grow the canvas to the right.
 
-        :param width: Amount of pixel to grow down (width).
-        :param height: Amount of pixel to grow down (height).
+        :param width: Pixels to grow down (width).
+        :param height: Pixels to grow down (height).
         """
         old_self = copy.copy(self)
         self.used = True
@@ -128,8 +128,8 @@ class Node(object):
     def grow_down(self, width, height):
         """Grow the canvas down.
 
-        :param width: Amount of pixel to grow down (width).
-        :param height: Amount of pixel to grow down (height).
+        :param width: Pixels to grow down (width).
+        :param height: Pixels to grow down (height).
         """
         old_self = copy.copy(self)
         self.used = True
@@ -170,7 +170,7 @@ class Image(object):
     ORDERINGS = ['maxside', 'width', 'height', 'area']
 
     def __init__(self, name, sprite):
-        """ Image constructor
+        """Image constructor
 
         :param name: Image name.
         :param sprite: :class:`~Sprite` instance for this image."""
@@ -184,7 +184,7 @@ class Image(object):
             self.image = PImage.open(image_file)
             self.image.load()
         except IOError, e:
-            sys.stderr.write(("ERROR: PIL %s decoder isn't available. "
+            sys.stderr.write(("ERROR: PIL %s decoder is unavailable. "
                               "Please read the documentation and "
                               "install it before spriting this kind of "
                               "images.\n" % e.args[0].split()[1]))
@@ -205,7 +205,7 @@ class Image(object):
         """Crop the image searching for the smallest possible bounding box
         without losing any non-transparent pixel.
 
-        This crop is only used if the crop flag is present in the config.
+        This crop is only used if the crop flag is set in the config.
         """
         width, height = self.image.size
         maxx = maxy = 0
@@ -227,7 +227,7 @@ class Image(object):
         self.image = self.image.crop((minx, miny, maxx + 1, maxy + 1))
 
     def _generate_padding(self, padding):
-        """Return a four element list with the desired padding.
+        """Return a 4-elements list with the desired padding.
 
         :param padding: Padding as a list or a raw string representing
                         the padding for this image."""
@@ -247,19 +247,19 @@ class Image(object):
 
     @property
     def class_name(self):
-        """Return the css class name for this file.
+        """Return the CSS class name for this file.
 
-        This css class name will have the following format:
+        This CSS class name will have the following format:
 
         ``.[namespace]-[sprite_name]-[image_name]{ ... }``
 
-        The image_name will only contain the alphanumeric characters,
-        ``-`` and ``_``. The default namespace is ``sprite``, it but could
+        The image_name will only contain alphanumeric characters,
+        ``-`` and ``_``. The default namespace is ``sprite``, but it could
         be overridden using the ``--namespace`` optional argument.
 
 
-        * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
-        * ``animals/cow_20.png`` css class will be ``.sprite-animals-cow``
+        * ``animals/cat.png`` CSS class will be ``.sprite-animals-cat``
+        * ``animals/cow_20.png`` CSS class will be ``.sprite-animals-cow``
         """
         name = self.filename
         if not self.sprite.manager.config.ignore_filename_paddings:
@@ -272,7 +272,7 @@ class Image(object):
 
     @property
     def _padding_info(self):
-        """Return the padding information from the filename. """
+        """Return the padding information from the filename."""
         padding_info = self.filename.rsplit('_', 1)[-1]
         if re.match(r"^(\d+-?){,3}\d+$", padding_info):
             return padding_info.split('-')
@@ -281,7 +281,7 @@ class Image(object):
     @property
     def padding(self):
         """Return the padding for this image based on the filename and
-        sprite settings file preferences.
+        the sprite settings file.
 
         * ``filename.png`` will have the default padding ``10px``.
         * ``filename_20.png`` -> ``20px`` all around the image.
@@ -306,7 +306,7 @@ class Image(object):
         return self.node.y + self.padding[0]
 
     def __lt__(self, img):
-        """Use the maxside, width, height or area as ordering algorithm.
+        """Use maxside, width, height or area as ordering algorithm.
 
         :param img: Another :class:`~Image`."""
         algorithm = self.sprite.config.algorithm
@@ -349,7 +349,7 @@ class Sprite(object):
 
     def process(self):
         """Process a sprite path searching for all the images and then
-        allocate all of them in the more appropriate position.
+        allocate all of them in the most appropriate position.
         """
         self.images = self._locate_images()
         width = self.images[0].width
@@ -366,16 +366,16 @@ class Sprite(object):
                 image.node = root.grow(image.width, image.height)
 
     def _locate_images(self):
-        """Return all the valid images within a folder.
+        """Return all valid images within a folder.
 
-        All the files with an extension not included in VALID_IMAGE_EXTENSIONS
-        (png, jpg, jpeg and gif) or begging with a '.' will be ignored.
+        All files with a extension not included in VALID_IMAGE_EXTENSIONS
+        (png, jpg, jpeg and gif) or beginning with '.' will be ignored.
 
         If the folder doesn't contain any valid image it will raise
-        a :class:`~MultipleImagesWithSameNameError`
+        :class:`~MultipleImagesWithSameNameError`
 
         The list of images will be ordered using the desired ordering
-        algorithm. The default one is 'maxside'.
+        algorithm. The default is 'maxside'.
         """
         extensions = '|'.join(self.manager.VALID_IMAGE_EXTENSIONS)
         extension_re = re.compile('.+\.(%s)$' % extensions, re.IGNORECASE)
@@ -448,12 +448,12 @@ class Sprite(object):
             error = subprocess.call(command, shell=True, stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE)
             if error:
-                self.manager.log("Error: optipng has fail, reverting to "
+                self.manager.log("Error: optipng has failed, reverting to "
                                  "the original file.")
                 save()
 
     def save_css(self):
-        """Create the css or less file for this sprite."""
+        """Create the CSS or LESS file for this sprite."""
         format = 'less' if self.config.less else 'css'
         self.manager.log("Creating '%s' %s file..." % (self.name, format))
 
@@ -494,7 +494,7 @@ class Sprite(object):
 
     @property
     def filename(self):
-        """Return the desired filename for this sprite generated files."""
+        """Return the desired filename for files generated by this sprite."""
         return self.name
 
     @property
@@ -527,7 +527,7 @@ class ConfigManager(object):
         """ConfigManager constructor.
 
         :param *args: List of config dictionaries. The order of this list is
-                      important because as soon as one config property
+                      important because as soon as a config property
                       is available it will be returned.
         :param defaults: Dictionary with the default configuration.
         :param priority: Dictionary with the command line configuration. This
@@ -548,8 +548,8 @@ class ConfigManager(object):
 
     def __getattr__(self, name):
         """Return the first available configuration value for this key. This
-        method always prioritize the command line configuration. If this key
-        is not available within any configuration dictionary return the
+        method always prioritizes the command line configuration. If this key
+        is not available within any configuration dictionary, it returns the
         default value
 
         :param name: Configuration property name.
@@ -567,7 +567,7 @@ class BaseManager(object):
     VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
     def __init__(self, path, config, output=None):
-        """ BaseManager constructor.
+        """BaseManager constructor.
 
         :param path: Sprite path.
         :param config: :class:`~ConfigManager` instance with all the
@@ -612,7 +612,7 @@ class BaseManager(object):
         return sprite_output_path
 
     def log(self, message):
-        """ Prints the message if it's necessary. """
+        """Print the message if necessary."""
         if not self.config.quiet:
             print(message)
 
@@ -623,33 +623,33 @@ class BaseManager(object):
 class MultipleSpriteManager(BaseManager):
 
     def process(self):
-        """Process a path searching for folders that contains images.
+        """Process a path searching for folders that contain images.
         Every folder will be a new sprite with all the images inside.
 
-        The filename of the image also can contain information about the
+        The filename of the image can also contain information about the
         padding needed around the image.
 
-        * ``filename.png`` wil have the default padding (10px).
+        * ``filename.png`` will have the default padding (10px).
         * ``filename_20.png`` will have 20px all around the image.
         * ``filename_1-2-3.png`` will have 1px 2px 3px 2px around the image.
         * ``filename_1-2-3-4.png`` will have 1px 2px 3px 4px around the image.
 
-        The generated css file will have a css class for every image found
-        inside the sprite folder. This css class names will have the
+        The generated CSS file will have a CSS class for every image found
+        inside the sprites folder. These CSS class names will have the
         following format:
 
         ``.[namespace]-[sprite_name]-[image_name]{ ... }``
 
-        The image_name will only contain the alphanumeric characters,
-        ``-`` and ``_``. The default namespace is ``sprite``, it but could be
+        The image_name will only contain alphanumeric characters,
+        ``-`` and ``_``. The default namespace is ``sprite``, but it could be
         overridden using the ``--namespace`` optional argument.
 
 
-        * ``animals/cat.png`` css class will be ``.sprite-animals-cat``
-        * ``animals/cow_20.png`` css class will be ``.sprite-animals-cow``
+        * ``animals/cat.png`` CSS class will be ``.sprite-animals-cat``
+        * ``animals/cow_20.png`` CSS class will be ``.sprite-animals-cow``
 
-        If two images has the same name, a
-        :class:`~MultipleImagesWithSameNameError` error will be raised.
+        If two images have the same name,
+        :class:`~MultipleImagesWithSameNameError` will be raised.
         """
         for sprite_name in os.listdir(self.path):
             # Only process folders
@@ -666,8 +666,8 @@ class MultipleSpriteManager(BaseManager):
 class SimpleSpriteManager(BaseManager):
 
     def process(self):
-        """Process an unique folder and create one sprite. It works in the
-        same way than :class:`~MultipleSpriteManager` but for only one folder.
+        """Process a single folder and create one sprite. It works the
+        same way as :class:`~MultipleSpriteManager`, but only for one folder.
 
         This is not the default manager. It is only used if you use
         the ``--simple`` default argument.
@@ -677,11 +677,11 @@ class SimpleSpriteManager(BaseManager):
 
 
 def get_file_config(path, section='sprite'):
-    """ Return as a dictionary all the available configuration inside the
-    sprite configuration file on this path
+    """Return, as a dictionary, all the available configuration inside the
+    sprite configuration file on this path.
 
     :param path: Path where the configuration file is.
-    :param section: The configuration file section que need to read.
+    :param section: The configuration file section that needs to be read.
     """
     def clean(value):
         return {'true': True, 'false': False}.get(value.lower(), value)
@@ -696,7 +696,7 @@ def get_file_config(path, section='sprite'):
 
 
 def command_exists(command):
-    """ Check if a command exists running it.
+    """Check if a command exists by running it.
 
     :param command: command name.
     """
@@ -755,25 +755,25 @@ def main():
     parser = OptionParser(usage=("usage: %prog [options] source_dir [<output> "
                                  "| --css=<dir> --img=<dir>]"))
     parser.add_option("-s", "--simple", action="store_true", dest="simple",
-                      help="only generate sprites for one folder")
+                      help="generate sprites for a single folder")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
                 help="crop images removing unnecessary transparent margins")
     parser.add_option("-l", "--less", dest="less", action='store_true',
-                help="the output stylesheets will be .less and not .css")
+                help="generate output stylesheets as .less instead of .css")
     parser.add_option("-u", "--url", dest="url", default=None,
                       help="prepend this url to the sprites filename")
     parser.add_option("-q", "--quiet", dest="quiet", action='store_true',
                       help="suppress all normal output")
     parser.add_option("-p", "--padding", dest="padding", default=None,
-                      help="force this padding to all the images")
+                      help="force this padding in all images")
     parser.add_option("-z", "--no-size", action="store_false", dest="size",
                       help="don't add the image size to the sprite")
 
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='',
-                    help="output directory for the css files", metavar='DIR')
+                    help="output directory for css files", metavar='DIR')
     group.add_option("--img", dest="img_dir", default='', metavar='DIR',
-                    help="output directory for the img files")
+                    help="output directory for img files")
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Advanced Options")
@@ -781,7 +781,7 @@ def main():
                     help=("ordering algorithm: maxside, width, height or "
                           "area (default: maxside)"), metavar='NAME')
     group.add_option("--namespace", dest="namespace",  default=None,
-                      help="namespace for the css (default: sprite)")
+                      help="namespace for all css classes (default: sprite)")
     group.add_option("--png8", action="store_true", dest="png8",
                       help=("the output image format will be png8 "
                             "instead of png32"))
@@ -791,7 +791,7 @@ def main():
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Optipng Options",
-                        "You must install optipng before using this options")
+                      "You need to install optipng before using these options")
     group.add_option("--optipng", dest="optipng", action='store_true',
                 help="postprocess images using optipng")
     group.add_option("--optipngpath", dest="optipngpath", default='optipng',
@@ -801,27 +801,27 @@ def main():
     group = OptionGroup(parser, "Browser Cache Invalidation Options")
     group.add_option("--cachebuster", dest="cachebuster",
                     action='store_true',
-                    help=("use the sprite's sha1 6 first characters as a "
-                          "queryarg everywhere that file is used on the "
-                          "css"))
+                    help=("use the sprite's first 6 sha1 characters as a "
+                          "queryarg everytime that file is referred from "
+                          "the css"))
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
 
     if not len(args):
-        parser.error("You must choose the folder that contains the sprites.")
+        parser.error("You must provide the folder containing the sprites.")
 
     if len(args) == 1 and not (options.css_dir and options.img_dir):
-        parser.error(("You must choose the output folder using the output "
-                      "argument or --img and --css."))
+        parser.error(("You must choose the output folder using either the "
+                      "output argument or both --img and --css."))
 
     if len(args) == 2 and (options.css_dir or options.img_dir):
         parser.error(("You must choose between using an unique output dir, or "
                       "using --css and --img."))
 
     if options.optipng and not command_exists(options.optipngpath):
-        parser.error("'optipng' seems to not be available. You must "
-                     "install it before using the --optipng option or "
+        parser.error("'optipng' seems to be unavailable. You need to "
+                     "install it before using --optipng, or "
                      "provide a path using --optipngpath.")
 
     source = os.path.abspath(args[0])
