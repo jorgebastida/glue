@@ -54,7 +54,7 @@ This files contain exactly the same CSS code. This option only changes the file 
 
 -u --url
 ---------
-By default ``glue`` adds to the PNG file the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace its default one with your url.
+By default ``glue`` adds to the PNG file name the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace its suggested one with your url.
 
 .. code-block:: bash
 

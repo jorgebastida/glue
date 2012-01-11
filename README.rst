@@ -12,11 +12,11 @@ Features
 --------
 * Automatic Sprite (PNG+CSS) creation.
 * Support for multi-sprite projects.
-* Automatic `crop of transparent borders <http://glue.readthedocs.org/en/latest/quickstart.html#crop-unnecessary-transparent-spaces>`_ around source images.
+* Automatic `crop of unnecessary transparent borders <http://glue.readthedocs.org/en/latest/quickstart.html#crop-unnecessary-transparent-spaces>`_ around source images.
 * Configurable `paddings per image, sprite or project <http://glue.readthedocs.org/en/latest/paddings.html>`_.
 * Optional .less output format.
 * Automatic sprite images post-processing using `OptiPNG <http://optipng.sourceforge.net/>`_.
-* Sprite-level configuration via static config files.
+* Sprite- and Project-level configuration via static config files.
 * Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
 
 Example

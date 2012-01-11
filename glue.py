@@ -31,7 +31,7 @@ class MultipleImagesWithSameNameError(Exception):
 
 
 class SourceImagesNotFoundError(Exception):
-    """Raised if a folder doesn't contain a valid image."""
+    """Raised if a folder doesn't contain any valid image."""
     pass
 
 
