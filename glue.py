@@ -466,23 +466,30 @@ class Sprite(object):
 
         css_file = open(css_filename, 'w')
 
+        # get all the class names and join them
+        class_names = ['.%s' % i.class_name for i in self.images]
+        class_names = ',\n'.join(class_names)
+
+        # create an unique style for all the sprites for less bloat
+        style = "%s{background-image:url('%s');background-repeat:no-repeat;}\n"
+        css_file.write(style % (class_names, self.image_url))
+
         for image in self.images:
-            data = {'namespace': image.sprite.namespace,
-                    'sprite_url': image.sprite.image_url,
-                    'image_class_name': image.class_name,
+            data = {'image_class_name': image.class_name,
                     'top': image.node.y * -1 if image.node.y else 0,
                     'left': image.node.x * -1 if image.node.x else 0,
                     'width': image.width,
                     'height': image.height}
 
-            style = (".%(image_class_name)s{ "
-                     "background:url('%(sprite_url)s') no-repeat "
-                     "%(left)ipx %(top)ipx; ")
+            style = (".%(image_class_name)s{"
+                     "background-position:%(left)ipx %(top)ipx;")
 
             if self.config.size:
+                # if it's required add the image size to the sprite
                 style += "width:%(width)spx; height:%(height)spx;"
 
             style += "}\n"
+
             css_file.write(style % data)
 
         css_file.close()
