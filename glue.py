@@ -20,7 +20,7 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'url': '',
                     'less': False,
                     'optipng': False,
-                    'ignore_filename_paddings': True,
+                    'ignore_filename_paddings': False,
                     'size': True,
                     'png8': False}
 
@@ -235,7 +235,9 @@ class Image(object):
         if type(padding) == str:
             padding = padding.replace('px', '').split()
 
-        if len(padding) == 3:
+        if len(padding) == 4:
+            padding = padding
+        elif len(padding) == 3:
             padding = padding + [padding[1]]
         elif len(padding) == 2:
             padding = padding * 2
