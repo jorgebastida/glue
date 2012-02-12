@@ -6,6 +6,7 @@ Changelog
 * New ordering algorithms square, horizontal and vertical.
 * New command line argument ``--ordering``.
 * Old algorithms maxside, width, height and area are now orderings.
+* Glue now ignore folders that start with a '.'
 
 
 0.1.9
