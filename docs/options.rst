@@ -99,14 +99,30 @@ Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`
 
 -a --algorithm
 --------------
-The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `maxside`, but in some situations using another ordering like `width`, `height` or `area` could be useful depending on the kind of images you are spriting.
+The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `square`, but in some situations using another ordering like `vertical` or `horizontal` could be useful depending on the kind of images you are spriting.
 
-The ordering algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
+* The `square` algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
+* The `vertical` one allocates the images vertically.
+* The `horizontal` one allocates the images horizontally.
 
 .. code-block:: bash
 
-    $ glue source output --algorithm=[maxside|width|height|area]
+    $ glue source output --algorithm=[square|vertical|hortizontal]
 
+
+--ordering
+--------------
+Before processing the images using the `algorithm` glue orders the images. The default ordering is `maxside` but you can configure it using the ``--ordering`` option.
+
+.. code-block:: bash
+
+    $ glue source output --ordering=[maxside|width|height|area]
+
+You can reverse how any of the available algorithms works prepending a `-`.
+
+.. code-block:: bash
+
+    $ glue source output --ordering=[-maxside|-width|-height|-area]
 
 --namespace
 -----------

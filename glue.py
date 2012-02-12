@@ -10,11 +10,11 @@ from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
-
 TRANSPARENT = (255, 255, 255, 0)
 CONFIG_FILENAME = 'sprite.conf'
 DEFAULT_SETTINGS = {'padding': '0',
-                    'algorithm': 'maxside',
+                    'algorithm': 'square',
+                    'ordering': 'maxsize',
                     'namespace': 'sprite',
                     'crop': False,
                     'url': '',
@@ -40,12 +40,17 @@ class NoSpritesFoldersFoundError(Exception):
     pass
 
 
-class InvalidImageOrderingAlgorithmError(Exception):
+class InvalidImageAlgorithmError(Exception):
     """Raised if the provided algorithm name is invalid."""
     pass
 
 
-class Node(object):
+class InvalidImageOrderingError(Exception):
+    """Raised if the provided ordering is invalid."""
+    pass
+
+
+class SquareAlgorithmNode(object):
 
     def __init__(self, x=0, y=0, width=0, height=0, used=False,
                  down=None, right=None):
@@ -115,7 +120,7 @@ class Node(object):
         self.x = self.y = 0
         self.width += width
         self.down = old_self
-        self.right = Node(x=old_self.width,
+        self.right = SquareAlgorithmNode(x=old_self.width,
                           y=0,
                           width=width,
                           height=self.height)
@@ -136,7 +141,7 @@ class Node(object):
         self.x = self.y = 0
         self.height += height
         self.right = old_self
-        self.down = Node(x=0,
+        self.down = SquareAlgorithmNode(x=0,
                          y=old_self.height,
                          width=self.width,
                          height=height)
@@ -154,15 +159,60 @@ class Node(object):
         :param height: New node height.
         """
         node.used = True
-        node.down = Node(x=node.x,
+        node.down = SquareAlgorithmNode(x=node.x,
                                y=node.y + height,
                                width=node.width,
                                height=node.height - height)
-        node.right = Node(x=node.x + width,
+        node.right = SquareAlgorithmNode(x=node.x + width,
                                 y=node.y,
                                 width=node.width - width,
                                 height=height)
         return node
+
+
+class SquareAlgorithm(object):
+
+    def process(self, sprite):
+
+        root = SquareAlgorithmNode(width=sprite.images[0].absolute_width,
+                    height=sprite.images[0].absolute_height)
+
+        # Loot all over the images creating a binary tree
+        for image in sprite.images:
+            node = root.find(root, image.absolute_width, image.absolute_height)
+            if node:  # Use this node
+                node = root.split(node, image.absolute_width,
+                                        image.absolute_height)
+            else:  # Grow the canvas
+                node = root.grow(image.absolute_width, image.absolute_height)
+
+            image.x = node.x
+            image.y = node.y
+
+
+class VerticalAlgorithm(object):
+
+    def process(self, sprite):
+        y = 0
+        for image in sprite.images:
+            image.x = 0
+            image.y = y
+            y += image.absolute_height
+
+
+class HorizontalAlgorithm(object):
+
+    def process(self, sprite):
+        x = 0
+        for image in sprite.images:
+            image.y = 0
+            image.x = x
+            x += image.absolute_width
+
+
+ALGORITHMS = {'square': SquareAlgorithm,
+              'vertical': VerticalAlgorithm,
+              'horizontal': HorizontalAlgorithm}
 
 
 class Image(object):
@@ -174,6 +224,8 @@ class Image(object):
 
         :param name: Image name.
         :param sprite: :class:`~Sprite` instance for this image."""
+        self.x = None
+        self.y = None
         self.name = name
         self.sprite = sprite
         self.filename, self.format = name.rsplit('.', 1)
@@ -196,10 +248,8 @@ class Image(object):
             self._crop_image()
 
         self.width, self.height = self.image.size
-
-        self.width += self.padding[1] + self.padding[3]
-        self.height += self.padding[0] + self.padding[2]
-        self.node = None
+        self.absolute_width = self.width + self.padding[1] + self.padding[3]
+        self.absolute_height = self.height + self.padding[0] + self.padding[2]
 
     def _crop_image(self):
         """Crop the image searching for the smallest possible bounding box
@@ -297,29 +347,26 @@ class Image(object):
             padding = self.sprite.config.padding
         return self._generate_padding(padding)
 
-    @property
-    def x(self):
-        """Y coordinate for this image."""
-        return self.node.x + self.padding[3]
-
-    @property
-    def y(self):
-        """X coordinate for this image."""
-        return self.node.y + self.padding[0]
-
     def __lt__(self, img):
         """Use maxside, width, height or area as ordering algorithm.
 
         :param img: Another :class:`~Image`."""
-        algorithm = self.sprite.config.algorithm
-        if algorithm == 'width':
-            return self.width <= img.width
-        elif algorithm == 'height':
-            return self.height <= img.height
-        elif algorithm == 'area':
-            return self.width * self.height <= img.width * img.height
+        ordering = self.sprite.config.ordering
+        ordering = ordering[1:] if ordering.startswith('-') else ordering
+
+        if ordering not in self.ORDERINGS:
+            raise InvalidImageOrderingError(ordering)
+
+        if ordering == 'width':
+            return self.absolute_width <= img.absolute_width
+        elif ordering == 'height':
+            return self.absolute_height <= img.absolute_height
+        elif ordering == 'area':
+            return self.absolute_width * self.absolute_height <= \
+                   img.absolute_width * img.absolute_height
         else:
-            return max(self.width, self.height) <= max(img.width, img.height)
+            return max(self.absolute_width, self.absolute_height) <= \
+                   max(img.absolute_width, img.absolute_height)
 
 
 class Sprite(object):
@@ -343,29 +390,21 @@ class Sprite(object):
         self.path = path
 
         self.config = manager.config.extend(get_file_config(self.path))
-
-        if self.config.algorithm not in Image.ORDERINGS:
-            raise InvalidImageOrderingAlgorithmError(self.config.algorithm)
-
         self.process()
 
     def process(self):
         """Process a sprite path searching for all the images and then
         allocate all of them in the most appropriate position.
         """
-        self.images = self._locate_images()
-        width = self.images[0].width
-        height = self.images[0].height
-        root = Node(width=width, height=height)
 
-        # Loot all over the images creating a binary tree
-        for image in self.images:
-            self.manager.log("\t %s => .%s" % (image.name, image.class_name))
-            node = root.find(root, image.width, image.height)
-            if node:  # Use this node
-                image.node = root.split(node, image.width, image.height)
-            else:  # Grow the canvas
-                image.node = root.grow(image.width, image.height)
+        algorithm = ALGORITHMS.get(self.config.algorithm)
+        if algorithm is None:
+            raise InvalidImageAlgorithmError(self.config.algorithm)
+
+        self.algorithm = algorithm()
+        self.images = self._locate_images()
+
+        self.algorithm.process(self)
 
     def _locate_images(self):
         """Return all valid images within a folder.
@@ -395,7 +434,10 @@ class Sprite(object):
             dup = [i for i in images if class_names.count(i.class_name) > 1]
             raise MultipleImagesWithSameNameError(dup)
 
-        return sorted(images, reverse=True)
+        for image in images:
+            self.manager.log("\t %s => .%s" % (image.name, image.class_name))
+
+        return sorted(images, reverse=self.config.ordering[0] != '-')
 
     def save_image(self):
         """Create the image file for this sprite."""
@@ -407,8 +449,8 @@ class Sprite(object):
         width = height = 0
 
         for image in self.images:
-            x = image.node.x + image.width
-            y = image.node.y + image.height
+            x = image.x + image.absolute_width
+            y = image.y + image.absolute_height
             if width < x:
                 width = x
             if height < y:
@@ -419,7 +461,8 @@ class Sprite(object):
 
         # Paste the images inside the canvas
         for image in self.images:
-            canvas.paste(image.image, (image.x, image.y))
+            canvas.paste(image.image, (image.x + image.padding[3],
+                                       image.y + image.padding[0]))
 
         # Save png
         sprite_filename = '%s.png' % self.filename
@@ -478,10 +521,10 @@ class Sprite(object):
 
         for image in self.images:
             data = {'image_class_name': image.class_name,
-                    'top': image.node.y * -1 if image.node.y else 0,
-                    'left': image.node.x * -1 if image.node.x else 0,
-                    'width': image.width,
-                    'height': image.height}
+                    'top': image.y * -1 if image.y else 0,
+                    'left': image.x * -1 if image.x else 0,
+                    'width': image.absolute_width,
+                    'height': image.absolute_height}
 
             style = (".%(image_class_name)s{"
                      "background-position:%(left)ipx %(top)ipx;")
@@ -787,7 +830,10 @@ def main():
 
     group = OptionGroup(parser, "Advanced Options")
     group.add_option("-a", "--algorithm", dest="algorithm", default=None,
-                    help=("ordering algorithm: maxside, width, height or "
+                    help=("allocation algorithm: square, vertical, horizontal "
+                          "(default: square)"), metavar='NAME')
+    group.add_option("--ordering", dest="ordering", default=None,
+                    help=("ordering criteria: maxside, width, height or "
                           "area (default: maxside)"), metavar='NAME')
     group.add_option("--namespace", dest="namespace",  default=None,
                       help="namespace for all css classes (default: sprite)")
@@ -863,6 +909,10 @@ def main():
         sys.stderr.write("Error: No images found.\n")
     except NoSpritesFoldersFoundError:
         sys.stderr.write("Error: No sprites folders found.\n")
+    except InvalidImageOrderingError:
+        sys.stderr.write("Error: Invalid image ordering %s.\n" % e.args[0])
+    except InvalidImageAlgorithmError:
+        sys.stderr.write("Error: Invalid image algorithm %s.\n" % e.args[0])
 
 
 if __name__ == "__main__":
