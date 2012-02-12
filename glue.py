@@ -663,7 +663,7 @@ class MultipleSpriteManager(BaseManager):
         for sprite_name in os.listdir(self.path):
             # Only process folders
             path = os.path.join(self.path, sprite_name)
-            if os.path.isdir(path):
+            if os.path.isdir(path) and not sprite_name.startswith('.'):
                 self.process_sprite(path=path, name=sprite_name)
 
         if not len(self.sprites):
