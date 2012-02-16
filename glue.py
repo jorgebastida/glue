@@ -210,9 +210,21 @@ class HorizontalAlgorithm(object):
             x += image.absolute_width
 
 
+class DiagonalAlgorithm(object):
+
+    def process(self, sprite):
+        x = y = 0
+        for image in sprite.images:
+            image.x = x
+            image.y = y
+            x += image.absolute_width
+            y += image.absolute_height
+
+
 ALGORITHMS = {'square': SquareAlgorithm,
               'vertical': VerticalAlgorithm,
-              'horizontal': HorizontalAlgorithm}
+              'horizontal': HorizontalAlgorithm,
+              'diagonal': DiagonalAlgorithm}
 
 
 class Image(object):
@@ -398,7 +410,8 @@ class Sprite(object):
         """
 
         algorithm = ALGORITHMS.get(self.config.algorithm)
-        if algorithm is None:
+
+        if not algorithm:
             raise InvalidImageAlgorithmError(self.config.algorithm)
 
         self.algorithm = algorithm()
