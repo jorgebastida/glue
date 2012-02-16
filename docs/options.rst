@@ -104,10 +104,11 @@ The criteria that ``glue`` uses to order the images before adding them to the ca
 * The `square` algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
 * The `vertical` one allocates the images vertically.
 * The `horizontal` one allocates the images horizontally.
+* The `diagonal` one allocates the images diagonally. It was inspired by the `Diagonal CSS Sprites Article <http://www.aaronbarker.net/2010/07/diagonal-sprites/>`_ by Aaron Barker.
 
 .. code-block:: bash
 
-    $ glue source output --algorithm=[square|vertical|hortizontal]
+    $ glue source output --algorithm=[square|vertical|hortizontal|diagonal]
 
 
 --ordering
