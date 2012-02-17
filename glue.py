@@ -14,7 +14,7 @@ TRANSPARENT = (255, 255, 255, 0)
 CONFIG_FILENAME = 'sprite.conf'
 DEFAULT_SETTINGS = {'padding': '0',
                     'algorithm': 'square',
-                    'ordering': 'maxsize',
+                    'ordering': 'maxside',
                     'namespace': 'sprite',
                     'crop': False,
                     'url': '',
@@ -922,9 +922,9 @@ def main():
         sys.stderr.write("Error: No images found.\n")
     except NoSpritesFoldersFoundError:
         sys.stderr.write("Error: No sprites folders found.\n")
-    except InvalidImageOrderingError:
+    except InvalidImageOrderingError, e:
         sys.stderr.write("Error: Invalid image ordering %s.\n" % e.args[0])
-    except InvalidImageAlgorithmError:
+    except InvalidImageAlgorithmError, e:
         sys.stderr.write("Error: Invalid image algorithm %s.\n" % e.args[0])
 
 
