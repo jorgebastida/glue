@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import re
 import os
 import sys
@@ -10,8 +11,14 @@ from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
+__version__ = '0.2'
+
 TRANSPARENT = (255, 255, 255, 0)
+
 CONFIG_FILENAME = 'sprite.conf'
+ORDERINGS = ['maxside', 'width', 'height', 'area']
+VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
 DEFAULT_SETTINGS = {'padding': '0',
                     'algorithm': 'square',
                     'ordering': 'maxside',
@@ -121,9 +128,9 @@ class SquareAlgorithmNode(object):
         self.width += width
         self.down = old_self
         self.right = SquareAlgorithmNode(x=old_self.width,
-                          y=0,
-                          width=width,
-                          height=self.height)
+                                         y=0,
+                                         width=width,
+                                         height=self.height)
 
         node = self.find(self, width, height)
         if node:
@@ -142,9 +149,9 @@ class SquareAlgorithmNode(object):
         self.height += height
         self.right = old_self
         self.down = SquareAlgorithmNode(x=0,
-                         y=old_self.height,
-                         width=self.width,
-                         height=height)
+                                        y=old_self.height,
+                                        width=self.width,
+                                        height=height)
 
         node = self.find(self, width, height)
         if node:
@@ -160,13 +167,13 @@ class SquareAlgorithmNode(object):
         """
         node.used = True
         node.down = SquareAlgorithmNode(x=node.x,
-                               y=node.y + height,
-                               width=node.width,
-                               height=node.height - height)
+                                        y=node.y + height,
+                                        width=node.width,
+                                        height=node.height - height)
         node.right = SquareAlgorithmNode(x=node.x + width,
-                                y=node.y,
-                                width=node.width - width,
-                                height=height)
+                                         y=node.y,
+                                         width=node.width - width,
+                                         height=height)
         return node
 
 
@@ -228,8 +235,6 @@ ALGORITHMS = {'square': SquareAlgorithm,
 
 
 class Image(object):
-
-    ORDERINGS = ['maxside', 'width', 'height', 'area']
 
     def __init__(self, name, sprite):
         """Image constructor
@@ -366,7 +371,7 @@ class Image(object):
         ordering = self.sprite.config.ordering
         ordering = ordering[1:] if ordering.startswith('-') else ordering
 
-        if ordering not in self.ORDERINGS:
+        if ordering not in ORDERINGS:
             raise InvalidImageOrderingError(ordering)
 
         if ordering == 'width':
@@ -382,12 +387,6 @@ class Image(object):
 
 
 class Sprite(object):
-
-    DEFAULT_SETTINGS = {'padding': '0',
-                        'algorithm': 'maxside',
-                        'namespace': 'sprite',
-                        'crop': False,
-                        'url': ''}
 
     def __init__(self, name, path, manager):
         """Sprite constructor.
@@ -422,7 +421,7 @@ class Sprite(object):
     def _locate_images(self):
         """Return all valid images within a folder.
 
-        All files with a extension not included in VALID_IMAGE_EXTENSIONS
+        All files with a extension not included i
         (png, jpg, jpeg and gif) or beginning with '.' will be ignored.
 
         If the folder doesn't contain any valid image it will raise
@@ -431,7 +430,7 @@ class Sprite(object):
         The list of images will be ordered using the desired ordering
         algorithm. The default is 'maxside'.
         """
-        extensions = '|'.join(self.manager.VALID_IMAGE_EXTENSIONS)
+        extensions = '|'.join(VALID_IMAGE_EXTENSIONS)
         extension_re = re.compile('.+\.(%s)$' % extensions, re.IGNORECASE)
 
         images = [Image(n, sprite=self) for n in os.listdir(self.path) if \
@@ -628,8 +627,6 @@ class ConfigManager(object):
 
 
 class BaseManager(object):
-
-    VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
     def __init__(self, path, config, output=None):
         """BaseManager constructor.
@@ -833,6 +830,8 @@ def main():
                       help="force this padding in all images")
     parser.add_option("-z", "--no-size", action="store_false", dest="size",
                       help="don't add the image size to the sprite")
+    parser.add_option("-v", "--version", action="store_true", dest="version",
+                      help="show program's version number and exit")
 
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='',
@@ -875,6 +874,10 @@ def main():
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
+
+    if options.version:
+        sys.stdout.write("2.0\n")
+        sys.exit(0)
 
     if not len(args):
         parser.error("You must provide the folder containing the sprites.")
