@@ -528,7 +528,7 @@ class Sprite(object):
         class_names = ',\n'.join(class_names)
 
         # create an unique style for all the sprites for less bloat
-        style = "%s{background-image:url('%s');background-repeat:no-repeat;}\n"
+        style = "%s{background-image:url(%s);background-repeat:no-repeat;}\n"
         css_file.write(style % (class_names, self.image_url))
 
         for image in self.images:
