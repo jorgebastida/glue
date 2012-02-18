@@ -7,6 +7,9 @@ Changelog
 * New command line argument ``--ordering``.
 * Old algorithms maxside, width, height and area are now orderings.
 * Glue now ignore folders that start with a '.'
+* CSS files will now avoid using quotes around the sprite filename.
+* New -v, --version option.
+
 
 
 0.1.9
