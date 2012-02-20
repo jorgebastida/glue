@@ -874,14 +874,13 @@ def main():
     group = OptionGroup(parser, "Browser Cache Invalidation Options")
     group.add_option("--cachebuster", dest="cachebuster",
                     action='store_true',
-                    help=("use the sprite's sha1 first 6characters as a "
+                    help=("use the sprite's sha1 first 6 characters as a "
                           "queryarg everytime that file is referred from "
                           "the css"))
     group.add_option("--cachebuster-filename", dest="cachebuster_filename",
                     action='store_true',
                     help=("append the sprite's sha first 6 characters "
-                          "to the filename and everytime that file is "
-                          "referred from the css"))
+                          "to the otput filename"))
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
