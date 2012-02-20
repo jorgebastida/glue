@@ -204,3 +204,28 @@ After --cachebuster:
     .sprite-icons-zoom{ background:url('sprites/icons/icons.png=p3c54d'); top:0; left:0; no-repeat;}
     .sprite-icons-wrench_orange{ background:url('sprites/icons/icons.png?p3c54d'); top:0; left:-16; no-repeat;}
     ...
+
+--cachebuster-filename
+-----------------------
+This option has the same purpose than ``--cachebuster`` but insted of using the hash of the PNG as a queryarg it uses it as part of the filename.
+
+
+.. code-block:: bash
+
+    $ glue source output --cachebuster-filename
+
+Original css:
+
+.. code-block:: css
+
+    .sprite-icons-zoom{ background:url('sprites/icons/icons.png'); top:0; left:0; no-repeat;}
+    .sprite-icons-wrench_orange{ background:url('sprites/icons/icons.png'); top:0; left:-16; no-repeat;}
+    ...
+
+After --cachebuster:
+
+.. code-block:: css
+
+    .sprite-icons-zoom{ background:url('sprites/icons/icons_p3c54d.png'); top:0; left:0; no-repeat;}
+    .sprite-icons-wrench_orange{ background:url('sprites/icons/icons_p3c54d.png'); top:0; left:-16; no-repeat;}
+    ...

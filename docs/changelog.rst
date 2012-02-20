@@ -5,6 +5,7 @@ Changelog
 ^^^^^
 * New ordering algorithms square, horizontal, vertical and diagonal.
 * New command line argument ``--ordering``.
+* New command line argument ``--cachebuster-filename``.
 * Old algorithms maxside, width, height and area are now orderings.
 * Glue now ignore folders that start with a '.'
 * CSS files will now avoid using quotes around the sprite filename.
