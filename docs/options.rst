@@ -1,9 +1,9 @@
 Command line arguments
 ======================
 
--s --simple
+--project
 -----------
-As it's explained at the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is to handle multi-sprite apps.
+As it's explained at the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is to handle one unique sprite folder. If you need to generate several sprites for a project, you can use the ``--project`` option to handle multiple folders with only one command.
 
 The suggested setup is to create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder::
 
@@ -19,17 +19,12 @@ The suggested setup is to create a new folder for every sprite, and add inside a
         ├── new.png
         └── rss.png
 
-The ``--simple`` argument ignores that behaviour and only expects that the ``source`` folder contains images like::
-
-    animals
-        ├── cat.css
-        ├── snake.css
-        ├── elephant.css
-        └── dog.png
-
 .. code-block:: bash
 
-    $ glue source output --simple
+    $ glue source output --project
+
+.. note::
+    This was the default behaviour prior to the version ``0.2``, after ``2.0`` is not.
 
 -c --crop
 ---------

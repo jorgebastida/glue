@@ -3,6 +3,9 @@ Changelog
 
 0.2
 ^^^^^
+* The default behaviour of glue is now the old --simple one.
+* The old default behaviour (multiple-sprites) is now accesible using --project
+* --simple argument is now deprecated
 * New ordering algorithms square, horizontal, vertical and diagonal.
 * New command line argument ``--ordering``.
 * New command line argument ``--cachebuster-filename``.

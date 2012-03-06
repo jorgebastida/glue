@@ -6,7 +6,7 @@ Using the filename
 In some situations it's really useful to add some padding to an image. ``glue`` will use the filename to determine the padding, so if you simply append ``_10`` to the filename it'll add a ``10px`` padding all around the image::
 
     $ mv rainbow.png rainbow_10.png
-    $ glue icons sprites --simple
+    $ glue icons sprites
 
 This small change means that the ``rainbow.png`` image needs a ``10px`` padding all around the image.
 

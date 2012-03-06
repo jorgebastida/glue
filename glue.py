@@ -393,7 +393,7 @@ class Sprite(object):
 
         :param name: Sprite name.
         :param path: Sprite path
-        :param manager: Sprite manager. :class:`~MultipleSpriteManager` or
+        :param manager: Sprite manager. :class:`~ProjectSpriteManager` or
                         :class:`SimpleSpriteManager`"""
         self.name = name
         self.manager = manager
@@ -688,7 +688,7 @@ class BaseManager(object):
         raise NotImplementedError()
 
 
-class MultipleSpriteManager(BaseManager):
+class ProjectSpriteManager(BaseManager):
 
     def process(self):
         """Process a path searching for folders that contain images.
@@ -718,6 +718,9 @@ class MultipleSpriteManager(BaseManager):
 
         If two images have the same name,
         :class:`~MultipleImagesWithSameNameError` will be raised.
+
+        This is not the default manager. It is only used if you use
+        the ``--project`` argument.
         """
         for sprite_name in os.listdir(self.path):
             # Only process folders
@@ -735,10 +738,9 @@ class SimpleSpriteManager(BaseManager):
 
     def process(self):
         """Process a single folder and create one sprite. It works the
-        same way as :class:`~MultipleSpriteManager`, but only for one folder.
+        same way as :class:`~ProjectSpriteManager`, but only for one folder.
 
-        This is not the default manager. It is only used if you use
-        the ``--simple`` default argument.
+        This is the default manager.
         """
         self.process_sprite(path=self.path, name=os.path.basename(self.path))
         self.save()
@@ -822,8 +824,8 @@ PImage.Image.load = patched_load
 def main():
     parser = OptionParser(usage=("usage: %prog [options] source_dir [<output> "
                                  "| --css=<dir> --img=<dir>]"))
-    parser.add_option("-s", "--simple", action="store_true", dest="simple",
-                      help="generate sprites for a single folder")
+    parser.add_option("--project", action="store_true",
+                  dest="project", help="generate sprites for multiple folders")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
                 help="crop images removing unnecessary transparent margins")
     parser.add_option("-l", "--less", dest="less", action='store_true',
@@ -915,10 +917,10 @@ def main():
     if not os.path.isdir(source):
         parser.error("Directory not found: '%s'" % source)
 
-    if options.simple:
-        manager_cls = SimpleSpriteManager
+    if options.project:
+        manager_cls = ProjectSpriteManager
     else:
-        manager_cls = MultipleSpriteManager
+        manager_cls = SimpleSpriteManager
 
     # Get configuration from file
     config = get_file_config(source)

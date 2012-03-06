@@ -14,7 +14,7 @@ Your first sprite
 Create a new folder (``icons`` in this example), and add as many images as you want.
 Then you can simply run the following command::
 
-    $ glue icons sprites --simple
+    $ glue icons sprites
 
 Glue will create a new folder named ``sprites`` with the following structure::
 
@@ -76,7 +76,7 @@ Usually designers add some unnecessary transparent space around the images becau
 
 .. code-block:: bash
 
-    $ glue icons sprites --simple --crop
+    $ glue icons sprites --crop
 
 The new ``icons.png`` (348Kb) will be 53Kb smaller.
 
@@ -92,13 +92,12 @@ Now, the css file will have the new coordinates but using the same css class nam
     .sprite-icons-world_link{ background:url('sprites/icons/icons.png'); top:-16; left:-16; no-repeat;}
     ...
 
-What about the --simple parameter?
------------------------------------
+What about if I need to generate multiple sprites?
+---------------------------------------------------
 
-Weird no? Well... usually an app has more than one sprite, so the default behaviour of ``glue`` is to handle
-multiple sprites smoothly.
+Usually an app has more than one sprite and generate all of them one by one could be annoying.
 
-The suggested setup is to create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder::
+The suggested setup is to create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder if you use the ``--project`` argument::
 
     images
     ├── actions
@@ -114,7 +113,7 @@ The suggested setup is to create a new folder for every sprite, and add inside a
 
 So now, running::
 
-    $ glue images sprites
+    $ glue images sprites --project
 
 Will generate a new ``sprites`` folder with the images and the css inside::
 
