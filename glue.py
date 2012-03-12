@@ -548,7 +548,7 @@ class Sprite(object):
 
             if self.config.size:
                 # if it's required add the image size to the sprite
-                style += "width:%(width)spx; height:%(height)spx;"
+                style += "width:%(width)spx;height:%(height)spx;"
 
             style += "}\n"
 
