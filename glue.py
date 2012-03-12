@@ -888,7 +888,7 @@ def main():
     (options, args) = parser.parse_args()
 
     if options.version:
-        sys.stdout.write("2.0\n")
+        sys.stdout.write("%s\n" % __version__)
         sys.exit(0)
 
     if options.cachebuster and options.cachebuster_filename:
