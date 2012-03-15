@@ -35,7 +35,7 @@ Usually designers add some unnecessary transparent space around the images becau
 
 .. code-block:: bash
 
-    $ glue source output --simple --crop
+    $ glue source output --crop
 
 -l --less
 ---------
