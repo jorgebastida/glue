@@ -12,17 +12,17 @@ This small change means that the ``rainbow.png`` image needs a ``10px`` padding 
 
 .. image:: _static/famfamfam3.png
 
-If you don't need the same padding all around the image, you can use ``_10_20`` for a ``10px 20px 10px 20px`` padding or
-``_10_20_30_40`` for a ``10px 20px 30px 40px`` padding as this table shows:
+If you don't need the same padding all around the image, you can use ``_10-20`` for a ``10px 20px 10px 20px`` padding or
+``_10-20-30-40`` for a ``10px 20px 30px 40px`` padding as this table shows:
 
 =================== =========================
 filename            padding
 =================== =========================
 cat.png             0px 0px 0px 0px
 cat_20.png          20px 20px 20px 20px
-cat_20_30.png       20px 30px 20px 30px
-cat_20_30_40.png    20px 30px 40px 30px
-cat_20_30_40_50.png 20px 30px 40px 30px
+cat_20-30.png       20px 30px 20px 30px
+cat_20-30-40.png    20px 30px 40px 30px
+cat_20-30-40-50.png 20px 30px 40px 30px
 =================== =========================
 
 
