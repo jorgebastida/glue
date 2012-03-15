@@ -337,6 +337,7 @@ class Image(object):
                 padding_info_name = '_%s' % padding_info_name
             name = name[:len(padding_info_name) * -1 or None]
         name = re.sub(r'[^\w\-_]', '', name)
+
         return '%s-%s' % (self.sprite.namespace, name)
 
     @property
@@ -559,6 +560,8 @@ class Sprite(object):
     @property
     def namespace(self):
         """Return the namespace for this sprite."""
+        if not self.config.namespace:
+            return self.name
         return '%s-%s' % (self.config.namespace, self.name)
 
     @property

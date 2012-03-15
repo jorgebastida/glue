@@ -99,6 +99,14 @@ EXPECTED_VERYSIMPLE_NAMESPACE = """
 .abc-verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
 .abc-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}"""
 
+EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
+.verysimple-red,
+.verysimple-green,
+.verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
+.verysimple-red{background-position:0px 0px;width:25px;height:25px;}
+.verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
+.verysimple-blue{background-position:0px -25px;width:25px;height:25px;}"""
+
 
 class SimpleCssCompiler(object):
 
@@ -446,6 +454,19 @@ class TestGlue(unittest.TestCase):
 
         css = open(css_path)
         self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NAMESPACE)
+        css.close()
+
+        # Empty namespace
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'namespace': ''})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_EMPTYNAMESPACE)
         css.close()
 
     def test_cachebuster(self):
