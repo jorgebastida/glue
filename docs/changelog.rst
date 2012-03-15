@@ -3,16 +3,16 @@ Changelog
 
 0.2
 ^^^^^
-* The default behaviour of glue is now the old --simple one.
+* The default behaviour of glue is now the old ``--simple`` one.
 * The old default behaviour (multiple-sprites) is now accesible using --project
-* --simple argument is now deprecated
+* ``--simple`` argument is now deprecated
 * New ordering algorithms square, horizontal, vertical and diagonal.
 * New command line argument ``--ordering``.
 * New command line argument ``--cachebuster-filename``.
 * Old algorithms maxside, width, height and area are now orderings.
 * Glue now ignore folders that start with a '.'
 * CSS files will now avoid using quotes around the sprite filename.
-* New -v, --version option.
+* New ``-v``, ``--version`` option.
 * Fix bugs.
 * New test suite.
 
