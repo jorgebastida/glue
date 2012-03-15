@@ -13,6 +13,7 @@ Changelog
 * Glue now ignore folders that start with a '.'
 * CSS files will now avoid using quotes around the sprite filename.
 * New -v, --version option.
+* New test suite.
 
 
 

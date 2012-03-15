@@ -1,6 +1,8 @@
 import os
-import unittest
+import re
+import hashlib
 import shutil
+import unittest
 
 from PIL import Image
 import glue
@@ -15,6 +17,7 @@ PINK = (255, 0, 255, 255)
 BLUE = (0, 0, 255, 255)
 GREEN = (0, 255, 0, 255)
 YELLOW = (255, 255, 0, 255)
+TRANSPARENT = (0, 0, 0, 0)
 
 
 EXPECTED_SIMPLE_CSS = """
@@ -30,6 +33,71 @@ EXPECTED_SIMPLE_CSS = """
 .sprite-simple-green{background-position:-75px 0px;width:25px;height:25px;}
 .sprite-simple-cyan{background-position:-100px 0px;width:25px;height:25px;}
 .sprite-simple-blue{background-position:-125px 0px;width:25px;height:25px;}"""
+
+EXPECTED_PROJECT_MIX_CSS = """
+.sprite-mix-yellow,
+.sprite-mix-pink,
+.sprite-mix-cyan{background-image:url(mix.png);background-repeat:no-repeat;}
+.sprite-mix-yellow{background-position:0px 0px;width:25px;height:25px;}
+.sprite-mix-pink{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-mix-cyan{background-position:0px -25px;width:25px;height:25px;}"""
+
+EXPECTED_PROJECT_RGB_CSS = """
+.sprite-rgb-red,
+.sprite-rgb-green,
+.sprite-rgb-blue{background-image:url(rgb.png);background-repeat:no-repeat;}
+.sprite-rgb-red{background-position:0px 0px;width:25px;height:25px;}
+.sprite-rgb-green{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-rgb-blue{background-position:0px -25px;width:25px;height:25px;}"""
+
+EXPECTED_SIMPLE_CROP = """
+.sprite-crop-red_border,
+.sprite-crop-green_border,
+.sprite-crop-blue_border{background-image:url(crop.png);background-repeat:no-repeat;}
+.sprite-crop-red_border{background-position:0px 0px;width:25px;height:25px;}
+.sprite-crop-green_border{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-crop-blue_border{background-position:0px -25px;width:25px;height:25px;}"""
+
+EXPECTED_SIMPLE_PADDING = """
+.sprite-padding-red,
+.sprite-padding-green,
+.sprite-padding-blue{background-image:url(padding.png);background-repeat:no-repeat;}
+.sprite-padding-red{background-position:0px 0px;width:45px;height:45px;}
+.sprite-padding-green{background-position:-45px 0px;width:45px;height:35px;}
+.sprite-padding-blue{background-position:0px -45px;width:31px;height:29px;}"""
+
+EXPECTED_VERYSIMPLE_URL = """
+.sprite-verysimple-red,
+.sprite-verysimple-green,
+.sprite-verysimple-blue{background-image:url(/static/verysimple.png);background-repeat:no-repeat;}
+.sprite-verysimple-red{background-position:0px 0px;width:25px;height:25px;}
+.sprite-verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}"""
+
+EXPECTED_VERYSIMPLE_NOSIZE = """
+.sprite-verysimple-red,
+.sprite-verysimple-green,
+.sprite-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
+.sprite-verysimple-red{background-position:0px 0px;}
+.sprite-verysimple-green{background-position:-25px 0px;}
+.sprite-verysimple-blue{background-position:0px -25px;}"""
+
+EXPECTED_PADDING_NOPADDING = """
+.sprite-padding-red_10,
+.sprite-padding-green_5-10,
+.sprite-padding-blue_1-2-3-4{background-image:url(padding.png);background-repeat:no-repeat;}
+.sprite-padding-red_10{background-position:0px 0px;width:25px;height:25px;}
+.sprite-padding-green_5-10{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-padding-blue_1-2-3-4{background-position:0px -25px;width:25px;height:25px;}"""
+
+
+EXPECTED_VERYSIMPLE_NAMESPACE = """
+.abc-verysimple-red,
+.abc-verysimple-green,
+.abc-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
+.abc-verysimple-red{background-position:0px 0px;width:25px;height:25px;}
+.abc-verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
+.abc-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}"""
 
 
 class SimpleCssCompiler(object):
@@ -54,26 +122,23 @@ class SimpleCssCompiler(object):
         return self._rules == other._rules
 
 
-class GlueTestCase(unittest.TestCase):
+class TestGlue(unittest.TestCase):
 
     def assertEqualCSS(self, css_text1, css_text2):
         css1 = SimpleCssCompiler(css_text1)
         css2 = SimpleCssCompiler(css_text2)
         assert css1 == css2
 
-
-class TestManagers(GlueTestCase):
-
     def setUp(self):
         self.base_path = os.path.dirname(os.path.abspath(__file__))
-        self.output_path = os.path.join(self.base_path, 'test_tmp/')
+        self.output_path = os.path.join(self.base_path, 'tests_tmp/')
         shutil.rmtree(self.output_path, True)
 
     def generate_manager(self, manager_cls, path, config=None):
         config = config or {}
         config = glue.ConfigManager(config, defaults=TEST_DEFAULT_SETTINGS)
         simple_path = os.path.join(self.base_path, 'tests_resources/%s' % path)
-        output_path = os.path.join(self.base_path, 'test_tmp/')
+        output_path = os.path.join(self.base_path, 'tests_tmp/')
 
         return manager_cls(path=simple_path,
                            config=config,
@@ -150,7 +215,7 @@ class TestManagers(GlueTestCase):
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
         css.close()
 
-        # Test diagonal algorith
+        # Test diagonal algorithm
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'simple',
                                         {'algorithm': 'diagonal'})
@@ -173,6 +238,279 @@ class TestManagers(GlueTestCase):
 
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
         css.close()
+
+    def test_project_manager(self):
+        manager = self.generate_manager(glue.ProjectSpriteManager, 'multiple')
+        manager.process()
+
+        rgb_img_path = os.path.join(self.output_path, 'rgb.png')
+        rgb_css_path = os.path.join(self.output_path, 'rgb.css')
+        mix_img_path = os.path.join(self.output_path, 'mix.png')
+        mix_css_path = os.path.join(self.output_path, 'mix.css')
+        self.assertTrue(os.path.isfile(rgb_img_path))
+        self.assertTrue(os.path.isfile(rgb_css_path))
+        self.assertTrue(os.path.isfile(mix_img_path))
+        self.assertTrue(os.path.isfile(mix_css_path))
+
+        image = Image.open(rgb_img_path)
+        css = open(rgb_css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), RED)
+        self.assertEqual(image.getpixel((25, 0)), GREEN)
+        self.assertEqual(image.getpixel((0, 25)), BLUE)
+        self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
+
+        self.assertEqualCSS(css.read(), EXPECTED_PROJECT_RGB_CSS)
+        css.close()
+
+        image = Image.open(mix_img_path)
+        css = open(mix_css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), YELLOW)
+        self.assertEqual(image.getpixel((25, 0)), PINK)
+        self.assertEqual(image.getpixel((0, 25)), CYAN)
+        self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
+
+        self.assertEqualCSS(css.read(), EXPECTED_PROJECT_MIX_CSS)
+        css.close()
+
+    def test_crop(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'crop',
+                                        {'crop': True})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'crop.png')
+        css_path = os.path.join(self.output_path, 'crop.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), RED)
+        self.assertEqual(image.getpixel((25, 0)), GREEN)
+        self.assertEqual(image.getpixel((0, 25)), BLUE)
+        self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
+
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CROP)
+        css.close()
+
+    def test_padding(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'padding')
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'padding.png')
+        css_path = os.path.join(self.output_path, 'padding.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), TRANSPARENT)
+        self.assertEqual(image.getpixel((10, 10)), RED)
+        self.assertEqual(image.getpixel((34, 34)), RED)
+        self.assertEqual(image.getpixel((55, 5)), GREEN)
+        self.assertEqual(image.getpixel((79, 29)), GREEN)
+        self.assertEqual(image.getpixel((5, 46)), BLUE)
+        self.assertEqual(image.getpixel((28, 70)), BLUE)
+        self.assertEqual(image.getpixel((89, 73)), TRANSPARENT)
+
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_PADDING)
+        css.close()
+
+    def test_ignore_filename_padding(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'padding',
+                                        {'ignore_filename_paddings': True})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'padding.png')
+        css_path = os.path.join(self.output_path, 'padding.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), RED)
+        self.assertEqual(image.getpixel((25, 0)), GREEN)
+        self.assertEqual(image.getpixel((0, 25)), BLUE)
+        self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
+
+        self.assertEqualCSS(css.read(), EXPECTED_PADDING_NOPADDING)
+        css.close()
+
+    def test_less(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                       'verysimple',
+                                       {'less': True})
+        manager.process()
+
+        less_path = os.path.join(self.output_path, 'verysimple.less')
+        self.assertTrue(os.path.isfile(less_path))
+
+    def test_url(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'url': '/static/'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_URL)
+        css.close()
+
+    def test_nosize(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'size': False})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NOSIZE)
+        css.close()
+
+    def test_ordering(self):
+        # Test maxside ordering
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'ordering',
+                                        {'ordering': 'maxside',
+                                         'algorithm': 'horizontal'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'ordering.png')
+        image = Image.open(img_path)
+
+        self.assertEqual(image.getpixel((0, 0)), GREEN)
+        self.assertEqual(image.getpixel((25, 0)), BLUE)
+        self.assertEqual(image.getpixel((44, 0)), RED)
+
+        # Test maxside ordering
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'ordering',
+                                        {'ordering': 'width',
+                                         'algorithm': 'horizontal'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'ordering.png')
+        image = Image.open(img_path)
+
+        self.assertEqual(image.getpixel((0, 0)), GREEN)
+        self.assertEqual(image.getpixel((25, 0)), BLUE)
+        self.assertEqual(image.getpixel((44, 0)), RED)
+
+        # Test maxside ordering
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'ordering',
+                                        {'ordering': 'height',
+                                         'algorithm': 'horizontal'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'ordering.png')
+        image = Image.open(img_path)
+
+        self.assertEqual(image.getpixel((0, 0)), BLUE)
+        self.assertEqual(image.getpixel((19, 0)), GREEN)
+        self.assertEqual(image.getpixel((44, 0)), RED)
+
+        # Test area ordering
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'ordering',
+                                        {'ordering': 'area',
+                                         'algorithm': 'horizontal'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'ordering.png')
+        image = Image.open(img_path)
+
+        self.assertEqual(image.getpixel((0, 0)), BLUE)
+        self.assertEqual(image.getpixel((19, 0)), GREEN)
+        self.assertEqual(image.getpixel((44, 0)), RED)
+
+    def test_namespace(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'namespace': 'abc'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NAMESPACE)
+        css.close()
+
+    def test_cachebuster(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'cachebuster': True})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        img_path = os.path.join(self.output_path, 'verysimple.png')
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        img_hash = hashlib.sha1(image.tostring()).hexdigest()[:6]
+        self.assertTrue('verysimple.png?%s' % img_hash in css.read())
+
+        css.close()
+
+    def test_cachebuster_filename(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'cachebuster_filename': True})
+        manager.process()
+
+        wrong_css_path = os.path.join(self.output_path, 'verysimple.css')
+        wrong_img_path = os.path.join(self.output_path, 'verysimple.png')
+        self.assertFalse(os.path.isfile(wrong_css_path))
+        self.assertFalse(os.path.isfile(wrong_img_path))
+
+        # Discover the css file
+        css_filename = [f for f in os.listdir(self.output_path) if f.endswith('.css')][0]
+        css_path = os.path.join(self.output_path, css_filename)
+
+        css = open(css_path)
+        css_text = css.read()
+        css.close()
+
+        img_hash = re.findall(r'verysimple_(\w+).png', css_text)[0]
+
+        img_path = os.path.join(self.output_path, 'verysimple_%s.png' % img_hash)
+        self.assertTrue(os.path.isfile(img_path))
+
+        image = Image.open(img_path)
+        real_img_hash = hashlib.sha1(image.tostring()).hexdigest()[:6]
+
+        self.assertTrue(real_img_hash == img_hash)
+
+    def test_png8(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'png8': True})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'verysimple.png')
+        self.assertTrue(os.path.isfile(img_path))
+
+        image = Image.open(img_path)
+        self.assertEqual(image.mode, 'P')
+
+        transparency = image.info.get('transparency')
+
+        self.assertTrue(all([t == 255 for t in transparency[:-1]]))
+        self.assertEqual(transparency[-1], 0)
 
 
 class TestConfigManager(unittest.TestCase):
