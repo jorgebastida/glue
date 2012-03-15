@@ -14,7 +14,7 @@ CYAN = (0, 255, 255, 255)
 PINK = (255, 0, 255, 255)
 BLUE = (0, 0, 255, 255)
 GREEN = (0, 255, 0, 255)
-YELLOY = (255, 255, 0, 255)
+YELLOW = (255, 255, 0, 255)
 
 
 EXPECTED_SIMPLE_CSS = """
@@ -50,9 +50,8 @@ class SimpleCssCompiler(object):
                     if key not in ignore:
                         self._rules.setdefault(selector, {})[key] = value
 
-    def __equal__(self, other_css):
-        return False
-        return self._rules == other_css._rules
+    def __eq__(self, other):
+        return self._rules == other._rules
 
 
 class GlueTestCase(unittest.TestCase):
@@ -60,7 +59,7 @@ class GlueTestCase(unittest.TestCase):
     def assertEqualCSS(self, css_text1, css_text2):
         css1 = SimpleCssCompiler(css_text1)
         css2 = SimpleCssCompiler(css_text2)
-        return css1 == css2
+        assert css1 == css2
 
 
 class TestManagers(GlueTestCase):
@@ -93,7 +92,7 @@ class TestManagers(GlueTestCase):
         image = Image.open(img_path)
         css = open(css_path)
 
-        self.assertEqual(image.getpixel((0, 0)), YELLOY)
+        self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((25, 0)), RED)
         self.assertEqual(image.getpixel((50, 0)), CYAN)
         self.assertEqual(image.getpixel((0, 25)), PINK)
@@ -117,7 +116,7 @@ class TestManagers(GlueTestCase):
         image = Image.open(img_path)
         css = open(css_path)
 
-        self.assertEqual(image.getpixel((0, 0)), YELLOY)
+        self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((0, 25)), RED)
         self.assertEqual(image.getpixel((0, 50)), PINK)
         self.assertEqual(image.getpixel((0, 75)), GREEN)
@@ -141,12 +140,36 @@ class TestManagers(GlueTestCase):
         image = Image.open(img_path)
         css = open(css_path)
 
-        self.assertEqual(image.getpixel((0, 0)), YELLOY)
+        self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((25, 0)), RED)
         self.assertEqual(image.getpixel((50, 0)), PINK)
         self.assertEqual(image.getpixel((75, 0)), GREEN)
         self.assertEqual(image.getpixel((100, 0)), CYAN)
         self.assertEqual(image.getpixel((125, 0)), BLUE)
+
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        css.close()
+
+        # Test diagonal algorith
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'simple',
+                                        {'algorithm': 'diagonal'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'simple.png')
+        css_path = os.path.join(self.output_path, 'simple.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), YELLOW)
+        self.assertEqual(image.getpixel((25, 25)), RED)
+        self.assertEqual(image.getpixel((50, 50)), PINK)
+        self.assertEqual(image.getpixel((75, 75)), GREEN)
+        self.assertEqual(image.getpixel((100, 100)), CYAN)
+        self.assertEqual(image.getpixel((125, 125)), BLUE)
 
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
         css.close()
