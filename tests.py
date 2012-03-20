@@ -20,8 +20,7 @@ YELLOW = (255, 255, 0, 255)
 TRANSPARENT = (0, 0, 0, 0)
 
 
-EXPECTED_SIMPLE_CSS = """
-.sprite-simple-yellow,
+EXPECTED_SIMPLE_CSS = """.sprite-simple-yellow,
 .sprite-simple-red,
 .sprite-simple-pink,
 .sprite-simple-green,
@@ -32,47 +31,48 @@ EXPECTED_SIMPLE_CSS = """
 .sprite-simple-pink{background-position:-50px 0px;width:25px;height:25px;}
 .sprite-simple-green{background-position:-75px 0px;width:25px;height:25px;}
 .sprite-simple-cyan{background-position:-100px 0px;width:25px;height:25px;}
-.sprite-simple-blue{background-position:-125px 0px;width:25px;height:25px;}"""
+.sprite-simple-blue{background-position:-125px 0px;width:25px;height:25px;}
+"""
 
-EXPECTED_PROJECT_MIX_CSS = """
-.sprite-mix-yellow,
+EXPECTED_PROJECT_MIX_CSS = """.sprite-mix-yellow,
 .sprite-mix-pink,
 .sprite-mix-cyan{background-image:url(mix.png);background-repeat:no-repeat;}
 .sprite-mix-yellow{background-position:0px 0px;width:25px;height:25px;}
 .sprite-mix-pink{background-position:-25px 0px;width:25px;height:25px;}
-.sprite-mix-cyan{background-position:0px -25px;width:25px;height:25px;}"""
+.sprite-mix-cyan{background-position:0px -25px;width:25px;height:25px;}
+"""
 
-EXPECTED_PROJECT_RGB_CSS = """
-.sprite-rgb-red,
+EXPECTED_PROJECT_RGB_CSS = """.sprite-rgb-red,
 .sprite-rgb-green,
 .sprite-rgb-blue{background-image:url(rgb.png);background-repeat:no-repeat;}
 .sprite-rgb-red{background-position:0px 0px;width:25px;height:25px;}
 .sprite-rgb-green{background-position:-25px 0px;width:25px;height:25px;}
-.sprite-rgb-blue{background-position:0px -25px;width:25px;height:25px;}"""
+.sprite-rgb-blue{background-position:0px -25px;width:25px;height:25px;}
+"""
 
-EXPECTED_SIMPLE_CROP = """
-.sprite-crop-red_border,
+EXPECTED_SIMPLE_CROP = """.sprite-crop-red_border,
 .sprite-crop-green_border,
 .sprite-crop-blue_border{background-image:url(crop.png);background-repeat:no-repeat;}
 .sprite-crop-red_border{background-position:0px 0px;width:25px;height:25px;}
 .sprite-crop-green_border{background-position:-25px 0px;width:25px;height:25px;}
-.sprite-crop-blue_border{background-position:0px -25px;width:25px;height:25px;}"""
+.sprite-crop-blue_border{background-position:0px -25px;width:25px;height:25px;}
+"""
 
-EXPECTED_SIMPLE_PADDING = """
-.sprite-padding-red,
+EXPECTED_SIMPLE_PADDING = """.sprite-padding-red,
 .sprite-padding-green,
 .sprite-padding-blue{background-image:url(padding.png);background-repeat:no-repeat;}
 .sprite-padding-red{background-position:0px 0px;width:45px;height:45px;}
 .sprite-padding-green{background-position:-45px 0px;width:45px;height:35px;}
-.sprite-padding-blue{background-position:0px -45px;width:31px;height:29px;}"""
+.sprite-padding-blue{background-position:0px -45px;width:31px;height:29px;}
+"""
 
-EXPECTED_VERYSIMPLE_URL = """
-.sprite-verysimple-red,
+EXPECTED_VERYSIMPLE_URL = """.sprite-verysimple-red,
 .sprite-verysimple-green,
 .sprite-verysimple-blue{background-image:url(/static/verysimple.png);background-repeat:no-repeat;}
 .sprite-verysimple-red{background-position:0px 0px;width:25px;height:25px;}
 .sprite-verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
-.sprite-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}"""
+.sprite-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
+"""
 
 EXPECTED_VERYSIMPLE_NOSIZE = """
 .sprite-verysimple-red,
@@ -80,15 +80,16 @@ EXPECTED_VERYSIMPLE_NOSIZE = """
 .sprite-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
 .sprite-verysimple-red{background-position:0px 0px;}
 .sprite-verysimple-green{background-position:-25px 0px;}
-.sprite-verysimple-blue{background-position:0px -25px;}"""
+.sprite-verysimple-blue{background-position:0px -25px;}
+"""
 
-EXPECTED_PADDING_NOPADDING = """
-.sprite-padding-red_10,
+EXPECTED_PADDING_NOPADDING = """.sprite-padding-red_10,
 .sprite-padding-green_5-10,
 .sprite-padding-blue_1-2-3-4{background-image:url(padding.png);background-repeat:no-repeat;}
 .sprite-padding-red_10{background-position:0px 0px;width:25px;height:25px;}
 .sprite-padding-green_5-10{background-position:-25px 0px;width:25px;height:25px;}
-.sprite-padding-blue_1-2-3-4{background-position:0px -25px;width:25px;height:25px;}"""
+.sprite-padding-blue_1-2-3-4{background-position:0px -25px;width:25px;height:25px;}
+"""
 
 
 EXPECTED_VERYSIMPLE_NAMESPACE = """
@@ -97,7 +98,8 @@ EXPECTED_VERYSIMPLE_NAMESPACE = """
 .abc-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
 .abc-verysimple-red{background-position:0px 0px;width:25px;height:25px;}
 .abc-verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
-.abc-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}"""
+.abc-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
+"""
 
 EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 .verysimple-red,
@@ -105,7 +107,8 @@ EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 .verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
 .verysimple-red{background-position:0px 0px;width:25px;height:25px;}
 .verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
-.verysimple-blue{background-position:0px -25px;width:25px;height:25px;}"""
+.verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
+"""
 
 
 class SimpleCssCompiler(object):
@@ -300,7 +303,6 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((25, 0)), GREEN)
         self.assertEqual(image.getpixel((0, 25)), BLUE)
         self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
-
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CROP)
         css.close()
 
@@ -371,19 +373,6 @@ class TestGlue(unittest.TestCase):
 
         css = open(css_path)
         self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_URL)
-        css.close()
-
-    def test_nosize(self):
-        manager = self.generate_manager(glue.SimpleSpriteManager,
-                                        'verysimple',
-                                        {'size': False})
-        manager.process()
-
-        css_path = os.path.join(self.output_path, 'verysimple.css')
-        self.assertTrue(os.path.isfile(css_path))
-
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NOSIZE)
         css.close()
 
     def test_ordering(self):
@@ -532,6 +521,34 @@ class TestGlue(unittest.TestCase):
 
         self.assertTrue(all([t == 255 for t in transparency[:-1]]))
         self.assertEqual(transparency[-1], 0)
+
+    def test_templates(self):
+        # Test empty templates
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'global_template': '',
+                                         'each_template': ''})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), '')
+        css.close()
+
+        # Test no-size template
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'each_template': ('%(class_name)s{background-position:%(x)s %(y)s;}\n')})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NOSIZE)
+        css.close()
 
 
 class TestConfigManager(unittest.TestCase):

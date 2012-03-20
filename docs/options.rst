@@ -73,17 +73,6 @@ If you want to add the same padding around all images you can use the ``--paddin
     $ glue source output --padding=10 20
     $ glue source output --padding=10 20 30 40
 
--z --no-size
-------------
-If you don't want to add the ``width`` and  ``height`` properties to the sprite CSS you can remove them using the flag ``--no-size`` from the command line or using the ``size`` property in the config files.
-
-.. code-block:: bash
-
-    $ glue source output --no-size
-
-.. note::
-    New in version 0.1.9
-
 --css --img
 -----------
 Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`. If you want to choose an individual folder for each type of file you can use the ``--img=<dir> --css=<dir>`` options together to customize where the output files will be created.
@@ -146,6 +135,42 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 .. code-block:: bash
 
     $ glue source output --ignore-filename-paddings
+
+--global-template
+------------------
+If you want to customize the output CSS you can use this option to tune the global section of the output CSS. This template is going to be only added **once per sprite**. Usually you'll not need to change this template.
+
+.. code-block:: bash
+
+    $ glue source output --global-template=<template>
+
+
+For example if you want to add quotes around the sprite image:
+
+.. code-block:: bash
+
+    $ glue source output --global-template="%(all_classes)s{background-image:url('%(sprite_url)s');background-repeat:no-repeat}"
+
+.. note::
+    New in version 0.2.1
+
+--each-template
+------------------
+If you want to customize the output CSS, you can use this option to tune the output CSS generated for each image. This template is going to be added **once per image** present in the sprite. Usually you'll change this template if you want to remove the block size from the output CSS or make any other fine tune.
+
+.. code-block:: bash
+
+    $ glue source output --each-template=<template>
+
+
+For example if you want to remove the block size from the output CSS (old ``--no-size`` option):
+
+.. code-block:: bash
+
+    $ glue source output --each-template="%(class_name)s{background-position:%(x)s %(y)s;}"
+
+.. note::
+    New in version 0.2.1
 
 --optipng
 ---------

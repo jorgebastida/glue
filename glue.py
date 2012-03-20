@@ -11,7 +11,7 @@ from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
-__version__ = '0.2'
+__version__ = '0.2.1'
 
 TRANSPARENT = (255, 255, 255, 0)
 
@@ -28,8 +28,13 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'less': False,
                     'optipng': False,
                     'ignore_filename_paddings': False,
-                    'size': True,
-                    'png8': False}
+                    'png8': False,
+                    'global_template': ('%(all_classes)s{background-image:'
+                                        'url(%(sprite_url)s);'
+                                        'background-repeat:no-repeat}\n'),
+                    'each_template': ('%(class_name)s{'
+                                      'background-position:%(x)s %(y)s;'
+                                      'width:%(width)s;height:%(height)s;}\n')}
 
 
 class MultipleImagesWithSameNameError(Exception):
@@ -530,31 +535,28 @@ class Sprite(object):
         css_file = open(css_filename, 'w')
 
         # get all the class names and join them
-        class_names = ['.%s' % i.class_name for i in self.images]
-        class_names = ',\n'.join(class_names)
+        class_names = ',\n'.join(['.%s' % i.class_name for i in self.images])
 
-        # create an unique style for all the sprites for less bloat
-        style = "%s{background-image:url(%s);background-repeat:no-repeat;}\n"
-        css_file.write(style % (class_names, self.image_url))
+        # add the global style for all the sprites for less bloat
+        template = self.config.global_template
+        css_file.write(template % {'all_classes': class_names,
+                                   'sprite_url': self.image_url})
 
+        # compile one template for each file
         for image in self.images:
-            data = {'image_class_name': image.class_name,
-                    'top': image.y * -1 if image.y else 0,
-                    'left': image.x * -1 if image.x else 0,
-                    'width': image.absolute_width,
-                    'height': image.absolute_height}
 
-            style = (".%(image_class_name)s{"
-                     "background-position:%(left)ipx %(top)ipx;")
+            x = '%spx' % (image.y * -1 if image.y else 0)
+            y = '%spx' % (image.x * -1 if image.x else 0)
+            height = '%spx' % image.absolute_height
+            width = '%spx' % image.absolute_width
 
-            if self.config.size:
-                # if it's required add the image size to the sprite
-                style += "width:%(width)spx;height:%(height)spx;"
-
-            style += "}\n"
-
-            css_file.write(style % data)
-
+            template = self.config.each_template
+            css_file.write(template % {'class_name': '.%s' % image.class_name,
+                                       'sprite_url': self.image_url,
+                                       'height': height,
+                                       'width': width,
+                                       'y': y,
+                                       'x': x})
         css_file.close()
 
     @property
@@ -839,8 +841,6 @@ def main():
                       help="suppress all normal output")
     parser.add_option("-p", "--padding", dest="padding", default=None,
                       help="force this padding in all images")
-    parser.add_option("-z", "--no-size", action="store_false", dest="size",
-                      help="don't add the image size to the sprite")
     parser.add_option("-v", "--version", action="store_true", dest="version",
                       help="show program's version number and exit")
 
@@ -866,6 +866,20 @@ def main():
     group.add_option("--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
                       help="ignore filename paddings")
+    parser.add_option_group(group)
+
+    group = OptionGroup(parser, "Output CSS Template Options")
+    group.add_option("--global-template", dest="global_template",
+                    help=("Customize the global section of the output CSS."
+                          "This section will be added only once for each "
+                          "sprite."),
+                    metavar='TEMPLATE')
+
+    group.add_option("--each-template", dest="each_template",
+                    help=("Customize each image output CSS."
+                          "This section will be added once for each "
+                          "image inside the sprite."),
+                    metavar='TEMPLATE')
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Optipng Options",

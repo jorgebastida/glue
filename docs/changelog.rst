@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.2.1
+^^^^^^
+* New command line argument ``--global-template``.
+* New command line argument ``--each-template``.
+* ``-z`` and ``--no-size`` arguments are now deprecated.
+
 0.2
 ^^^^^
 * The default behaviour of glue is now the old ``--simple`` one.
