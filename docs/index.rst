@@ -31,7 +31,6 @@ Documentation
    options
    optipng
    faq
-   api
    changelog
 
 Indices and tables
