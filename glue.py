@@ -545,8 +545,8 @@ class Sprite(object):
         # compile one template for each file
         for image in self.images:
 
-            x = '%spx' % (image.y * -1 if image.y else 0)
-            y = '%spx' % (image.x * -1 if image.x else 0)
+            x = '%spx' % (image.x * -1 if image.x else 0)
+            y = '%spx' % (image.y * -1 if image.y else 0)
             height = '%spx' % image.absolute_height
             width = '%spx' % image.absolute_width
 
