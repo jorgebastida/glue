@@ -251,6 +251,12 @@ class Image(object):
         self.name = name
         self.sprite = sprite
         self.filename, self.format = name.rsplit('.', 1)
+        self.pseudo = ''
+        
+        if self.filename.find('.') != -1:
+            self.filename, self.pseudo = self.filename.rsplit('.', 1)
+            self.pseudo = ":%s" % self.pseudo
+        
         image_path = os.path.join(sprite.path, name)
 
         image_file = open(image_path, "rb")
@@ -336,6 +342,7 @@ class Image(object):
         * ``animals/cow_20.png`` CSS class will be ``.sprite-animals-cow``
         """
         name = self.filename
+            
         if not self.sprite.manager.config.ignore_filename_paddings:
             padding_info_name = '-'.join(self._padding_info)
             if padding_info_name:
@@ -343,7 +350,7 @@ class Image(object):
             name = name[:len(padding_info_name) * -1 or None]
         name = re.sub(r'[^\w\-_]', '', name)
 
-        return '%s-%s' % (self.sprite.namespace, name)
+        return '%s-%s%s' % (self.sprite.namespace, name, self.pseudo)
 
     @property
     def _padding_info(self):
