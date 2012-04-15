@@ -255,8 +255,17 @@ class Image(object):
 
         image_file = open(image_path, "rb")
         try:
-            self.image = PImage.open(image_file)
-            self.image.load()
+            source_image = PImage.open(image_file)
+            source_image.load()
+            self.image = PImage.new('RGBA', source_image.size, (0, 0, 0, 0))
+
+            if source_image.mode == 'L':
+                alpha = source_image.split()[0]
+                mask = PImage.eval(alpha, lambda a: 0 if a == source_image.info.get('transparency', 0) else 255)
+                self.image.paste(source_image, (0, 0), mask=mask)
+            else:
+                self.image.paste(source_image, (0, 0))
+
         except IOError, e:
             sys.stderr.write(("ERROR: PIL %s decoder is unavailable. "
                               "Please read the documentation and "
