@@ -348,7 +348,8 @@ class Image(object):
     @property
     def _padding_info(self):
         """Return the padding information from the filename."""
-        padding_info = self.filename.rsplit('_', 1)[-1]
+        padding_info = self.filename.rsplit('_', 1)
+        padding_info = padding_info[-1] if len(padding_info) > 1 else ''
         if re.match(r"^(\d+-?){,3}\d+$", padding_info):
             return padding_info.split('-')
         return []
