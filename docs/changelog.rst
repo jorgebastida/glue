@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.2
+^^^^^^
+* Added support for 8bit bg images.
+* Fixed newline characters support on ``--global-template`` and ``--each-template``.
+
 0.2.1
 ^^^^^^
 * New command line argument ``--global-template``.
