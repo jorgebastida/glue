@@ -547,7 +547,7 @@ class Sprite(object):
         class_names = ',\n'.join(['.%s' % i.class_name for i in self.images])
 
         # add the global style for all the sprites for less bloat
-        template = self.config.global_template
+        template = self.config.global_template.decode('unicode-escape')
         css_file.write(template % {'all_classes': class_names,
                                    'sprite_url': self.image_url})
 
@@ -559,7 +559,7 @@ class Sprite(object):
             height = '%spx' % image.absolute_height
             width = '%spx' % image.absolute_width
 
-            template = self.config.each_template
+            template = self.config.each_template.decode('unicode-escape')
             css_file.write(template % {'class_name': '.%s' % image.class_name,
                                        'sprite_url': self.image_url,
                                        'height': height,
