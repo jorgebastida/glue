@@ -6,6 +6,7 @@ Changelog
 * Added support for 8bit bg images.
 * Added support for digit-only images.
 * Fix newline characters support on ``--global-template`` and ``--each-template``.
+* New algoritms ``vertical-right`` and ``horizontal-bottom``.
 
 0.2.1
 ^^^^^^

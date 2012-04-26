@@ -212,12 +212,34 @@ class VerticalAlgorithm(object):
             y += image.absolute_height
 
 
+class VerticalRightAlgorithm(object):
+
+    def process(self, sprite):
+        max_width = max([i.width for i in sprite.images])
+        y = 0
+        for image in sprite.images:
+            image.x = max_width - image.width
+            image.y = y
+            y += image.absolute_height
+
+
 class HorizontalAlgorithm(object):
 
     def process(self, sprite):
         x = 0
         for image in sprite.images:
             image.y = 0
+            image.x = x
+            x += image.absolute_width
+
+
+class HorizontalBottomAlgorithm(object):
+
+    def process(self, sprite):
+        max_height = max([i.height for i in sprite.images])
+        x = 0
+        for image in sprite.images:
+            image.y = max_height - image.height
             image.x = x
             x += image.absolute_width
 
@@ -235,7 +257,9 @@ class DiagonalAlgorithm(object):
 
 ALGORITHMS = {'square': SquareAlgorithm,
               'vertical': VerticalAlgorithm,
+              'vertical-right': VerticalRightAlgorithm,
               'horizontal': HorizontalAlgorithm,
+              'horizontal-bottom': HorizontalBottomAlgorithm,
               'diagonal': DiagonalAlgorithm}
 
 

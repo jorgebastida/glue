@@ -110,6 +110,15 @@ EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 .verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
+EXPECTED_ORDERING_CSS = """
+.sprite-ordering-green,
+.sprite-ordering-blue,
+.sprite-ordering-red{background-image:url(ordering.png);background-repeat:no-repeat}
+.sprite-ordering-green{background-position:0px -8px;width:25px;height:17px;}
+.sprite-ordering-blue{background-position:-25px 0px;width:19px;height:25px;}
+.sprite-ordering-red{background-position:-44px -23px;width:9px;height:2px;}
+"""
+
 
 class SimpleCssCompiler(object):
 
@@ -248,6 +257,48 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((125, 125)), BLUE)
 
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        css.close()
+
+        # Test horizontal-bottom algorith
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'ordering',
+                                        {'algorithm': 'horizontal-bottom'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'ordering.png')
+        css_path = os.path.join(self.output_path, 'ordering.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 8)), GREEN)
+        self.assertEqual(image.getpixel((25, 0)), BLUE)
+        self.assertEqual(image.getpixel((44, 23)), RED)
+
+        self.assertEqualCSS(css.read(), EXPECTED_ORDERING_CSS)
+        css.close()
+
+        # Test vertical-right algorith
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'ordering',
+                                        {'algorithm': 'vertical-right'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'ordering.png')
+        css_path = os.path.join(self.output_path, 'ordering.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), GREEN)
+        self.assertEqual(image.getpixel((6, 17)), BLUE)
+        self.assertEqual(image.getpixel((16, 42)), RED)
+
+        self.assertEqualCSS(css.read(), EXPECTED_ORDERING_CSS)
         css.close()
 
     def test_project_manager(self):
