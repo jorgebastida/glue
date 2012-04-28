@@ -548,7 +548,8 @@ class Sprite(object):
         css_file = open(css_filename, 'w')
 
         # get all the class names and join them
-        class_names = ',\n'.join(['.%s' % i.class_name for i in self.images])
+        class_names = ',\n'.join(['.%s' % i.class_name for i in self.images \
+                                                  if ':' not in i.class_name])
 
         # add the global style for all the sprites for less bloat
         template = self.config.global_template
