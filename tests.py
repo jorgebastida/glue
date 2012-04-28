@@ -110,6 +110,21 @@ EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 .verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
+EXPECTED_PSEUDOCLASS = """
+.sprite-pseudoclass-red:hover,
+.sprite-pseudoclass-red,
+.sprite-pseudoclass-blue:hover,
+.sprite-pseudoclass-blue,
+.sprite-pseudoclass-green:hover,
+.sprite-pseudoclass-green{background-image:url(pseudoclass.png);background-repeat:no-repeat}
+.sprite-pseudoclass-red:hover{background-position:0px 0px;width:31px;height:29px;}
+.sprite-pseudoclass-red{background-position:-31px 0px;width:31px;height:29px;}
+.sprite-pseudoclass-blue:hover{background-position:0px -29px;width:31px;height:29px;}
+.sprite-pseudoclass-blue{background-position:-31px -29px;width:31px;height:29px;}
+.sprite-pseudoclass-green:hover{background-position:-62px 0px;width:25px;height:25px;}
+.sprite-pseudoclass-green{background-position:-62px -25px;width:25px;height:25px;}
+"""
+
 
 class SimpleCssCompiler(object):
 
@@ -329,6 +344,35 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((89, 73)), TRANSPARENT)
 
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_PADDING)
+        css.close()
+
+    def test_pseudoclass(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'pseudoclass')
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'pseudoclass.png')
+        css_path = os.path.join(self.output_path, 'pseudoclass.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((4, 1)), RED)
+        self.assertEqual(image.getpixel((28, 25)), RED)
+        self.assertEqual(image.getpixel((35, 1)), RED)
+        self.assertEqual(image.getpixel((59, 25)), RED)
+        self.assertEqual(image.getpixel((62, 0)), GREEN)
+        self.assertEqual(image.getpixel((86, 24)), GREEN)
+        self.assertEqual(image.getpixel((4, 30)), BLUE)
+        self.assertEqual(image.getpixel((28, 54)), BLUE)
+        self.assertEqual(image.getpixel((35, 30)), BLUE)
+        self.assertEqual(image.getpixel((59, 54)), BLUE)
+        self.assertEqual(image.getpixel((62, 25)), GREEN)
+        self.assertEqual(image.getpixel((86, 49)), GREEN)
+
+        self.assertEqualCSS(css.read(), EXPECTED_PSEUDOCLASS)
         css.close()
 
     def test_ignore_filename_padding(self):
