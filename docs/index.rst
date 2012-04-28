@@ -28,6 +28,7 @@ Documentation
    installation
    quickstart
    paddings
+   pseudoclasses
    files
    options
    optipng
