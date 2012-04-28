@@ -18,6 +18,9 @@ TRANSPARENT = (255, 255, 255, 0)
 CONFIG_FILENAME = 'sprite.conf'
 ORDERINGS = ['maxside', 'width', 'height', 'area']
 VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+PSEUDO_CLASSES = set(['link', 'visited', 'active', 'hover', 'focus',
+                      'first-letter', 'first-line', 'first-child',
+                      'before', 'after'])
 
 DEFAULT_SETTINGS = {'padding': '0',
                     'algorithm': 'square',
@@ -251,9 +254,13 @@ class Image(object):
         self.name = name
         self.sprite = sprite
         self.filename, self.format = name.rsplit('.', 1)
-        image_path = os.path.join(sprite.path, name)
 
+        pseudo = set(self.filename.split('_')).intersection(PSEUDO_CLASSES)
+        self.pseudo = ':%s' % list(pseudo)[-1] if pseudo else ''
+
+        image_path = os.path.join(sprite.path, name)
         image_file = open(image_path, "rb")
+
         try:
             self.image = PImage.open(image_file)
             self.image.load()
@@ -332,25 +339,31 @@ class Image(object):
         be overridden using the ``--namespace`` optional argument.
 
 
-        * ``animals/cat.png`` CSS class will be ``.sprite-animals-cat``
-        * ``animals/cow_20.png`` CSS class will be ``.sprite-animals-cow``
+        * ``animals/cat.png`` will be ``.sprite-animals-cat``
+        * ``animals/cow_20.png`` will be ``.sprite-animals-cow``
+        * ``animals/cat_hover.png`` will be ``.sprite-animals-cat:hover``
+        * ``animals/cow_20_hover.png`` will be ``.sprite-animals-cow:hover``
         """
         name = self.filename
         if not self.sprite.manager.config.ignore_filename_paddings:
             padding_info_name = '-'.join(self._padding_info)
             if padding_info_name:
                 padding_info_name = '_%s' % padding_info_name
-            name = name[:len(padding_info_name) * -1 or None]
+            name = name.replace(padding_info_name, '')
+
+        if self.pseudo:
+            name = name.replace('_%s' % self.pseudo[1:], '')
+
         name = re.sub(r'[^\w\-_]', '', name)
 
-        return '%s-%s' % (self.sprite.namespace, name)
+        return '%s-%s%s' % (self.sprite.namespace, name, self.pseudo)
 
     @property
     def _padding_info(self):
         """Return the padding information from the filename."""
-        padding_info = self.filename.rsplit('_', 1)[-1]
-        if re.match(r"^(\d+-?){,3}\d+$", padding_info):
-            return padding_info.split('-')
+        for block in self.filename.split('_')[::-1]:
+            if re.match(r"^(\d+-?){,3}\d+$", block):
+                return block.split('-')
         return []
 
     @property
