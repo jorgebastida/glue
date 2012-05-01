@@ -372,7 +372,7 @@ class Image(object):
             separator = ''
             name = name.lower()
             if self.sprite.namespace:
-                name = name.lower().capitalize()
+                name = name.capitalize()
 
         # Add pseudo-class information
         name = '%s%s' % (name, self.pseudo)
