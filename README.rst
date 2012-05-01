@@ -12,6 +12,7 @@ Features
 --------
 * Automatic Sprite (PNG+CSS) creation.
 * Support for multi-sprite projects.
+* Multiple `algorithms <http://glue.readthedocs.org/en/latest/options.html#a-algorithm>`_ available.
 * Automatic `crop of unnecessary transparent borders <http://glue.readthedocs.org/en/latest/quickstart.html#crop-unnecessary-transparent-spaces>`_ around source images.
 * Configurable `paddings per image, sprite or project <http://glue.readthedocs.org/en/latest/paddings.html>`_.
 * Optional .less output format.
@@ -19,6 +20,7 @@ Features
 * Sprite- and Project-level configuration via static config files.
 * Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
 * Customizable `output css templates <http://glue.readthedocs.org/en/latest/options.html#global-template>`_.
+* Customizable `CSS class names <http://glue.readthedocs.org/en/latest/options.html#separator>`_.
 
 Example
 -------
