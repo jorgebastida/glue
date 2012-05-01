@@ -138,6 +138,21 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 
     $ glue source output --ignore-filename-paddings
 
+--separator
+--------------------------
+``glue`` by default uses ``-`` as separator for the CSS class names. If you want to customize this behaviour you can use ``--separator`` to specify your own
+one:
+
+.. code-block:: bash
+
+    $ glue source output --separator=_
+
+If you want to use `camelCase <http://en.wikipedia.org/wiki/CamelCase>`_ instead of a separator, choose ``camelcase`` as separator.
+
+.. code-block:: bash
+
+    $ glue source output --separator=camelcase
+
 --global-template
 ------------------
 If you want to customize the output CSS you can use this option to tune the global section of the output CSS. This template is going to be only added **once per sprite**. Usually you'll not need to change this template.

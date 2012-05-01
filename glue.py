@@ -15,9 +15,13 @@ __version__ = '0.2.1'
 
 TRANSPARENT = (255, 255, 255, 0)
 
+CAMELCASE_SEPARATOR = 'camelcase'
 CONFIG_FILENAME = 'sprite.conf'
 ORDERINGS = ['maxside', 'width', 'height', 'area']
 VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+PSEUDO_CLASSES = set(['link', 'visited', 'active', 'hover', 'focus',
+                      'first-letter', 'first-line', 'first-child',
+                      'before', 'after'])
 
 DEFAULT_SETTINGS = {'padding': '0',
                     'algorithm': 'square',
@@ -29,6 +33,7 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'optipng': False,
                     'ignore_filename_paddings': False,
                     'png8': False,
+                    'separator': '-',
                     'global_template': ('%(all_classes)s{background-image:'
                                         'url(%(sprite_url)s);'
                                         'background-repeat:no-repeat}\n'),
@@ -275,9 +280,13 @@ class Image(object):
         self.name = name
         self.sprite = sprite
         self.filename, self.format = name.rsplit('.', 1)
-        image_path = os.path.join(sprite.path, name)
 
+        pseudo = set(self.filename.split('_')).intersection(PSEUDO_CLASSES)
+        self.pseudo = ':%s' % list(pseudo)[-1] if pseudo else ''
+
+        image_path = os.path.join(sprite.path, name)
         image_file = open(image_path, "rb")
+
         try:
             source_image = PImage.open(image_file)
             source_image.load()
@@ -365,26 +374,50 @@ class Image(object):
         be overridden using the ``--namespace`` optional argument.
 
 
-        * ``animals/cat.png`` CSS class will be ``.sprite-animals-cat``
-        * ``animals/cow_20.png`` CSS class will be ``.sprite-animals-cow``
+        * ``animals/cat.png`` will be ``.sprite-animals-cat``
+        * ``animals/cow_20.png`` will be ``.sprite-animals-cow``
+        * ``animals/cat_hover.png`` will be ``.sprite-animals-cat:hover``
+        * ``animals/cow_20_hover.png`` will be ``.sprite-animals-cow:hover``
+
+        The separator used is also configurable using the ``--separator``
+        option. For a camelCase representation of the CSS class name use
+        ``camelcase`` as separator.
         """
         name = self.filename
+
+        # Remove padding information
         if not self.sprite.manager.config.ignore_filename_paddings:
             padding_info_name = '-'.join(self._padding_info)
             if padding_info_name:
                 padding_info_name = '_%s' % padding_info_name
-            name = name[:len(padding_info_name) * -1 or None]
+            name = name.replace(padding_info_name, '')
+
+        # Remove pseudo-class information
+        if self.pseudo:
+            name = name.replace('_%s' % self.pseudo[1:], '')
+
+        # Clean filename
         name = re.sub(r'[^\w\-_]', '', name)
 
-        return '%s-%s' % (self.sprite.namespace, name)
+        # Customize the name if necessary
+        separator = self.sprite.manager.config.separator
+        if separator == CAMELCASE_SEPARATOR:
+            separator = ''
+            name = name.lower()
+            if self.sprite.namespace:
+                name = name.capitalize()
+
+        # Add pseudo-class information
+        name = '%s%s' % (name, self.pseudo)
+
+        return separator.join([self.sprite.namespace, name])
 
     @property
     def _padding_info(self):
         """Return the padding information from the filename."""
-        padding_info = self.filename.rsplit('_', 1)
-        padding_info = padding_info[-1] if len(padding_info) > 1 else ''
-        if re.match(r"^(\d+-?){,3}\d+$", padding_info):
-            return padding_info.split('-')
+        for block in self.filename.split('_')[::-1]:
+            if re.match(r"^(\d+-?){,3}\d+$", block):
+                return block.split('-')
         return []
 
     @property
@@ -569,7 +602,8 @@ class Sprite(object):
         css_file = open(css_filename, 'w')
 
         # get all the class names and join them
-        class_names = ',\n'.join(['.%s' % i.class_name for i in self.images])
+        class_names = ',\n'.join(['.%s' % i.class_name for i in self.images \
+                                                  if ':' not in i.class_name])
 
         # add the global style for all the sprites for less bloat
         template = self.config.global_template.decode('unicode-escape')
@@ -596,9 +630,18 @@ class Sprite(object):
     @property
     def namespace(self):
         """Return the namespace for this sprite."""
-        if not self.config.namespace:
-            return self.name
-        return '%s-%s' % (self.config.namespace, self.name)
+
+        namespace = [self.name]
+        separator = self.config.separator
+
+        if self.config.namespace:
+            namespace.insert(0, self.config.namespace)
+
+        if separator == CAMELCASE_SEPARATOR:
+            namespace = [n.lower().capitalize() if i > 0 else n.lower() \
+                                            for i, n in  enumerate(namespace)]
+            separator = ''
+        return separator.join(namespace)
 
     @property
     def filename(self):
@@ -903,6 +946,11 @@ def main():
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Output CSS Template Options")
+    group.add_option("--separator", dest="separator",
+                    help=("Customize the separator used to join CSS class "
+                          "names. If you want to use camelCase use "
+                          "'camelcase' as separator."),
+                    metavar='SEPARATOR')
     group.add_option("--global-template", dest="global_template",
                     help=("Customize the global section of the output CSS."
                           "This section will be added only once for each "
