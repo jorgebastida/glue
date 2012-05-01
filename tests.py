@@ -111,11 +111,8 @@ EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 """
 
 EXPECTED_PSEUDOCLASS = """
-.sprite-pseudoclass-red:hover,
 .sprite-pseudoclass-red,
-.sprite-pseudoclass-blue:hover,
 .sprite-pseudoclass-blue,
-.sprite-pseudoclass-green:hover,
 .sprite-pseudoclass-green{background-image:url(pseudoclass.png);background-repeat:no-repeat}
 .sprite-pseudoclass-red:hover{background-position:0px 0px;width:31px;height:29px;}
 .sprite-pseudoclass-red{background-position:-31px 0px;width:31px;height:29px;}
@@ -123,6 +120,33 @@ EXPECTED_PSEUDOCLASS = """
 .sprite-pseudoclass-blue{background-position:-31px -29px;width:31px;height:29px;}
 .sprite-pseudoclass-green:hover{background-position:-62px 0px;width:25px;height:25px;}
 .sprite-pseudoclass-green{background-position:-62px -25px;width:25px;height:25px;}
+"""
+
+EXPECTED_VERYSIMPLE_SEP_ = """
+.sprite_verysimple_red,
+.sprite_verysimple_green,
+.sprite_verysimple_blue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.sprite_verysimple_red{background-position:0px 0px;width:25px;height:25px;}
+.sprite_verysimple_green{background-position:-25px 0px;width:25px;height:25px;}
+.sprite_verysimple_blue{background-position:0px -25px;width:25px;height:25px;}
+"""
+
+EXPECTED_VERYSIMPLE_SEP_NAMESPACE = """
+.custom_verysimple_red,
+.custom_verysimple_green,
+.custom_verysimple_blue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.custom_verysimple_red{background-position:0px 0px;width:25px;height:25px;}
+.custom_verysimple_green{background-position:-25px 0px;width:25px;height:25px;}
+.custom_verysimple_blue{background-position:0px -25px;width:25px;height:25px;}
+"""
+
+EXPECTED_VERYSIMPLE_CAMELCASE = """
+.spriteVerysimpleRed,
+.spriteVerysimpleGreen,
+.spriteVerysimpleBlue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.spriteVerysimpleRed{background-position:0px 0px;width:25px;height:25px;}
+.spriteVerysimpleGreen{background-position:-25px 0px;width:25px;height:25px;}
+.spriteVerysimpleBlue{background-position:0px -25px;width:25px;height:25px;}
 """
 
 
@@ -500,6 +524,47 @@ class TestGlue(unittest.TestCase):
 
         css = open(css_path)
         self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_EMPTYNAMESPACE)
+        css.close()
+
+    def test_separator(self):
+        # Custom separator
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'separator': '_'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SEP_)
+        css.close()
+
+        # separator and namespace
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'separator': '_',
+                                         'namespace': 'custom'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SEP_NAMESPACE)
+        css.close()
+
+        # camelcase separator
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'separator': 'camelcase'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_CAMELCASE)
         css.close()
 
     def test_cachebuster(self):
