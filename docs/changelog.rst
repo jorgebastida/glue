@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.3
+^^^^^^
+* Fix ``--version``
+* Fix the camelcase ``--separator`` to not lowercase the filename before the capitalization.
+
 0.2.2
 ^^^^^^
 * New feature: Per-file pseudo-class customization.

@@ -66,6 +66,7 @@ optipng                  False
 ignore_filename_paddings False
 size                     True
 png8                     False
+separator                '-'
 global_template          '%(all_classes)s{background-image:url(%(sprite_url)s);background-repeat:no-repeat}\\n'
 each_template            '%(class_name)s{background-position:%(x)s %(y)s;width:%(width)s;height:%(height)s;}\\n'
 ======================== ======================================================================================

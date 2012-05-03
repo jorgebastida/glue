@@ -11,7 +11,7 @@ from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
-__version__ = '0.2.1'
+__version__ = '0.2.3'
 
 TRANSPARENT = (255, 255, 255, 0)
 
@@ -403,7 +403,6 @@ class Image(object):
         separator = self.sprite.manager.config.separator
         if separator == CAMELCASE_SEPARATOR:
             separator = ''
-            name = name.lower()
             if self.sprite.namespace:
                 name = name.capitalize()
 
