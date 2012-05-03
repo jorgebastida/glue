@@ -44,27 +44,32 @@ DEFAULT_SETTINGS = {'padding': '0',
 
 class MultipleImagesWithSameNameError(Exception):
     """Raised if two images pretend to generate the same CSS class name."""
-    pass
+    error_code = 2
 
 
 class SourceImagesNotFoundError(Exception):
     """Raised if a folder doesn't contain any valid image."""
-    pass
+    error_code = 3
 
 
 class NoSpritesFoldersFoundError(Exception):
     """Raised if no sprites folders could be found."""
-    pass
+    error_code = 4
 
 
 class InvalidImageAlgorithmError(Exception):
     """Raised if the provided algorithm name is invalid."""
-    pass
+    error_code = 5
 
 
 class InvalidImageOrderingError(Exception):
     """Raised if the provided ordering is invalid."""
-    pass
+    error_code = 6
+
+
+class PILUnavailableError(Exception):
+    """Raised if some PIL decoder isn't available."""
+    error_code = 7
 
 
 class SquareAlgorithmNode(object):
@@ -300,11 +305,7 @@ class Image(object):
                 self.image.paste(source_image, (0, 0))
 
         except IOError, e:
-            sys.stderr.write(("ERROR: PIL %s decoder is unavailable. "
-                              "Please read the documentation and "
-                              "install it before spriting this kind of "
-                              "images.\n" % e.args[0].split()[1]))
-            sys.exit(1)
+            raise PILUnavailableError(e.args[0].split()[1])
 
         image_file.close()
 
@@ -1035,15 +1036,28 @@ def main():
         sys.stderr.write("Error: Some images will have the same class name:\n")
         for image in e.args[0]:
             sys.stderr.write('\t %s => .%s\n' % (image.name, image.class_name))
+        sys.exit(e.error_code)
     except SourceImagesNotFoundError:
         sys.stderr.write("Error: No images found.\n")
+        sys.exit(e.error_code)
     except NoSpritesFoldersFoundError:
         sys.stderr.write("Error: No sprites folders found.\n")
+        sys.exit(e.error_code)
     except InvalidImageOrderingError, e:
         sys.stderr.write("Error: Invalid image ordering %s.\n" % e.args[0])
+        sys.exit(e.error_code)
     except InvalidImageAlgorithmError, e:
         sys.stderr.write("Error: Invalid image algorithm %s.\n" % e.args[0])
-
+        sys.exit(e.error_code)
+    except PILUnavailableError, e:
+        sys.stderr.write(("Error: PIL %s decoder is unavailable"
+                          "Please read the documentation and "
+                          "install it before spriting this kind of "
+                          "images.\n") % e.args[0])
+        sys.exit(e.error_code)
+    except Exception:
+        sys.stderr.write("Error: Unknown Error.\n")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
