@@ -1037,10 +1037,10 @@ def main():
         for image in e.args[0]:
             sys.stderr.write('\t %s => .%s\n' % (image.name, image.class_name))
         sys.exit(e.error_code)
-    except SourceImagesNotFoundError:
+    except SourceImagesNotFoundError, e:
         sys.stderr.write("Error: No images found.\n")
         sys.exit(e.error_code)
-    except NoSpritesFoldersFoundError:
+    except NoSpritesFoldersFoundError, e:
         sys.stderr.write("Error: No sprites folders found.\n")
         sys.exit(e.error_code)
     except InvalidImageOrderingError, e:
