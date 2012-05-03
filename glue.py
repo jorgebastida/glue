@@ -404,7 +404,7 @@ class Image(object):
         if separator == CAMELCASE_SEPARATOR:
             separator = ''
             if self.sprite.namespace:
-                name = name.capitalize()
+                name = name[:1].capitalize() + name[1:]
 
         # Add pseudo-class information
         name = '%s%s' % (name, self.pseudo)
