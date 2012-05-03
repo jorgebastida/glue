@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.2.4
+^^^^^^
+* Better error handling: Glue will now return non zero return codes if something goes wrong.
+
 0.2.3
 ^^^^^^
 * Fix ``--version``
