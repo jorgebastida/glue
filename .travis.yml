@@ -2,6 +2,7 @@ language: python
 python:
   - "2.6"
   - "2.7"
-install: pip install PIL --use-mirrors
-before_script: apt-get install zlib1g-dev
+install:
+  - sudo apt-get install zlib1g-dev
+  - pip install PIL --use-mirrors
 script: nosetests
