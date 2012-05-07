@@ -4,5 +4,5 @@ python:
 install:
   - sudo apt-get install zlib1g-dev
   - sudo ln -s /usr/lib/i386-linux-gnu/libz.so /usr/lib
-  - pip install PIL
+  - pip install PIL==1.1.6
 script: nosetests
