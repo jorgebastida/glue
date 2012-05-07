@@ -194,7 +194,7 @@ class TestGlue(unittest.TestCase):
         shutil.rmtree(self.output_path, True)
 
     def tearDown(self):
-        shutil.rmtree(self.output_path, True)
+        shutil.rmtree(self.output_path, False)
 
     def generate_manager(self, manager_cls, path, config=None):
         config = config or {}
