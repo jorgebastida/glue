@@ -6,4 +6,4 @@ install:
   - sudo ln -s /usr/lib/i386-linux-gnu/libz.so /usr/lib
   - pip install PIL
 script:
-  - nosetests
+  - python tests.py
