@@ -193,6 +193,9 @@ class TestGlue(unittest.TestCase):
         self.output_path = os.path.join(self.base_path, 'tests_tmp/')
         shutil.rmtree(self.output_path, True)
 
+    def tearDown(self):
+        shutil.rmtree(self.output_path, True)
+
     def generate_manager(self, manager_cls, path, config=None):
         config = config or {}
         config = glue.ConfigManager(config, defaults=TEST_DEFAULT_SETTINGS)
