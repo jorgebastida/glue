@@ -1,6 +1,7 @@
 import os
 import re
 import hashlib
+import shutil
 import unittest
 
 from PIL import Image
@@ -190,17 +191,7 @@ class TestGlue(unittest.TestCase):
     def setUp(self):
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.output_path = os.path.join(self.base_path, 'tests_tmp/')
-        self.clean_output_path()
-
-    def clean_output_path(self):
-        for root, dirs, files in os.walk(self.output_path, topdown=False):
-            for name in files:
-                os.remove(os.path.join(root, name))
-            for name in dirs:
-                os.rmdir(os.path.join(root, name))
-
-    def tearDown(self):
-        self.clean_output_path()
+        shutil.rmtree(self.output_path, True)
 
     def generate_manager(self, manager_cls, path, config=None):
         config = config or {}
