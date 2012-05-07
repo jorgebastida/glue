@@ -4,6 +4,7 @@ import re
 import os
 import sys
 import copy
+import time
 import hashlib
 import subprocess
 import ConfigParser
@@ -828,6 +829,30 @@ class SimpleSpriteManager(BaseManager):
         self.save()
 
 
+class WatchManager(object):
+
+    def __init__(self, path, action):
+        self.action = action
+        self.path = path
+        self.last_hash = None
+
+    def run(self):
+        while True:
+            current_hash = self.generate_hash()
+            if self.last_hash != current_hash:
+                self.action()
+            self.last_hash = current_hash
+            time.sleep(1)
+
+    def generate_hash(self):
+        last_modified = []
+        for root, dirs, files in os.walk(self.path):
+            for f in files:
+                last_modified.append(str(os.path.getmtime(os.path.join(root, f))))
+        last_modified = ''.join(last_modified)
+        return hashlib.sha1(last_modified).hexdigest()
+
+
 def get_file_config(path, section='sprite'):
     """Return, as a dictionary, all the available configuration inside the
     sprite configuration file on this path.
@@ -918,6 +943,10 @@ def main():
                       help="suppress all normal output")
     parser.add_option("-p", "--padding", dest="padding", default=None,
                       help="force this padding in all images")
+    parser.add_option("-w", "--watch", dest="watch", default=False,
+                      action='store_true',
+                      help=("Watch the source folder for changes and rebuild "
+                            "when new files appear, disappear or change."))
     parser.add_option("-v", "--version", action="store_true", dest="version",
                       help="show program's version number and exit")
 
@@ -1029,6 +1058,10 @@ def main():
 
     config = ConfigManager(config, priority=options, defaults=DEFAULT_SETTINGS)
     manager = manager_cls(path=source, output=output, config=config)
+
+    if manager.config.watch:
+        WatchManager(path=source, action=manager.process).run()
+        sys.exit(0)
 
     try:
         manager.process()
