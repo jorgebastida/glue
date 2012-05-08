@@ -7,6 +7,7 @@ import copy
 import hashlib
 import subprocess
 import ConfigParser
+import optimizedSquare
 from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
@@ -70,6 +71,10 @@ class InvalidImageOrderingError(Exception):
 class PILUnavailableError(Exception):
     """Raised if some PIL decoder isn't available."""
     error_code = 7
+
+class LineSizeExceeded(Exception):
+    """Raised if the size of a line is exceeded."""
+    error_code = 8
 
 
 class SquareAlgorithmNode(object):
@@ -270,7 +275,8 @@ ALGORITHMS = {'square': SquareAlgorithm,
               'vertical-right': VerticalRightAlgorithm,
               'horizontal': HorizontalAlgorithm,
               'horizontal-bottom': HorizontalBottomAlgorithm,
-              'diagonal': DiagonalAlgorithm}
+              'diagonal': DiagonalAlgorithm,
+              'optimized-square': optimizedSquare.OptimizedSquareAlgorithm}
 
 
 class Image(object):
@@ -1055,8 +1061,8 @@ def main():
                           "install it before spriting this kind of "
                           "images.\n") % e.args[0])
         sys.exit(e.error_code)
-    except Exception:
-        sys.stderr.write("Error: Unknown Error.\n")
+    except Exception, e:
+        sys.stderr.write(("Error: Unknown Error : %s.\n") % e.args[0])
         sys.exit(1)
 
 if __name__ == "__main__":
