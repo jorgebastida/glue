@@ -27,7 +27,6 @@ setup(
     long_description=('Glue is a simple command line tool to generate CSS '
                       'sprites.'),
     py_modules=['glue'],
-    include_package_data=True,
     platforms='any',
     install_requires=[
         'PIL>=1.1.6'
