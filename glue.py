@@ -506,8 +506,8 @@ class Sprite(object):
         """
         extensions = '|'.join(VALID_IMAGE_EXTENSIONS)
         extension_re = re.compile('.+\.(%s)$' % extensions, re.IGNORECASE)
-
-        images = [Image(n, sprite=self) for n in os.listdir(self.path) if \
+        files = sorted(os.listdir(self.path))
+        images = [Image(n, sprite=self) for n in files if \
                                     not n.startswith('.') and \
                                     extension_re.match(n)]
 
