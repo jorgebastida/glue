@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.2.5
+^^^^^^
+* Add MANIFEST.in and tune the setup.py preparing the Debian/Ubuntu package.
+* Fix _locate_images to be deterministic.
+* Add support to Travis CI.
+
 0.2.4
 ^^^^^^
 * Better error handling: Glue will now return non zero return codes if something goes wrong.
