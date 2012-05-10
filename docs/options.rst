@@ -89,6 +89,9 @@ Using the ``--html`` option, ``Glue`` will also generate a test html per sprite 
 
     $ glue source --html
 
+.. note::
+    New in version 0.2.5
+
 -a --algorithm
 --------------
 The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `square`, but in some situations using another ordering like `vertical` or `horizontal` could be useful depending on the kind of images you are spriting.
@@ -118,6 +121,17 @@ You can reverse how any of the available algorithms works prepending a `-`.
 .. code-block:: bash
 
     $ glue source output --ordering=[-maxside|-width|-height|-area]
+
+--margin
+------------
+If you want to spread the images around the sprite but you don't want to count this space as image width/height (as happens using `--padding``), you can use the ``--margin`` option followed by the margin you want to add:
+
+.. code-block:: bash
+
+    $ glue source output --margin=20
+
+.. note::
+    New in version 0.2.5
 
 --namespace
 -----------

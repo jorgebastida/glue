@@ -4,6 +4,7 @@ Changelog
 0.2.5
 ^^^^^^
 * New option ``--html`` that generates a html using all the available css classes.
+* New option ``--margin`` that adds margins around the sprited images. This margin doesn't count as image size.
 * Add MANIFEST.in and tune the setup.py preparing the Debian/Ubuntu package.
 * Fix _locate_images to be deterministic.
 * Add support to Travis CI.
