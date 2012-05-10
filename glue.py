@@ -629,10 +629,10 @@ class Sprite(object):
         # compile one template for each file
         for image in self.images:
 
-            x = '%spx' % ((image.x * -1 if image.x else 0) + self.manager.config.margin)
-            y = '%spx' % ((image.y * -1 if image.y else 0) + self.manager.config.margin)
-            height = '%spx' % image.absolute_height
-            width = '%spx' % image.absolute_width
+            x = '%spx' % ((image.x * -1 if image.x else 0) - self.manager.config.margin)
+            y = '%spx' % ((image.y * -1 if image.y else 0) - self.manager.config.margin)
+            height = '%spx' % (image.absolute_height - (self.manager.config.margin * 2))
+            width = '%spx' % (image.absolute_width - (self.manager.config.margin * 2))
 
             template = self.config.each_template.decode('unicode-escape')
             css_file.write(template % {'class_name': '.%s' % image.class_name,
