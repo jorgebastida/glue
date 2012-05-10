@@ -652,6 +652,9 @@ class Sprite(object):
         filename = '%s.html' % self.filename
         html_filename = os.path.join(output_path, filename)
 
+        # CSS output format
+        format = 'less' if self.config.less else 'css'
+
         # Fix css urls on Windows
         html_filename = '/'.join(html_filename.split('\\'))
 
@@ -666,7 +669,7 @@ class Sprite(object):
 
         file_template = TEST_HTML_TEMPLATE.decode('unicode-escape')
         html_file.write(file_template % {'sprites': ''.join(sprites_html),
-                                         'css_url': '%s.css' % self.filename,
+                                         'css_url': '%s.%s' % (self.filename, format),
                                          'version': __version__})
         html_file.close()
 
