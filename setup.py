@@ -1,12 +1,3 @@
-"""
-Glue
------
-
-Glue is a simple command line tool to generate CSS sprites.
-
-"""
-
-
 try:
     from setuptools import setup
     kw = {'entry_points':
@@ -25,7 +16,11 @@ setup(
     author_email='me@jorgebastida.com',
     description='Glue is a simple command line tool to generate CSS sprites.',
     long_description=('Glue is a simple command line tool to generate CSS '
-                      'sprites.'),
+                      'sprites using any kind of source images like '
+                      'PNG, JPEG or GIF. Glue will generate a unique PNG '
+                      'file containing every source image and a CSS file '
+                      'including the necessary CSS classes to use the '
+                      'sprite.'),
     py_modules=['glue'],
     platforms='any',
     install_requires=[
