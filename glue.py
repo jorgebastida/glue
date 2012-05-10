@@ -331,8 +331,9 @@ class Image(object):
             self._crop_image()
 
         self.width, self.height = self.image.size
-        self.absolute_width = self.width + self.padding[1] + self.padding[3] + (self.sprite.manager.config.margin * 2)
-        self.absolute_height = self.height + self.padding[0] + self.padding[2] + (self.sprite.manager.config.margin * 2)
+        margin = int(self.sprite.manager.config.margin)
+        self.absolute_width = self.width + self.padding[1] + self.padding[3] + (margin * 2)
+        self.absolute_height = self.height + self.padding[0] + self.padding[2] + (margin * 2)
 
     def _crop_image(self):
         """Crop the image searching for the smallest possible bounding box
@@ -564,9 +565,10 @@ class Sprite(object):
         canvas = PImage.new('RGBA', (width, height), (0, 0, 0, 0))
 
         # Paste the images inside the canvas
+        margin = int(self.manager.config.margin)
         for image in self.images:
-            canvas.paste(image.image, (image.x + image.padding[3] + self.manager.config.margin,
-                                       image.y + image.padding[0] + self.manager.config.margin))
+            canvas.paste(image.image, (image.x + image.padding[3] + margin,
+                                       image.y + image.padding[0] + margin))
 
         if self.config.cachebuster or self.config.cachebuster_filename:
             self.cachebuster_hash = hashlib.sha1(canvas.tostring()
@@ -629,12 +631,13 @@ class Sprite(object):
                                    'sprite_url': self.image_url})
 
         # compile one template for each file
+        margin = int(self.manager.config.margin)
         for image in self.images:
 
-            x = '%spx' % ((image.x * -1 if image.x else 0) - self.manager.config.margin)
-            y = '%spx' % ((image.y * -1 if image.y else 0) - self.manager.config.margin)
-            height = '%spx' % (image.absolute_height - (self.manager.config.margin * 2))
-            width = '%spx' % (image.absolute_width - (self.manager.config.margin * 2))
+            x = '%spx' % ((image.x * -1 if image.x else 0) - margin)
+            y = '%spx' % ((image.y * -1 if image.y else 0) - margin)
+            height = '%spx' % (image.absolute_height - (margin * 2))
+            width = '%spx' % (image.absolute_width - (margin * 2))
 
             template = self.config.each_template.decode('unicode-escape')
             css_file.write(template % {'class_name': '.%s' % image.class_name,
