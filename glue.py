@@ -31,6 +31,7 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'url': '',
                     'less': False,
                     'optipng': False,
+                    'html': False,
                     'ignore_filename_paddings': False,
                     'png8': False,
                     'separator': '-',
@@ -40,6 +41,20 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'each_template': ('%(class_name)s{'
                                       'background-position:%(x)s %(y)s;'
                                       'width:%(width)s;height:%(height)s;}\n')}
+
+TEST_HTML_TEMPLATE = """
+<html><head><title>Glue Sprite Test Html</title>
+<link rel="stylesheet" type="text/css" href="%(css_url)s"></head><body>
+<style type="text/css">tr div:hover{ border:1px solid #ccc;}
+tr div{ border:1px solid white;}</style><h1>CSS Classes</h1><table>
+<tr><th>CSS Class</th><th>Result</th></tr>%(sprites)s</table>
+<p><em>Generated using <a href="http://gluecss.com"/>Glue v%(version)s</a>
+</em></p></body></html>
+"""
+
+TEST_HTML_SPRITE_TEMPLATE = """
+<tr><td>.%(class_name)s </td><td><div class="%(class_name)s"></div></td></tr>
+"""
 
 
 class MultipleImagesWithSameNameError(Exception):
@@ -627,6 +642,31 @@ class Sprite(object):
                                        'x': x})
         css_file.close()
 
+    def save_html(self):
+        self.manager.log("Creating '%s' html file..." % self.name)
+
+        output_path = self.manager.output_path('css')
+        filename = '%s.html' % self.filename
+        html_filename = os.path.join(output_path, filename)
+
+        # Fix css urls on Windows
+        html_filename = '/'.join(html_filename.split('\\'))
+
+        html_file = open(html_filename, 'w')
+
+        # get all the class names and join them
+        class_names = [i.class_name for i in self.images \
+                                                if ':' not in i.class_name]
+
+        sprite_template = TEST_HTML_SPRITE_TEMPLATE.decode('unicode-escape')
+        sprites_html = [sprite_template % {'class_name':c} for c in class_names]
+
+        file_template = TEST_HTML_TEMPLATE.decode('unicode-escape')
+        html_file.write(file_template % {'sprites': ''.join(sprites_html),
+                                         'css_url': '%s.css' % self.filename,
+                                         'version': __version__})
+        html_file.close()
+
     @property
     def namespace(self):
         """Return the namespace for this sprite."""
@@ -745,6 +785,8 @@ class BaseManager(object):
         for sprite in self.sprites:
             sprite.save_image()
             sprite.save_css()
+            if sprite.manager.config.html:
+                sprite.save_html()
 
     def output_path(self, format):
         """Return the path where all the generated files will be saved.
@@ -926,6 +968,9 @@ def main():
                     help="output directory for css files", metavar='DIR')
     group.add_option("--img", dest="img_dir", default='', metavar='DIR',
                     help="output directory for img files")
+    group.add_option("--html", dest="html", default=None, action="store_true",
+                    help=("generate test html file using the sprite "
+                          "image and CSS."))
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Advanced Options")
