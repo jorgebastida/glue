@@ -1,6 +1,23 @@
 Changelog
 =========
 
+0.2.5
+^^^^^^
+* New option ``--html`` that generates a html using all the available css classes.
+* New option ``--margin`` that adds margins around the sprited images. This margin doesn't count as image size.
+* Add MANIFEST.in and tune the setup.py preparing the Debian/Ubuntu package.
+* Fix _locate_images to be deterministic.
+* Add support to Travis CI.
+
+0.2.4
+^^^^^^
+* Better error handling: Glue will now return non zero return codes if something goes wrong.
+
+0.2.3
+^^^^^^
+* Fix ``--version``
+* Fix the camelcase ``--separator`` to not lowercase the filename before the capitalization.
+
 0.2.2
 ^^^^^^
 * New feature: Per-file pseudo-class customization.

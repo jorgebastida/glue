@@ -12,7 +12,7 @@ from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
-__version__ = '0.2.1'
+__version__ = '0.2.5'
 
 TRANSPARENT = (255, 255, 255, 0)
 
@@ -25,6 +25,7 @@ PSEUDO_CLASSES = set(['link', 'visited', 'active', 'hover', 'focus',
                       'before', 'after'])
 
 DEFAULT_SETTINGS = {'padding': '0',
+                    'margin': 0,
                     'algorithm': 'square',
                     'ordering': 'maxside',
                     'namespace': 'sprite',
@@ -32,6 +33,7 @@ DEFAULT_SETTINGS = {'padding': '0',
                     'url': '',
                     'less': False,
                     'optipng': False,
+                    'html': False,
                     'ignore_filename_paddings': False,
                     'png8': False,
                     'separator': '-',
@@ -42,30 +44,49 @@ DEFAULT_SETTINGS = {'padding': '0',
                                       'background-position:%(x)s %(y)s;'
                                       'width:%(width)s;height:%(height)s;}\n')}
 
+TEST_HTML_TEMPLATE = """
+<html><head><title>Glue Sprite Test Html</title>
+<link rel="stylesheet" type="text/css" href="%(css_url)s"></head><body>
+<style type="text/css">tr div:hover{ border:1px solid #ccc;}
+tr div{ border:1px solid white;}</style><h1>CSS Classes</h1><table>
+<tr><th>CSS Class</th><th>Result</th></tr>%(sprites)s</table>
+<p><em>Generated using <a href="http://gluecss.com"/>Glue v%(version)s</a>
+</em></p></body></html>
+"""
+
+TEST_HTML_SPRITE_TEMPLATE = """
+<tr><td>.%(class_name)s </td><td><div class="%(class_name)s"></div></td></tr>
+"""
+
 
 class MultipleImagesWithSameNameError(Exception):
     """Raised if two images pretend to generate the same CSS class name."""
-    pass
+    error_code = 2
 
 
 class SourceImagesNotFoundError(Exception):
     """Raised if a folder doesn't contain any valid image."""
-    pass
+    error_code = 3
 
 
 class NoSpritesFoldersFoundError(Exception):
     """Raised if no sprites folders could be found."""
-    pass
+    error_code = 4
 
 
 class InvalidImageAlgorithmError(Exception):
     """Raised if the provided algorithm name is invalid."""
-    pass
+    error_code = 5
 
 
 class InvalidImageOrderingError(Exception):
     """Raised if the provided ordering is invalid."""
-    pass
+    error_code = 6
+
+
+class PILUnavailableError(Exception):
+    """Raised if some PIL decoder isn't available."""
+    error_code = 7
 
 
 class SquareAlgorithmNode(object):
@@ -301,11 +322,7 @@ class Image(object):
                 self.image.paste(source_image, (0, 0))
 
         except IOError, e:
-            sys.stderr.write(("ERROR: PIL %s decoder is unavailable. "
-                              "Please read the documentation and "
-                              "install it before spriting this kind of "
-                              "images.\n" % e.args[0].split()[1]))
-            sys.exit(1)
+            raise PILUnavailableError(e.args[0].split()[1])
 
         image_file.close()
 
@@ -313,8 +330,8 @@ class Image(object):
             self._crop_image()
 
         self.width, self.height = self.image.size
-        self.absolute_width = self.width + self.padding[1] + self.padding[3]
-        self.absolute_height = self.height + self.padding[0] + self.padding[2]
+        self.absolute_width = self.width + self.padding[1] + self.padding[3] + (self.sprite.manager.config.margin * 2)
+        self.absolute_height = self.height + self.padding[0] + self.padding[2] + (self.sprite.manager.config.margin * 2)
 
     def _crop_image(self):
         """Crop the image searching for the smallest possible bounding box
@@ -404,9 +421,8 @@ class Image(object):
         separator = self.sprite.manager.config.separator
         if separator == CAMELCASE_SEPARATOR:
             separator = ''
-            name = name.lower()
             if self.sprite.namespace:
-                name = name.capitalize()
+                name = name[:1].capitalize() + name[1:]
 
         # Add pseudo-class information
         name = '%s%s' % (name, self.pseudo)
@@ -507,8 +523,8 @@ class Sprite(object):
         """
         extensions = '|'.join(VALID_IMAGE_EXTENSIONS)
         extension_re = re.compile('.+\.(%s)$' % extensions, re.IGNORECASE)
-
-        images = [Image(n, sprite=self) for n in os.listdir(self.path) if \
+        files = sorted(os.listdir(self.path))
+        images = [Image(n, sprite=self) for n in files if \
                                     not n.startswith('.') and \
                                     extension_re.match(n)]
 
@@ -548,8 +564,8 @@ class Sprite(object):
 
         # Paste the images inside the canvas
         for image in self.images:
-            canvas.paste(image.image, (image.x + image.padding[3],
-                                       image.y + image.padding[0]))
+            canvas.paste(image.image, (image.x + image.padding[3] + self.manager.config.margin,
+                                       image.y + image.padding[0] + self.manager.config.margin))
 
         if self.config.cachebuster or self.config.cachebuster_filename:
             self.cachebuster_hash = hashlib.sha1(canvas.tostring()
@@ -614,10 +630,10 @@ class Sprite(object):
         # compile one template for each file
         for image in self.images:
 
-            x = '%spx' % (image.x * -1 if image.x else 0)
-            y = '%spx' % (image.y * -1 if image.y else 0)
-            height = '%spx' % image.absolute_height
-            width = '%spx' % image.absolute_width
+            x = '%spx' % ((image.x * -1 if image.x else 0) - self.manager.config.margin)
+            y = '%spx' % ((image.y * -1 if image.y else 0) - self.manager.config.margin)
+            height = '%spx' % (image.absolute_height - (self.manager.config.margin * 2))
+            width = '%spx' % (image.absolute_width - (self.manager.config.margin * 2))
 
             template = self.config.each_template.decode('unicode-escape')
             css_file.write(template % {'class_name': '.%s' % image.class_name,
@@ -627,6 +643,31 @@ class Sprite(object):
                                        'y': y,
                                        'x': x})
         css_file.close()
+
+    def save_html(self):
+        self.manager.log("Creating '%s' html file..." % self.name)
+
+        output_path = self.manager.output_path('css')
+        filename = '%s.html' % self.filename
+        html_filename = os.path.join(output_path, filename)
+
+        # Fix css urls on Windows
+        html_filename = '/'.join(html_filename.split('\\'))
+
+        html_file = open(html_filename, 'w')
+
+        # get all the class names and join them
+        class_names = [i.class_name for i in self.images \
+                                                if ':' not in i.class_name]
+
+        sprite_template = TEST_HTML_SPRITE_TEMPLATE.decode('unicode-escape')
+        sprites_html = [sprite_template % {'class_name':c} for c in class_names]
+
+        file_template = TEST_HTML_TEMPLATE.decode('unicode-escape')
+        html_file.write(file_template % {'sprites': ''.join(sprites_html),
+                                         'css_url': '%s.css' % self.filename,
+                                         'version': __version__})
+        html_file.close()
 
     @property
     def namespace(self):
@@ -746,6 +787,8 @@ class BaseManager(object):
         for sprite in self.sprites:
             sprite.save_image()
             sprite.save_css()
+            if sprite.manager.config.html:
+                sprite.save_html()
 
     def output_path(self, format):
         """Return the path where all the generated files will be saved.
@@ -955,6 +998,9 @@ def main():
                     help="output directory for css files", metavar='DIR')
     group.add_option("--img", dest="img_dir", default='', metavar='DIR',
                     help="output directory for img files")
+    group.add_option("--html", dest="html", default=None, action="store_true",
+                    help=("generate test html file using the sprite "
+                          "image and CSS."))
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Advanced Options")
@@ -964,6 +1010,8 @@ def main():
     group.add_option("--ordering", dest="ordering", default=None,
                     help=("ordering criteria: maxside, width, height or "
                           "area (default: maxside)"), metavar='NAME')
+    group.add_option("--margin", dest="margin", default=None,
+                      help="force this margin in all images", type=int)
     group.add_option("--namespace", dest="namespace",  default=None,
                       help="namespace for all css classes (default: sprite)")
     group.add_option("--png8", action="store_true", dest="png8",
@@ -1069,15 +1117,28 @@ def main():
         sys.stderr.write("Error: Some images will have the same class name:\n")
         for image in e.args[0]:
             sys.stderr.write('\t %s => .%s\n' % (image.name, image.class_name))
-    except SourceImagesNotFoundError:
+        sys.exit(e.error_code)
+    except SourceImagesNotFoundError, e:
         sys.stderr.write("Error: No images found.\n")
-    except NoSpritesFoldersFoundError:
+        sys.exit(e.error_code)
+    except NoSpritesFoldersFoundError, e:
         sys.stderr.write("Error: No sprites folders found.\n")
+        sys.exit(e.error_code)
     except InvalidImageOrderingError, e:
         sys.stderr.write("Error: Invalid image ordering %s.\n" % e.args[0])
+        sys.exit(e.error_code)
     except InvalidImageAlgorithmError, e:
         sys.stderr.write("Error: Invalid image algorithm %s.\n" % e.args[0])
-
+        sys.exit(e.error_code)
+    except PILUnavailableError, e:
+        sys.stderr.write(("Error: PIL %s decoder is unavailable"
+                          "Please read the documentation and "
+                          "install it before spriting this kind of "
+                          "images.\n") % e.args[0])
+        sys.exit(e.error_code)
+    except Exception:
+        sys.stderr.write("Error: Unknown Error.\n")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

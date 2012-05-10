@@ -57,15 +57,18 @@ This is all the available configuration you can add to your ``sprite.conf`` file
 name                     default value
 ======================== ======================================================================================
 padding                  '0'
+margin                   0
 algorithm                'maxside'
 namespace                'sprite'
 crop                     False
 url                      ''
 less                     False
 optipng                  False
+html                     False
 ignore_filename_paddings False
 size                     True
 png8                     False
+separator                '-'
 global_template          '%(all_classes)s{background-image:url(%(sprite_url)s);background-repeat:no-repeat}\\n'
 each_template            '%(class_name)s{background-position:%(x)s %(y)s;width:%(width)s;height:%(height)s;}\\n'
 ======================== ======================================================================================

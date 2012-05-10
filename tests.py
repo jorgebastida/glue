@@ -421,6 +421,38 @@ class TestGlue(unittest.TestCase):
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_PADDING)
         css.close()
 
+    def test_margin(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'simple',
+                                        {'margin': 10})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'simple.png')
+        css_path = os.path.join(self.output_path, 'simple.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), TRANSPARENT)
+        self.assertEqual(image.getpixel((10, 10)), YELLOW)
+        self.assertEqual(image.getpixel((34, 34)), YELLOW)
+        self.assertEqual(image.getpixel((55, 10)), RED)
+        self.assertEqual(image.getpixel((79, 34)), RED)
+        self.assertEqual(image.getpixel((100, 10)), CYAN)
+        self.assertEqual(image.getpixel((124, 34)), CYAN)
+
+        self.assertEqual(image.getpixel((10, 55)), PINK)
+        self.assertEqual(image.getpixel((34, 79)), PINK)
+        self.assertEqual(image.getpixel((55, 55)), GREEN)
+        self.assertEqual(image.getpixel((79, 79)), GREEN)
+        self.assertEqual(image.getpixel((100, 55)), BLUE)
+        self.assertEqual(image.getpixel((124, 79)), BLUE)
+
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        css.close()
+
     def test_pseudoclass(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'pseudoclass')

@@ -1,0 +1,8 @@
+include AUTHORS
+include COPYING
+recursive-include docs *
+recursive-exclude docs *.bat
+recursive-exclude docs .DS_Store
+recursive-exclude docs .gitignore
+prune docs/_build
+
