@@ -24,6 +24,7 @@ PSEUDO_CLASSES = set(['link', 'visited', 'active', 'hover', 'focus',
                       'before', 'after'])
 
 DEFAULT_SETTINGS = {'padding': '0',
+                    'margin': 0,
                     'algorithm': 'square',
                     'ordering': 'maxside',
                     'namespace': 'sprite',
@@ -313,8 +314,8 @@ class Image(object):
             self._crop_image()
 
         self.width, self.height = self.image.size
-        self.absolute_width = self.width + self.padding[1] + self.padding[3]
-        self.absolute_height = self.height + self.padding[0] + self.padding[2]
+        self.absolute_width = self.width + self.padding[1] + self.padding[3] + (self.sprite.manager.config.margin * 2)
+        self.absolute_height = self.height + self.padding[0] + self.padding[2] + (self.sprite.manager.config.margin * 2)
 
     def _crop_image(self):
         """Crop the image searching for the smallest possible bounding box
@@ -547,8 +548,8 @@ class Sprite(object):
 
         # Paste the images inside the canvas
         for image in self.images:
-            canvas.paste(image.image, (image.x + image.padding[3],
-                                       image.y + image.padding[0]))
+            canvas.paste(image.image, (image.x + image.padding[3] + self.manager.config.margin,
+                                       image.y + image.padding[0] + self.manager.config.margin))
 
         if self.config.cachebuster or self.config.cachebuster_filename:
             self.cachebuster_hash = hashlib.sha1(canvas.tostring()
@@ -613,8 +614,8 @@ class Sprite(object):
         # compile one template for each file
         for image in self.images:
 
-            x = '%spx' % (image.x * -1 if image.x else 0)
-            y = '%spx' % (image.y * -1 if image.y else 0)
+            x = '%spx' % ((image.x * -1 if image.x else 0) + self.manager.config.margin)
+            y = '%spx' % ((image.y * -1 if image.y else 0) + self.manager.config.margin)
             height = '%spx' % image.absolute_height
             width = '%spx' % image.absolute_width
 
@@ -935,6 +936,8 @@ def main():
     group.add_option("--ordering", dest="ordering", default=None,
                     help=("ordering criteria: maxside, width, height or "
                           "area (default: maxside)"), metavar='NAME')
+    group.add_option("--margin", dest="margin", default=None,
+                      help="force this margin in all images", type=int)
     group.add_option("--namespace", dest="namespace",  default=None,
                       help="namespace for all css classes (default: sprite)")
     group.add_option("--png8", action="store_true", dest="png8",
