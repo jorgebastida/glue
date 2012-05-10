@@ -5,6 +5,7 @@ import os
 import sys
 import copy
 import time
+import signal
 import hashlib
 import subprocess
 import ConfigParser
@@ -880,20 +881,31 @@ class WatchManager(object):
         self.last_hash = None
 
     def run(self):
+        signal.signal(signal.SIGINT, self.signal_handler)
+
         while True:
-            current_hash = self.generate_hash()
-            if self.last_hash != current_hash:
-                self.action()
-            self.last_hash = current_hash
-            time.sleep(1)
+            try:
+                current_hash = self.generate_hash()
+                if self.last_hash != current_hash:
+                    self.action()
+                self.last_hash = current_hash
+            except Exception:
+                pass
+            finally:
+                time.sleep(0.2)
+
+    def signal_handler(self, signal, frame):
+        print 'You pressed Ctrl+C!'
+        sys.exit(0)
 
     def generate_hash(self):
-        last_modified = []
+        hash_list = []
         for root, dirs, files in os.walk(self.path):
-            for f in files:
-                last_modified.append(str(os.path.getmtime(os.path.join(root, f))))
-        last_modified = ''.join(last_modified)
-        return hashlib.sha1(last_modified).hexdigest()
+            for f in sorted([f for f in files if not f.startswith('.')]):
+                hash_list.append(os.path.join(root, f))
+                hash_list.append(str(os.path.getmtime(os.path.join(root, f))))
+        hash_list = ''.join(hash_list)
+        return hashlib.sha1(hash_list).hexdigest()
 
 
 def get_file_config(path, section='sprite'):
