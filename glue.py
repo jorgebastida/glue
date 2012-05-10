@@ -26,7 +26,7 @@ PSEUDO_CLASSES = set(['link', 'visited', 'active', 'hover', 'focus',
                       'before', 'after'])
 
 DEFAULT_SETTINGS = {'padding': '0',
-                    'margin': 0,
+                    'margin': '0',
                     'algorithm': 'square',
                     'ordering': 'maxside',
                     'namespace': 'sprite',
@@ -331,7 +331,7 @@ class Image(object):
             self._crop_image()
 
         self.width, self.height = self.image.size
-        margin = int(self.sprite.manager.config.margin)
+        margin = int(self.sprite.config.margin)
         self.absolute_width = self.width + self.padding[1] + self.padding[3] + (margin * 2)
         self.absolute_height = self.height + self.padding[0] + self.padding[2] + (margin * 2)
 
@@ -565,7 +565,7 @@ class Sprite(object):
         canvas = PImage.new('RGBA', (width, height), (0, 0, 0, 0))
 
         # Paste the images inside the canvas
-        margin = int(self.manager.config.margin)
+        margin = int(self.config.margin)
         for image in self.images:
             canvas.paste(image.image, (image.x + image.padding[3] + margin,
                                        image.y + image.padding[0] + margin))
@@ -631,7 +631,7 @@ class Sprite(object):
                                    'sprite_url': self.image_url})
 
         # compile one template for each file
-        margin = int(self.manager.config.margin)
+        margin = int(self.config.margin)
         for image in self.images:
 
             x = '%spx' % ((image.x * -1 if image.x else 0) - margin)
