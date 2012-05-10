@@ -81,6 +81,14 @@ Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`
 
     $ glue source --img=images/compiled --css=css/compiled
 
+--html
+-----------
+Using the ``--html`` option, ``Glue`` will also generate a test html per sprite using all the available CSS classes. This option is only useful for testing purposes. Glue generate the ``html`` file in the same directory as the CSS file.
+
+.. code-block:: bash
+
+    $ glue source --html
+
 -a --algorithm
 --------------
 The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `square`, but in some situations using another ordering like `vertical` or `horizontal` could be useful depending on the kind of images you are spriting.
