@@ -3,6 +3,7 @@ Changelog
 
 0.2.5
 ^^^^^^
+* New ``--watch`` option to keep glue running in the background watching file changes.
 * New option ``--html`` that generates a html using all the available css classes.
 * New option ``--margin`` that adds margins around the sprited images. This margin doesn't count as image size.
 * Add MANIFEST.in and tune the setup.py preparing the Debian/Ubuntu package.

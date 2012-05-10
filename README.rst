@@ -15,6 +15,7 @@ Features
 * Multiple `algorithms <http://glue.readthedocs.org/en/latest/options.html#a-algorithm>`_ available.
 * Automatic `crop of unnecessary transparent borders <http://glue.readthedocs.org/en/latest/quickstart.html#crop-unnecessary-transparent-spaces>`_ around source images.
 * Configurable `paddings per image, sprite or project <http://glue.readthedocs.org/en/latest/paddings.html>`_.
+* Watch option to keep glue running watching for file changes.
 * Optional .less output format.
 * Automatic sprite images post-processing using `OptiPNG <http://optipng.sourceforge.net/>`_.
 * Sprite- and Project-level configuration via static config files.

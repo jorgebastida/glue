@@ -73,6 +73,17 @@ If you want to add the same padding around all images you can use the ``--paddin
     $ glue source output --padding=10 20
     $ glue source output --padding=10 20 30 40
 
+--watch
+------------
+While you are developing a site it could be quite frustrating running ``Glue`` once and another every time you change a source image or a filename. ``--watch`` will allow you to keep ``Glue`` running in the background and it'll rebuild the sprite every time it detects changes on the source directory.
+
+.. code-block:: bash
+
+    $ glue source output --watch
+
+.. note::
+    New in version 0.2.5
+
 --css --img
 -----------
 Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`. If you want to choose an individual folder for each type of file you can use the ``--img=<dir> --css=<dir>`` options together to customize where the output files will be created.
