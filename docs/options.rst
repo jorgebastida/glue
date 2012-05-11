@@ -31,7 +31,7 @@ The suggested setup is to create a new folder for every sprite, and add inside a
 
 Usually designers add some unnecessary transparent space around the images because it is easier for them to work with a larger canvas. ``glue`` can optimize our sprite by croping all the unnecessary transparent spaces that the original images could have.
 
-.. image:: _static/crop.png
+.. image:: img/crop.png
 
 .. code-block:: bash
 

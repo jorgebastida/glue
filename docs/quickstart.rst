@@ -25,7 +25,7 @@ Glue will create a new folder named ``sprites`` with the following structure::
 For example using the gorgeous `famfamfam icons <http://www.famfamfam.com/lab/icons/silk/>`_ (4.2Mb) you will get
 the following ``icons.png`` (401Kb).
 
-.. image:: _static/famfamfam1.png
+.. image:: img/famfamfam1.png
 
 The other file, ``icons.css`` will have all the necessary css classes for this sprite:
 
@@ -72,7 +72,7 @@ Crop unnecessary transparent spaces
 
 Usually designers add some unnecessary transparent space around the images because it is easier for them to work with a larger canvas. ``glue`` can optimize our sprite by cropping all the unnecessary transparent spaces that the original images could have before merging the images into the sprite.
 
-.. image:: _static/crop.png
+.. image:: img/crop.png
 
 .. code-block:: bash
 
@@ -80,7 +80,7 @@ Usually designers add some unnecessary transparent space around the images becau
 
 The new ``icons.png`` (348Kb) will be 53Kb smaller.
 
-.. image:: _static/famfamfam2.png
+.. image:: img/famfamfam2.png
 
 Now, the css file will have the new coordinates but using the same css class names!
 

@@ -10,7 +10,7 @@ In some situations it's really useful to add some padding to an image. ``glue`` 
 
 This small change means that the ``rainbow.png`` image needs a ``10px`` padding all around the image.
 
-.. image:: _static/famfamfam3.png
+.. image:: img/famfamfam3.png
 
 If you don't need the same padding all around the image, you can use ``_10-20`` for a ``10px 20px 10px 20px`` padding or
 ``_10-20-30-40`` for a ``10px 20px 30px 40px`` padding as this table shows:
