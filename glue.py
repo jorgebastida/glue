@@ -695,8 +695,8 @@ class ConfigManager(object):
 
         :param config: Dictionary with the new config.
         """
-        return self.__class__(config, *self.sources, priority=self.priority,
-                              defaults=self.defaults)
+        return self.__class__(config, priority=self.priority,
+                              defaults=self.defaults, *self.sources)
 
     def __getattr__(self, name):
         """Return the first available configuration value for this key. This
