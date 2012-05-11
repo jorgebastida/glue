@@ -317,7 +317,8 @@ class Image(object):
 
             if source_image.mode == 'L':
                 alpha = source_image.split()[0]
-                mask = PImage.eval(alpha, lambda a: 0 if a == source_image.info.get('transparency', 0) else 255)
+                transparency = source_image.info.get('transparency')
+                mask = PImage.eval(alpha, lambda a: 0 if a == transparency else 255)
                 self.image.paste(source_image, (0, 0), mask=mask)
             else:
                 self.image.paste(source_image, (0, 0))
