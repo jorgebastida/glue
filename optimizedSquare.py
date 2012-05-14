@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 import math
+import copy
+
+class LineSizeExceeded(Exception):
+    """Raised if the size of a line is exceeded."""
+    error_code = 8
 
 class OptimizedSquareAlgorithm (object):
     MAX_WIDTH = 1200
@@ -28,11 +33,13 @@ class OptimizedSquareAlgorithm (object):
     sprite = None
 
     def __init__(self):
-        """Node constructor.
+        """OptimizedSquareAlgorithm constructor.
 
         :param sprite: sprite.
         """
         self.minWidth = self.MIN_WIDTH
+        self.matrix = None
+        self.sprite = None
 
 
     def generateOptimizedDatas(self):
@@ -66,7 +73,9 @@ class OptimizedSquareAlgorithm (object):
         self.matrix = OptimizedSquareSpriteMatrix(self.optimizedWidth, self.optimizedHeight)
 
         for image in self.sprite.images:
-            self.matrix.findAPlace(image)
+            rp = self.matrix.findAPlace(image)
+            image.x = rp.getX()
+            image.y = rp.getY()
 
         self.realWidth = self.matrix.getRealWidth()
         self.realHeight = self.matrix.getRealHeight()
@@ -81,9 +90,9 @@ class OptimizedSquareSpriteMatrix (object):
     maxY = 0
 
     # widthLeft Taille restante par ligne
-    widthLeft = []
+    widthLeft = {}
     # currentWidth Taille du dernier pixel par ligne
-    currentWidth = 0
+    currentWidth = {}
 
     # rectanglePositionList Liste des rectangles positionnes
     rectanglePositionList = []
@@ -93,6 +102,9 @@ class OptimizedSquareSpriteMatrix (object):
         self.maxY = int(y)
         self.minX = int(minX)
         self.minY = int(minY)
+        self.widthLeft = {}
+        self.currentWidth = {}
+        self.rectanglePositionList = []
 
     def getRealWidth(self):
         """ get the real width of the sprite
@@ -124,7 +136,7 @@ class OptimizedSquareSpriteMatrix (object):
             if (self.currentWidth[j] < (rp.x + rp.w)):
                 self.currentWidth[j] = rp.x + rp.w
             
-            if (not self.widthLeft[j]):
+            if (not self.widthLeft.has_key(j) or self.widthLeft[j] == 0):
                 self.widthLeft[j] = self.maxX - rp.w
             else:
                 self.widthLeft[j] -= rp.w
@@ -157,13 +169,16 @@ class OptimizedSquareSpriteMatrix (object):
         hy = rp.h + rp.y
 
         for j in range(rp.y, hy):
+            if (not self.currentWidth.has_key(j)):
+                self.currentWidth[j] = 0
+
             if (rp.x < self.currentWidth[j]):
                 return self.currentWidth[j]
 
         return True
 
     def optimizePosition(self, rp):
-        """ optimizePosition optimizt the position to avoid white space
+        """ optimizePosition optimize the position to avoid white space
                 :param rp: positionned rectangle
                 :return rectangle with new position
         """
@@ -171,12 +186,12 @@ class OptimizedSquareSpriteMatrix (object):
         for j in range(rp.y, rp.y + rp.h) :
             if ((rp.x > 0) and (self.currentWidth[j] < (rp.x - (rp.w / 2)))):
                 # There is a lot of space behind, we put down the image
-                tmpRp = copy(rp)
+                tmpRp = copy.deepcopy(rp)
                 tmpRp.x = self.currentWidth[j]
                 tmpRp.y = j
-                if (self.isRectangleFree(tmpRp)):
+                if (self.isRectangleFree(tmpRp) == True):
                     return self.optimizePosition(tmpRp)
-            return rp
+        return rp
 
     def findAPlace(self, r, putItIn = True):
         """ find a place for a rectange 
@@ -185,36 +200,34 @@ class OptimizedSquareSpriteMatrix (object):
              :return array($x, $y) if found
         """
         # for each line of the matrix
-        for j in range(self.minY, self.maxY):
+        j = self.minY
+        while j < self.maxY:
             start = 0
 
             # let's find a place on the width
             x = self.findWidthInLine(j, r.absolute_width, start)
-            print 'thiiii'
-            while x != False:
+            while x is not False:
                 # if a place is found
-                if (x != False):
-                    # we make a rectanglePosition
-                    rp = SpriteRectanglePosition(r.id, r.w, r.h, x, j)
+                # we make a rectanglePosition
+                rp = SpriteRectanglePosition(r.filename, r.absolute_width, r.absolute_height, x, j)
 
-                    # room is free
-                    posBloquante = self.isRectangleFree(rp)
-                    if (posBloquante == True):
-                        # let's optimize position
-                        rp = self.optimizePosition(rp)
-                        if (putItIn):
-                            self.pushRectangle(rp)
-                        return rp
-                    else:
-                        # not available, we increment and retest
-                        start = posBloquante
+                # room is free
+                posBloquante = self.isRectangleFree(rp)
+                if (posBloquante == True):
+                    # let's optimize position
+                    rp = self.optimizePosition(rp)
+                    if (putItIn == True):
+                        self.pushRectangle(rp)
+                    return rp
                 else:
-                    # no place found
-                    break;
-                x = self.findWidthInLine(j, r.w, start)
+                    # not available, we increment and retest
+                    start = posBloquante
+
+                x = self.findWidthInLine(j, r.absolute_width, start)
 
             if (self.maxY == j + 1):
                 self.maxY += 1
+            j += 1
 
         return False
 
@@ -226,28 +239,87 @@ class OptimizedSquareSpriteMatrix (object):
             :return void
         """
         # on teste si il reste de la place sur la ligne 
-        try:
-            if (w > self.widthLeft[y]):
-                return False
-        except IndexError, e:
-		    plop = None
+        if (self.widthLeft.has_key(y) and w > self.widthLeft[y]):
+            return False
 
         # variables init
         freeSpace = 0 # free space needed
 
         # pour chaque colonne
-        try:
-            cw = self.currentWidth[y]
-        except IndexError, e:
-		    self.currentWidth[y] = 0
+        if (not self.currentWidth.has_key(y)):
+            self.currentWidth[y] = 0
 
-        for i in range(max(self.minX, self.currentWidth[y], start), self.maxX):
+        i = max(self.minX, self.currentWidth[y], start)
+        while i < self.maxX:
             try:
                 if (self.isFree(i, y, w)): # if the place is free, we keep the position, if not already found
                     return i
                 else:
                     start += 1
+                i = max(self.minX, self.currentWidth[y], start)
             except LineSizeExceeded as e :
-				return False
+                return False
         return False
+
+
+class SpriteRectangle (object):
+    id = 0
+    h = 1
+    w = 1
+
+    def __init__(self, id, w = 1, h = 1):
+        """SpriteRectangle constructor.
+
+        :param id: id.
+        :param w: rectangle width.
+        :param h: rectangle height.
+        """
+        self.id = id
+        self.w = w
+        self.h = h
+
+    def getId(self) :
+        return self.id
+
+    def getWidth(self) :
+        return self.w
+
+    def getHeight(self) :
+        return self.h
+
+    def getArea(self) :
+        return self.w * self.h
+
+    def getPerimeter(self) :
+        return 2 * self.w + 2 * self.h
+
+
+class SpriteRectanglePosition (SpriteRectangle) :
+    x = 0
+    y = 0
+
+    def __init__(self, id, w = 1, h = 1, x = 0, y = 0):
+        """SpriteRectanglePosition constructor.
+
+        :param id: id.
+        :param w: rectangle width.
+        :param h: rectangle height.
+        :param x: position on x axis.
+        :param y: position on y axis.
+        """
+        super(SpriteRectanglePosition, self).__init__(id, w, h)
+        self.x = x
+        self.y = y
+
+    def getX(self) :
+        return self.x
+
+    def getY(self) :
+        return self.y
+
+    def setX(self, x) :
+        self.x = x
+
+    def setY(self, y) :
+        self.y = y
 

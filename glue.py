@@ -72,10 +72,6 @@ class PILUnavailableError(Exception):
     """Raised if some PIL decoder isn't available."""
     error_code = 7
 
-class LineSizeExceeded(Exception):
-    """Raised if the size of a line is exceeded."""
-    error_code = 8
-
 
 class SquareAlgorithmNode(object):
 
