@@ -28,7 +28,7 @@ Example
 Using the gorgeous `famfamfam icons <http://www.famfamfam.com/lab/icons/silk/>`_ (4.2Mb) you will get
 the following ``icons.png`` (401Kb).
 
-.. image:: https://github.com/jorgebastida/glue/raw/master/docs/_static/famfamfam1.png
+.. image:: https://github.com/jorgebastida/glue/raw/master/docs/img/famfamfam1.png
 
 
 And also an ``icons.css`` with all the necessary CSS classes for this sprite::
