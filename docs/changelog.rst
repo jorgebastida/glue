@@ -9,6 +9,7 @@ Changelog
 * Add MANIFEST.in and tune the setup.py preparing the Debian/Ubuntu package.
 * Fix _locate_images to be deterministic.
 * Add support to Travis CI.
+* Fix 8bit B/W images bug.
 
 0.2.4
 ^^^^^^
