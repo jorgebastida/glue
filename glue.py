@@ -629,7 +629,9 @@ class Sprite(object):
         # add the global style for all the sprites for less bloat
         template = self.config.global_template.decode('unicode-escape')
         css_file.write(template % {'all_classes': class_names,
-                                   'sprite_url': self.image_url})
+                                   'sprite_url': self.image_url,
+                                   'namespace': self.namespace,
+                                   })
 
         # compile one template for each file
         margin = int(self.config.margin)
