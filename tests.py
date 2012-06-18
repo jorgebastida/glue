@@ -34,6 +34,20 @@ EXPECTED_SIMPLE_CSS = """.sprite-simple-yellow,
 .sprite-simple-blue{background-position:-125px 0px;width:25px;height:25px;}
 """
 
+EXPECTED_OPTIMIZED_SQUARE_CSS = """.sprite-simple-red,
+.sprite-simple-green,
+.sprite-simple-cyan,
+.sprite-simple-pink,
+.sprite-simple-yellow,
+.sprite-simple-blue{background-image:url(simple.png);background-repeat:no-repeat}
+.sprite-simple-red{background-position:0px 0px;width:25px;height:25px;}
+.sprite-simple-green{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-simple-cyan{background-position:0px -25px;width:25px;height:25px;}
+.sprite-simple-pink{background-position:-25px -25px;width:25px;height:25px;}
+.sprite-simple-yellow{background-position:0px -50px;width:25px;height:25px;}
+.sprite-simple-blue{background-position:-25px -50px;width:25px;height:25px;}
+"""
+
 EXPECTED_PROJECT_MIX_CSS = """.sprite-mix-yellow,
 .sprite-mix-pink,
 .sprite-mix-cyan{background-image:url(mix.png);background-repeat:no-repeat;}
@@ -226,6 +240,31 @@ class TestGlue(unittest.TestCase):
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
         css.close()
 
+        # Test optimized square algorith
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'simple',
+                                        {'ordering': 'height',
+                                        'algorithm': 'vertical'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'simple.png')
+        css_path = os.path.join(self.output_path, 'simple.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), YELLOW)
+        self.assertEqual(image.getpixel((25, 0)), RED)
+        self.assertEqual(image.getpixel((50, 0)), CYAN)
+        self.assertEqual(image.getpixel((0, 25)), PINK)
+        self.assertEqual(image.getpixel((25, 25)), GREEN)
+        self.assertEqual(image.getpixel((50, 25)), BLUE)
+
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        css.close()
+
         # Test vertical algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'simple',
@@ -367,12 +406,12 @@ class TestGlue(unittest.TestCase):
         image = Image.open(mix_img_path)
         css = open(mix_css_path)
 
-        self.assertEqual(image.getpixel((0, 0)), YELLOW)
-        self.assertEqual(image.getpixel((25, 0)), PINK)
+        self.assertEqual(image.getpixel((0, 0)), RED)
+        self.assertEqual(image.getpixel((25, 0)), GREEN)
         self.assertEqual(image.getpixel((0, 25)), CYAN)
-        self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
+        self.assertEqual(image.getpixel((25, 25)), PINK)
 
-        self.assertEqualCSS(css.read(), EXPECTED_PROJECT_MIX_CSS)
+        self.assertEqualCSS(css.read(), EXPECTED_OPTIMIZED_SQUARE_CSS)
         css.close()
 
     def test_crop(self):
