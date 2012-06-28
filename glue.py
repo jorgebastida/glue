@@ -3,6 +3,7 @@
 import re
 import os
 import sys
+import math
 import copy
 import time
 import signal
@@ -15,8 +16,8 @@ from PIL import Image as PImage
 
 __version__ = '0.2.5'
 
-TRANSPARENT = (255, 255, 255, 0)
 
+TRANSPARENT = (255, 255, 255, 0)
 CAMELCASE_SEPARATOR = 'camelcase'
 CONFIG_FILENAME = 'sprite.conf'
 ORDERINGS = ['maxside', 'width', 'height', 'area']
@@ -25,25 +26,40 @@ PSEUDO_CLASSES = set(['link', 'visited', 'active', 'hover', 'focus',
                       'first-letter', 'first-line', 'first-child',
                       'before', 'after'])
 
-DEFAULT_SETTINGS = {'padding': '0',
-                    'margin': '0',
-                    'algorithm': 'square',
-                    'ordering': 'maxside',
-                    'namespace': 'sprite',
-                    'crop': False,
-                    'url': '',
-                    'less': False,
-                    'optipng': False,
-                    'html': False,
-                    'ignore_filename_paddings': False,
-                    'png8': False,
-                    'separator': '-',
-                    'global_template': ('%(all_classes)s{background-image:'
-                                        'url(%(sprite_url)s);'
-                                        'background-repeat:no-repeat}\n'),
-                    'each_template': ('%(class_name)s{'
-                                      'background-position:%(x)s %(y)s;'
-                                      'width:%(width)s;height:%(height)s;}\n')}
+DEFAULT_SETTINGS = {
+    'padding': '0',
+    'margin': '0',
+    'algorithm': 'square',
+    'ordering': 'maxside',
+    'namespace': 'sprite',
+    'crop': False,
+    'url': '',
+    'less': False,
+    'optipng': False,
+    'html': False,
+    'ignore_filename_paddings': False,
+    'png8': False,
+    'ratios': '',
+    'retina': False,
+    'separator': '-',
+    'global_template':
+        ('%(all_classes)s{background-image:url(%(sprite_url)s);'
+         'background-repeat:no-repeat}\n'),
+    'each_template':
+        ('%(class_name)s{background-position:%(x)s %(y)s;'
+         'width:%(width)s;height:%(height)s;}\n'),
+    'ratio_template':
+        ('@media '
+         'only screen and (-webkit-min-device-pixel-ratio: %(ratio)s), '
+         'only screen and (min--moz-device-pixel-ratio: %(ratio)s), '
+         'only screen and (-o-min-device-pixel-ratio: %(ratio_fraction)s), '
+         'only screen and (min-device-pixel-ratio: %(ratio)s) {'
+         '%(all_classes)s{background-image:url(%(sprite_url)s);'
+         '-webkit-background-size: %(width)s %(height)s;'
+         '-moz-background-size: %(width)s %(height)s;'
+         'background-size: %(width)s %(height)s;'
+         '}}')
+    }
 
 TEST_HTML_TEMPLATE = """
 <html><head><title>Glue Sprite Test Html</title>
@@ -88,6 +104,24 @@ class InvalidImageOrderingError(Exception):
 class PILUnavailableError(Exception):
     """Raised if some PIL decoder isn't available."""
     error_code = 7
+
+
+def round_up(value):
+    return int(math.ceil(value))
+
+
+def nearest_fration(value):
+    """
+    Return the nearest fraction.
+    If fraction.Fraction is not available, return a fraction.
+
+    Note: used for Opera CSS pixel-ratio media queries.
+    """
+    try:
+        from fraction import Fraction
+        return str(Fraction(value))
+    except ImportError:
+        return '%i/100' % int(float(value) * 100)
 
 
 class SquareAlgorithmNode(object):
@@ -333,8 +367,15 @@ class Image(object):
 
         self.width, self.height = self.image.size
         margin = int(self.sprite.config.margin)
-        self.absolute_width = self.width + self.padding[1] + self.padding[3] + (margin * 2)
-        self.absolute_height = self.height + self.padding[0] + self.padding[2] + (margin * 2)
+
+        # Both absolute_width and absolute_height are the real absolute space
+        # that we need to allocate into the sprite for this image.
+        # It's calculated using the width/height, padding and margin
+        # of this image multiplied by the max_ratio.
+        self.absolute_width = round_up(self.width +
+                (self.horizontal_padding + 2 * margin) * self.sprite.max_ratio)
+        self.absolute_height = round_up(self.height +
+                (self.vertical_padding + 2 * margin) * self.sprite.max_ratio)
 
     def _crop_image(self):
         """Crop the image searching for the smallest possible bounding box
@@ -457,6 +498,14 @@ class Image(object):
             padding = self.sprite.config.padding
         return self._generate_padding(padding)
 
+    @property
+    def horizontal_padding(self):
+        return self.padding[1] + self.padding[3]
+
+    @property
+    def vertical_padding(self):
+        return self.padding[0] + self.padding[2]
+
     def __lt__(self, img):
         """Use maxside, width, height or area as ordering algorithm.
 
@@ -495,6 +544,18 @@ class Sprite(object):
         self.cachebuster_hash = ''
 
         self.config = manager.config.extend(get_file_config(self.path))
+
+        # Build the set of ratios this sprite needs.
+        ratios = self.config.ratios.split(',')
+        self.ratios = set([float(r.strip()) for r in ratios if r.strip()])
+
+        # If the retina shortcut is in use add 2.0 as a required ratio.
+        if self.config.retina:
+            self.ratios.add(2.0)
+
+        # Always add 1.0 as a required ratio
+        self.ratios.add(1.0)
+
         self.process()
 
     def process(self):
@@ -545,15 +606,10 @@ class Sprite(object):
 
         return sorted(images, reverse=self.config.ordering[0] != '-')
 
-    def save_image(self):
-        """Create the image file for this sprite."""
-        self.manager.log("Creating '%s' image file..." % self.name)
-
-        sprite_output_path = self.manager.output_path('img')
-
-        # Search for the max x and y (Necessary to generate the canvas).
+    @property
+    def canvas_size(self):
+        """Return the width and height for this sprite canvas"""
         width = height = 0
-
         for image in self.images:
             x = image.x + image.absolute_width
             y = image.y + image.absolute_height
@@ -561,31 +617,37 @@ class Sprite(object):
                 width = x
             if height < y:
                 height = y
+        return round_up(width), round_up(height)
+
+    def save_image(self):
+        """Create the image file for this sprite."""
+        self.manager.log("Creating '%s' image file..." % self.name)
 
         # Create the sprite canvas
+        width, height = self.canvas_size
         canvas = PImage.new('RGBA', (width, height), (0, 0, 0, 0))
 
         # Paste the images inside the canvas
         margin = int(self.config.margin)
         for image in self.images:
-            canvas.paste(image.image, (image.x + image.padding[3] + margin,
-                                       image.y + image.padding[0] + margin))
+            canvas.paste(image.image,
+                (round_up(image.x + (image.padding[3] + margin) * self.max_ratio),
+                 round_up(image.y + (image.padding[0] + margin) * self.max_ratio)))
 
         if self.config.cachebuster or self.config.cachebuster_filename:
             self.cachebuster_hash = hashlib.sha1(canvas.tostring()
                                                 ).hexdigest()[:6]
 
-        # Save png
-        sprite_filename = '%s.png' % self.filename
-        sprite_image_path = os.path.join(sprite_output_path, sprite_filename)
-
-        args, kwargs = [sprite_image_path], dict(optimize=True)
+        # Customize how the png is going to be saved
+        kwargs = dict(optimize=True)
 
         if self.config.png8:
             # Get the alpha band
             alpha = canvas.split()[-1]
             canvas = canvas.convert('RGB'
-                        ).convert('P', palette=PImage.ADAPTIVE, colors=255)
+                        ).convert('P',
+                                  palette=PImage.ADAPTIVE,
+                                  colors=255)
 
             # Set all pixel values below 128 to 255, and the rest to 0
             mask = PImage.eval(alpha, lambda a: 255 if a <= 128 else 0)
@@ -594,19 +656,36 @@ class Sprite(object):
             canvas.paste(255, mask)
             kwargs.update({'transparency': 255})
 
-        save = lambda: canvas.save(*args, **kwargs)
-        save()
+        # Loop all over the ratios and save one image for each one
+        for ratio in self.ratios:
 
-        if self.config.optipng:
-            command = ["%s %s" % (self.config.optipngpath,
-                                  sprite_image_path)]
+            sprite_image_path = self.image_path(ratio)
 
-            error = subprocess.call(command, shell=True, stdin=subprocess.PIPE,
-                            stdout=subprocess.PIPE)
-            if error:
-                self.manager.log("Error: optipng has failed, reverting to "
-                                 "the original file.")
-                save()
+            # If this canvas isn't the biggest one scale it using the ratio
+            if self.max_ratio != ratio:
+                reduced_canvas = canvas.resize(
+                    (round_up((width / self.max_ratio) * ratio),
+                     round_up((height / self.max_ratio) * ratio)),
+                    PImage.ANTIALIAS)
+            else:
+                reduced_canvas = canvas
+
+            save = lambda: reduced_canvas.save(sprite_image_path, **kwargs)
+            save()
+
+            # Optimize the image using optipng, if for some reason, it fails
+            # rollback to the original one.
+            if self.config.optipng:
+                command = ["%s %s" % (self.config.optipngpath,
+                                      sprite_image_path)]
+                error = subprocess.call(command,
+                                        shell=True,
+                                        stdin=subprocess.PIPE,
+                                        stdout=subprocess.PIPE)
+                if error:
+                    self.manager.log("Error: optipng has failed, reverting to "
+                                     "the original file.")
+                    save()
 
     def save_css(self):
         """Create the CSS or LESS file for this sprite."""
@@ -629,24 +708,42 @@ class Sprite(object):
         # add the global style for all the sprites for less bloat
         template = self.config.global_template.decode('unicode-escape')
         css_file.write(template % {'all_classes': class_names,
-                                   'sprite_url': self.image_url})
+                                   'sprite_url': self.image_url()})
 
         # compile one template for each file
         margin = int(self.config.margin)
+
         for image in self.images:
 
-            x = '%spx' % ((image.x * -1 if image.x else 0) - margin)
-            y = '%spx' % ((image.y * -1 if image.y else 0) - margin)
-            height = '%spx' % (image.absolute_height - (margin * 2))
-            width = '%spx' % (image.absolute_width - (margin * 2))
+            x = '%spx' % round_up((image.x * -1 - margin * self.max_ratio) / self.max_ratio)
+            y = '%spx' % round_up((image.y * -1 - margin * self.max_ratio) / self.max_ratio)
+
+            height = '%spx' % round_up((image.height / self.max_ratio) + image.vertical_padding)
+            width = '%spx' % round_up((image.width / self.max_ratio) + image.horizontal_padding)
 
             template = self.config.each_template.decode('unicode-escape')
             css_file.write(template % {'class_name': '.%s' % image.class_name,
-                                       'sprite_url': self.image_url,
+                                       'sprite_url': self.image_url(),
                                        'height': height,
                                        'width': width,
                                        'y': y,
                                        'x': x})
+
+        # If we have some additional ratio, we need to add one media query
+        # for each one.
+        if len(self.ratios) > 1:
+            canvas_size = zip(('width', 'height'),
+                              map(lambda s: '%spx' % int(s / self.max_ratio),
+                                  self.canvas_size))
+
+            for ratio in self.ratios:
+                if ratio != 1:
+                    data = dict(ratio=ratio,
+                                ratio_fraction=nearest_fration(ratio),
+                                sprite_url=self.image_url(ratio),
+                                all_classes=class_names,
+                                **dict(canvas_size))
+                    css_file.write(self.config.ratio_template % data)
         css_file.close()
 
     def save_html(self):
@@ -700,16 +797,37 @@ class Sprite(object):
             return '%s_%s' % (self.name, self.cachebuster_hash)
         return self.name
 
-    @property
-    def image_path(self):
-        """Return the output path for the image file."""
+    def image_path(self, ratio=1):
+        reference = self.__get_reference(ratio)
+        """Return the output path for the image file.
+
+        :param ratio: Ratio.
+        """
         return os.path.join(self.manager.output_path('img'),
-                            '%s.png' % self.filename)
+                            '%s%s.png' % (self.filename, reference))
+
+    def __get_reference(self, ratio):
+        """ Return the reference @Nx for this ratio.
+
+        :param ratio: Ratio.
+        """
+        reference = '@%.1fx' % ratio if int(ratio) != ratio else '@%ix' % ratio
+        if reference == '@1x':
+            reference = ''
+        return reference
 
     @property
-    def image_url(self):
-        """Return the sprite image url."""
-        url = os.path.relpath(self.image_path, self.manager.output_path('css'))
+    def max_ratio(self):
+        """ Return the maximum ratio """
+        return max(self.ratios)
+
+    def image_url(self, ratio=1):
+        """Return the sprite image url.
+
+        :param ratio: Ratio.
+        """
+        url = os.path.relpath(self.image_path(ratio),
+                              self.manager.output_path('css'))
 
         if self.config.url:
             url = os.path.join(self.config.url, '%s.png' % self.filename)
@@ -814,7 +932,10 @@ class BaseManager(object):
         return sprite_output_path
 
     def log(self, message):
-        """Print the message if necessary."""
+        """Print the message if necessary.
+
+        :param message: Message to log.
+        """
         if not self.config.quiet:
             print(message)
 
@@ -881,13 +1002,19 @@ class SimpleSpriteManager(BaseManager):
 
 
 class WatchManager(object):
+    """ Watch a path for changes. """
 
     def __init__(self, path, action):
+        """
+        :param path: Path to watch.
+        :param action: Action to run when a change happens.
+        """
         self.action = action
         self.path = path
         self.last_hash = None
 
     def run(self):
+        """ Start watching the path for changes """
         signal.signal(signal.SIGINT, self.signal_handler)
 
         while True:
@@ -902,10 +1029,14 @@ class WatchManager(object):
                 time.sleep(0.2)
 
     def signal_handler(self, signal, frame):
+        """ Gracefully close the app if Ctrl+C is pressed."""
         print 'You pressed Ctrl+C!'
         sys.exit(0)
 
     def generate_hash(self):
+        """ Return a hash of files and modification times to determine if a
+        change has occourred."""
+
         hash_list = []
         for root, dirs, files in os.walk(self.path):
             for f in sorted([f for f in files if not f.startswith('.')]):
@@ -1005,6 +1136,10 @@ def main():
                       help="suppress all normal output")
     parser.add_option("-p", "--padding", dest="padding", default=None,
                       help="force this padding in all images")
+    parser.add_option("--ratios", dest="ratios", default=None,
+                      help="Create sprites based on these ratios")
+    parser.add_option("--retina", dest="retina", default=None,
+                      action='store_true', help="Shortcut for --ratios=2,1")
     parser.add_option("-w", "--watch", dest="watch", default=False,
                       action='store_true',
                       help=("Watch the source folder for changes and rebuild "
@@ -1156,6 +1291,7 @@ def main():
                           "images.\n") % e.args[0])
         sys.exit(e.error_code)
     except Exception:
+        raise
         sys.stderr.write("Error: Unknown Error.\n")
         sys.exit(1)
 
