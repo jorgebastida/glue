@@ -73,6 +73,24 @@ If you want to add the same padding around all images you can use the ``--paddin
     $ glue source output --padding=10 20
     $ glue source output --padding=10 20 30 40
 
+--ratios
+------------
+``Glue`` can automatically scale down your sprites to automatically fit them into low-dpi devices. Glue assumes that the source images are the biggests you want to serve, then glue will create one sprite for each ratio you set in this command. For more information, read :doc:`ratios`.
+
+.. code-block:: bash
+
+    $ glue source output --ratios=2,1
+    $ glue source output --ratios=2,1.5
+
+--retina
+------------
+The option ``--retina`` is only a shortcut for ``--ratios=2,1``.
+
+.. code-block:: bash
+
+    $ glue source output --retina
+
+
 --watch
 ------------
 While you are developing a site it could be quite frustrating running ``Glue`` once and another every time you change a source image or a filename. ``--watch`` will allow you to keep ``Glue`` running in the background and it'll rebuild the sprite every time it detects changes on the source directory.
