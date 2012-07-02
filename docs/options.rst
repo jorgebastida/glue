@@ -181,6 +181,9 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 .. note::
     New in version 0.1.9
 
+.. note::
+    This feature is unstable on 64bit environments because a bug in PIL.
+
 --ignore-filename-paddings
 --------------------------
 ``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior (e.g. legacy purposes), you can use the ``--ignore-filename-paddings`` option to disable it.
