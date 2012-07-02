@@ -127,3 +127,10 @@ iPad 2                1024 × 768       132ppi       1
 Kidle Fire            1024 × 600       169ppi       1
 Galaxy Y (S5360)      240 × 320        133ppi       0.75
 ===================== ================ ============ ================
+
+Avoiding undesired shades with small images
+-------------------------------------------
+
+If your source images are quite small or they don't have too much transparent space around, you'll probably need to add some margin to your images using ``--margin=5``. These 5 pixels will be probably enough to spread the images over the sprite and fix some scaling issues you can have.
+
+``Glue`` will try scale the sprite as gracefully as possible using an anti aliasing algorithm. In some situations, where images are really close in the sprite, these algorithms usually mess up the output image adding some undesired shades. You can read more about how ``--margin`` works in the :doc:`options <options>` page
