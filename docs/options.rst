@@ -75,12 +75,12 @@ If you want to add the same padding around all images you can use the ``--paddin
 
 --ratios
 ------------
-``Glue`` can automatically scale down your sprites to automatically fit them into low-dpi devices. Glue assumes that the source images are the biggests you want to serve, then glue will create one sprite for each ratio you set in this command. For more information, read :doc:`ratios`.
+``Glue`` can automatically scale down your sprites to automatically fit them into low-dpi devices. ``Glue`` assumes that the source images are the biggests you want to serve, then ``glue`` will create one sprite for each ratio you set in this command. For more information, read :doc:`ratios`.
 
 .. code-block:: bash
 
     $ glue source output --ratios=2,1
-    $ glue source output --ratios=2,1.5
+    $ glue source output --ratios=2,1.5,1
 
 --retina
 ------------
