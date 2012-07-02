@@ -182,7 +182,7 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
     New in version 0.1.9
 
 .. note::
-    This feature is unstable on 64bit environments because a bug in PIL.
+    This feature is unstable on OSX > 10.7 because a bug in PIL.
 
 --ignore-filename-paddings
 --------------------------
