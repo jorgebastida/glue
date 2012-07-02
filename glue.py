@@ -14,7 +14,7 @@ from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
-__version__ = '0.2.5'
+__version__ = '0.2.6'
 
 
 TRANSPARENT = (255, 255, 255, 0)

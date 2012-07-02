@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.6
+^^^^^^
+* Added support for multi-dpi (retina) sprite creation.
+* New ``--ratios`` and ``--retina`` options.
+
 0.2.5
 ^^^^^^
 * New ``--watch`` option to keep glue running in the background watching file changes.
