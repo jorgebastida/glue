@@ -5,6 +5,7 @@ Changelog
 ^^^^^^
 * Added support for multi-dpi (retina) sprite creation.
 * New ``--ratios`` and ``--retina`` options.
+* New option ``--debug``
 
 0.2.5
 ^^^^^^

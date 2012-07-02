@@ -189,6 +189,15 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 
     $ glue source output --ignore-filename-paddings
 
+
+--debug
+--------------------------
+By default ``glue`` catch all unexpected errors and fails gracefully. If you want to look under the hood use ``--debug`` and ``glue`` will raise some debugging information about the error. If you want to report a bug, please provide a reproducable example as well as the output of the command failing using ``--debug``.
+
+.. code-block:: bash
+
+    $ glue source output --debug
+
 --separator
 --------------------------
 ``glue`` by default uses ``-`` as separator for the CSS class names. If you want to customize this behaviour you can use ``--separator`` to specify your own

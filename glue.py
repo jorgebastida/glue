@@ -1175,6 +1175,9 @@ def main():
     group.add_option("--ignore-filename-paddings",
                       dest="ignore_filename_paddings", action='store_true',
                       help="ignore filename paddings")
+    group.add_option("--debug", dest="debug", action='store_true',
+                      help=("don't catch unexpected errors and let glue "
+                            "fail hardly"))
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Output CSS Template Options")
@@ -1292,7 +1295,15 @@ def main():
                           "images.\n") % e.args[0])
         sys.exit(e.error_code)
     except Exception:
-        raise
+        if config.debug:
+            import platform
+            sys.stderr.write("Glue version: %s\n" % __version__)
+            sys.stderr.write("PIL version: %s\n" % PImage.VERSION)
+            sys.stderr.write("Platform: %s\n" % platform.platform())
+            sys.stderr.write("Config: %s\n" % config.sources)
+            sys.stderr.write("Args: %s\n" % sys.argv)
+            sys.stderr.write("\n")
+            raise
         sys.stderr.write("Error: Unknown Error.\n")
         sys.exit(1)
 
