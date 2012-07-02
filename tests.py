@@ -158,6 +158,18 @@ EXPECTED_VERYSIMPLE_CAMELCASE = """
 .spriteVerysimpleBlue{background-position:0px -25px;width:25px;height:25px;}
 """
 
+EXPECTED_VERYSIMPLE_RATIOS = """.sprite-verysimple-red,
+.sprite-verysimple-green,
+.sprite-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.sprite-verysimple-red{background-position:-5px -5px;width:13px;height:13px;}
+.sprite-verysimple-green{background-position:-27px -5px;width:13px;height:13px;}
+.sprite-verysimple-blue{background-position:-5px -27px;width:13px;height:13px;}
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 150/100), only screen and (min-device-pixel-ratio: 1.5) {.sprite-verysimple-red,
+.sprite-verysimple-green,
+.sprite-verysimple-blue{background-image:url(verysimple@1.5x.png);-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}@media only screen and (-webkit-min-device-pixel-ratio: 2.0), only screen and (min--moz-device-pixel-ratio: 2.0), only screen and (-o-min-device-pixel-ratio: 200/100), only screen and (min-device-pixel-ratio: 2.0) {.sprite-verysimple-red,
+.sprite-verysimple-green,
+.sprite-verysimple-blue{background-image:url(verysimple@2x.png);-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}"""
+
 
 class SimpleCssCompiler(object):
 
@@ -187,6 +199,14 @@ class TestGlue(unittest.TestCase):
         css1 = SimpleCssCompiler(css_text1)
         css2 = SimpleCssCompiler(css_text2)
         assert css1 == css2
+
+    def assertAreaColor(self, area, color):
+        colors = area.getcolors(area.size[0] * area.size[1])
+        colors = filter(lambda c: c[1][3] in [255, 0], colors)
+        colors = sorted(colors, key=lambda c: c[0], reverse=True)
+
+        assert len(colors) == 1, "More than one color"
+        assert colors[0][1] == color, "Invalid predominant color"
 
     def setUp(self):
         self.base_path = os.path.dirname(os.path.abspath(__file__))
@@ -740,6 +760,47 @@ class TestGlue(unittest.TestCase):
 
         css = open(css_path)
         self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NOSIZE)
+        css.close()
+
+    def test_ratios(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'ratios': '2,1.5,1',
+                                         'margin': '5'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        img_path = os.path.join(self.output_path, 'verysimple.png')
+        img_path_15x = os.path.join(self.output_path, 'verysimple@1.5x.png')
+        img_path_2x = os.path.join(self.output_path, 'verysimple@2x.png')
+
+        self.assertTrue(os.path.isfile(css_path))
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(img_path_2x))
+        self.assertTrue(os.path.isfile(img_path_15x))
+
+        img = Image.open(img_path)
+
+        self.assertAreaColor(img.crop((5, 5, 18, 18)), RED)
+        self.assertAreaColor(img.crop((27, 5, 40, 18)), GREEN)
+        self.assertAreaColor(img.crop((5, 27, 18, 40)), BLUE)
+
+        img_15x = Image.open(img_path_15x)
+        self.assertAreaColor(img_15x.crop((8, 8, 25, 25)), RED)
+        self.assertAreaColor(img_15x.crop((41, 8, 59, 25)), GREEN)
+        self.assertAreaColor(img_15x.crop((8, 42, 25, 59)), BLUE)
+
+        img_2x = Image.open(img_path_2x)
+
+        self.assertEqual(img_2x.getpixel((10, 10)), RED)
+        self.assertEqual(img_2x.getpixel((34, 34)), RED)
+        self.assertEqual(img_2x.getpixel((55, 10)), GREEN)
+        self.assertEqual(img_2x.getpixel((79, 34)), GREEN)
+        self.assertEqual(img_2x.getpixel((10, 55)), BLUE)
+        self.assertEqual(img_2x.getpixel((34, 79)), BLUE)
+
+        css = open(css_path)
+        self.assertEqual(css.read(), EXPECTED_VERYSIMPLE_RATIOS)
         css.close()
 
 
