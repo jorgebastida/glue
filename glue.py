@@ -43,6 +43,12 @@ DEFAULT_SETTINGS = {
     'ratios': '',
     'retina': False,
     'separator': '-',
+    'optipngpath': 'optipng',
+    'optipng': False,
+    'project': False,
+    'quiet': False,
+    'cachebuster': False,
+    'cachebuster-filename': False,
     'global_template':
         ('%(all_classes)s{background-image:url(%(sprite_url)s);'
          'background-repeat:no-repeat}\n'),
@@ -1176,98 +1182,95 @@ PImage.Image.load = patched_load
 def main():
     parser = OptionParser(usage=("usage: %prog [options] source_dir [<output> "
                                  "| --css=<dir> --img=<dir>]"))
-    parser.add_option("--project", action="store_true",
-                  dest="project", help="generate sprites for multiple folders")
+    parser.add_option("--project", action="store_true", dest="project",
+            help="generate sprites for multiple folders")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
-                help="crop images removing unnecessary transparent margins")
+            help="crop images removing unnecessary transparent margins")
     parser.add_option("-l", "--less", dest="less", action='store_true',
-                help="generate output stylesheets as .less instead of .css")
-    parser.add_option("-u", "--url", dest="url", default=None,
-                      help="prepend this url to the sprites filename")
+            help="generate output stylesheets as .less instead of .css")
+    parser.add_option("-u", "--url", dest="url",
+            help="prepend this url to the sprites filename")
     parser.add_option("-q", "--quiet", dest="quiet", action='store_true',
-                      help="suppress all normal output")
-    parser.add_option("-p", "--padding", dest="padding", default=None,
-                      help="force this padding in all images")
-    parser.add_option("--ratios", dest="ratios", default=None,
-                      help="Create sprites based on these ratios")
-    parser.add_option("--retina", dest="retina", default=None,
-                      action='store_true', help="Shortcut for --ratios=2,1")
+            help="suppress all normal output")
+    parser.add_option("-p", "--padding", dest="padding",
+            help="force this padding in all images")
+    parser.add_option("--ratios", dest="ratios",
+            help="Create sprites based on these ratios")
+    parser.add_option("--retina", dest="retina", action='store_true',
+            help="Shortcut for --ratios=2,1")
     parser.add_option("-w", "--watch", dest="watch", default=False,
-                      action='store_true',
-                      help=("Watch the source folder for changes and rebuild "
-                            "when new files appear, disappear or change."))
+            action='store_true',
+            help=("Watch the source folder for changes and rebuild "
+                  "when new files appear, disappear or change."))
     parser.add_option("-v", "--version", action="store_true", dest="version",
-                      help="show program's version number and exit")
+            help="show program's version number and exit")
 
     group = OptionGroup(parser, "Output Options")
-    group.add_option("--css", dest="css_dir", default='',
-                    help="output directory for css files", metavar='DIR')
+    group.add_option("--css", dest="css_dir", default='', metavar='DIR',
+            help="output directory for css files")
     group.add_option("--img", dest="img_dir", default='', metavar='DIR',
-                    help="output directory for img files")
-    group.add_option("--html", dest="html", default=None, action="store_true",
-                    help=("generate test html file using the sprite "
-                          "image and CSS."))
+            help="output directory for img files")
+    group.add_option("--html", dest="html", action="store_true",
+            help="generate test html file using the sprite image and CSS.")
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Advanced Options")
-    group.add_option("-a", "--algorithm", dest="algorithm", default=None,
-                    help=("allocation algorithm: square, vertical, horizontal "
-                          "(default: square)"), metavar='NAME')
-    group.add_option("--ordering", dest="ordering", default=None,
-                    help=("ordering criteria: maxside, width, height or "
-                          "area (default: maxside)"), metavar='NAME')
-    group.add_option("--margin", dest="margin", default=None,
-                      help="force this margin in all images", type=int)
-    group.add_option("--namespace", dest="namespace",  default=None,
-                      help="namespace for all css classes (default: sprite)")
+    group.add_option("-a", "--algorithm", dest="algorithm", metavar='NAME',
+            help=("allocation algorithm: square, vertical, horizontal "
+                  "(default: square)"), )
+    group.add_option("--ordering", dest="ordering", metavar='NAME',
+            help=("ordering criteria: maxside, width, height or "
+                  "area (default: maxside)"), )
+    group.add_option("--margin", dest="margin", type=int,
+            help="force this margin in all images")
+    group.add_option("--namespace", dest="namespace",
+            help="namespace for all css classes (default: sprite)")
     group.add_option("--png8", action="store_true", dest="png8",
-                      help=("the output image format will be png8 "
-                            "instead of png32"))
-    group.add_option("--ignore-filename-paddings",
-                      dest="ignore_filename_paddings", action='store_true',
-                      help="ignore filename paddings")
+            help="the output image format will be png8 instead of png32")
+    group.add_option("--ignore-filename-paddings", action='store_true',
+            dest="ignore_filename_paddings", help="ignore filename paddings")
     group.add_option("--debug", dest="debug", action='store_true',
-                      help=("don't catch unexpected errors and let glue "
-                            "fail hardly"))
+            help="don't catch unexpected errors and let glue fail hardly")
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Output CSS Template Options")
-    group.add_option("--separator", dest="separator",
-                    help=("Customize the separator used to join CSS class "
-                          "names. If you want to use camelCase use "
-                          "'camelcase' as separator."),
-                    metavar='SEPARATOR')
+    group.add_option("--separator", dest="separator", metavar='SEPARATOR',
+            help=("Customize the separator used to join CSS class "
+                  "names. If you want to use camelCase use "
+                  "'camelcase' as separator."))
     group.add_option("--global-template", dest="global_template",
-                    help=("Customize the global section of the output CSS."
-                          "This section will be added only once for each "
-                          "sprite."),
-                    metavar='TEMPLATE')
-
+            metavar='TEMPLATE',
+            help=("Customize the global section of the output CSS."
+                  "This section will be added only once for each "
+                  "sprite."))
     group.add_option("--each-template", dest="each_template",
-                    help=("Customize each image output CSS."
-                          "This section will be added once for each "
-                          "image inside the sprite."),
-                    metavar='TEMPLATE')
+            metavar='TEMPLATE',
+            help=("Customize each image output CSS."
+                  "This section will be added once for each "
+                  "image inside the sprite."))
+    group.add_option("--ratio-template", dest="ratio_template",
+            metavar='TEMPLATE',
+            help=("Customize ratios CSS media queries template."
+                  "This section will be added once for each "
+                  "ratio different than 1."))
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Optipng Options",
-                      "You need to install optipng before using these options")
+                "You need to install optipng before using these options")
     group.add_option("--optipng", dest="optipng", action='store_true',
-                help="postprocess images using optipng")
-    group.add_option("--optipngpath", dest="optipngpath", default='optipng',
-                    help="path to optipng (default: optipng)", metavar='PATH')
+            help="postprocess images using optipng")
+    group.add_option("--optipngpath", dest="optipngpath",
+            help="path to optipng (default: optipng)", metavar='PATH')
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Browser Cache Invalidation Options")
-    group.add_option("--cachebuster", dest="cachebuster",
-                    action='store_true',
-                    help=("use the sprite's sha1 first 6 characters as a "
-                          "queryarg everytime that file is referred from "
-                          "the css"))
+    group.add_option("--cachebuster", dest="cachebuster", action='store_true',
+            help=("use the sprite's sha1 first 6 characters as a "
+                  "queryarg everytime that file is referred from the css"))
     group.add_option("--cachebuster-filename", dest="cachebuster_filename",
-                    action='store_true',
-                    help=("append the sprite's sha first 6 characters "
-                          "to the otput filename"))
+            action='store_true',
+            help=("append the sprite's sha first 6 characters "
+                  "to the otput filename"))
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
