@@ -6,7 +6,7 @@ Changelog
 * Added support for multi-dpi (retina) sprite creation.
 * New ``--ratios`` and ``--retina`` options.
 * New option ``--debug``
-* Performance improvements. Glue should run ~10% faster.
+* Performance improvements. ~10% on big sprites.
 
 0.2.5
 ^^^^^^
