@@ -58,7 +58,7 @@ DEFAULT_SETTINGS = {
          '-webkit-background-size: %(width)s %(height)s;'
          '-moz-background-size: %(width)s %(height)s;'
          'background-size: %(width)s %(height)s;'
-         '}}')
+         '}}\n')
     }
 
 TEST_HTML_TEMPLATE = """
@@ -555,6 +555,9 @@ class Sprite(object):
 
         # Always add 1.0 as a required ratio
         self.ratios.add(1.0)
+
+        # Create a sorted list of ratios
+        self.ratios = sorted(self.ratios)
 
         self.process()
 
