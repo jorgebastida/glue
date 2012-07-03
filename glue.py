@@ -108,7 +108,7 @@ class PILUnavailableError(Exception):
 
 
 class _Missing(object):
-    """ Missing object  use by cached_property"""
+    """ Missing object necessary for cached_property"""
     def __repr__(self):
         return 'no value'
 
