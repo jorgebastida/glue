@@ -851,6 +851,33 @@ class TestConfigManager(unittest.TestCase):
         cm = glue.ConfigManager(self.conf_b, defaults={'a': 'aaa'})
         self.assertEqual(cm.a, 'aaa')
 
+    def test_get_file_config(self):
+        expected = {'algorithm': 'horizontal',
+                    'cachebuster': True,
+                    'cachebuster-filename': True,
+                    'crop': True,
+                    'each_template': 'each_template',
+                    'global_template': 'global_template',
+                    'html': True,
+                    'ignore_filename_paddings': True,
+                    'less': True,
+                    'margin': '2',
+                    'namespace': 'test',
+                    'optipng': True,
+                    'optipngpath': '/foo/bar/optipng',
+                    'ordering': 'width',
+                    'padding': '1',
+                    'png8': True,
+                    'project': True,
+                    'quiet': True,
+                    'ratio_template': 'ratio_template',
+                    'ratios': '1,2,3',
+                    'retina': True,
+                    'separator': '_-_',
+                    'url': 'http://test.com',
+                    'random': False}
+        config = glue.get_file_config('tests_resources/config/')
+        self.assertEqual(config, expected)
 
 if __name__ == '__main__':
     unittest.main()
