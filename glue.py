@@ -520,7 +520,7 @@ class Image(object):
     @cached_property
     def _padding_info(self):
         """Return the padding information from the filename."""
-        for block in self.filename.split('_')[::-1]:
+        for block in self.filename.split('_')[:0:-1]:
             if PADDING_REGEXP.match(block):
                 return  block.split('-')
         return []

@@ -60,10 +60,12 @@ EXPECTED_SIMPLE_CROP = """.sprite-crop-red_border,
 
 EXPECTED_SIMPLE_PADDING = """.sprite-padding-red,
 .sprite-padding-green,
-.sprite-padding-blue{background-image:url(padding.png);background-repeat:no-repeat;}
+.sprite-padding-blue,
+.sprite-padding-500{background-image:url(padding.png);background-repeat:no-repeat}
 .sprite-padding-red{background-position:0px 0px;width:45px;height:45px;}
 .sprite-padding-green{background-position:-45px 0px;width:45px;height:35px;}
 .sprite-padding-blue{background-position:0px -45px;width:31px;height:29px;}
+.sprite-padding-500{background-position:-31px -45px;width:25px;height:25px;}
 """
 
 EXPECTED_VERYSIMPLE_URL = """.sprite-verysimple-red,
@@ -85,10 +87,12 @@ EXPECTED_VERYSIMPLE_NOSIZE = """
 
 EXPECTED_PADDING_NOPADDING = """.sprite-padding-red_10,
 .sprite-padding-green_5-10,
-.sprite-padding-blue_1-2-3-4{background-image:url(padding.png);background-repeat:no-repeat;}
+.sprite-padding-blue_1-2-3-4,
+.sprite-padding-500{background-image:url(padding.png);background-repeat:no-repeat}
 .sprite-padding-red_10{background-position:0px 0px;width:25px;height:25px;}
 .sprite-padding-green_5-10{background-position:-25px 0px;width:25px;height:25px;}
 .sprite-padding-blue_1-2-3-4{background-position:0px -25px;width:25px;height:25px;}
+.sprite-padding-500{background-position:-25px -25px;width:25px;height:25px;}
 """
 
 
@@ -438,6 +442,8 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((79, 29)), GREEN)
         self.assertEqual(image.getpixel((5, 46)), BLUE)
         self.assertEqual(image.getpixel((28, 70)), BLUE)
+        self.assertEqual(image.getpixel((31, 45)), YELLOW)
+        self.assertEqual(image.getpixel((54, 69)), YELLOW)
         self.assertEqual(image.getpixel((89, 73)), TRANSPARENT)
 
         self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_PADDING)
@@ -521,7 +527,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((0, 0)), RED)
         self.assertEqual(image.getpixel((25, 0)), GREEN)
         self.assertEqual(image.getpixel((0, 25)), BLUE)
-        self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
+        self.assertEqual(image.getpixel((25, 25)), YELLOW)
 
         self.assertEqualCSS(css.read(), EXPECTED_PADDING_NOPADDING)
         css.close()
