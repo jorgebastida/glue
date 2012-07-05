@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.6.1
+^^^^^^
+* Fix bug with images that only contain digits like. Thanks to Russ Ferriday and Paul Hallett.
+* Make possible read optipng related configuration from static configuration files.
+
 0.2.6
 ^^^^^^
 * Added support for multi-dpi (retina) sprite creation.

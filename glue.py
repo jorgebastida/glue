@@ -13,7 +13,7 @@ from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 
-__version__ = '0.2.6'
+__version__ = '0.2.6.1'
 
 
 PADDING_REGEXP = re.compile("^(\d+-?){,3}\d+$")
