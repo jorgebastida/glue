@@ -1294,11 +1294,6 @@ def main():
         parser.error(("You must choose between using an unique output dir, or "
                       "using --css and --img."))
 
-    if options.optipng and not command_exists(options.optipngpath):
-        parser.error("'optipng' seems to be unavailable. You need to "
-                     "install it before using --optipng, or "
-                     "provide a path using --optipngpath.")
-
     source = os.path.abspath(args[0])
     output = os.path.abspath(args[1]) if len(args) == 2 else None
 
@@ -1318,6 +1313,11 @@ def main():
 
     config = ConfigManager(config, priority=options, defaults=DEFAULT_SETTINGS)
     manager = manager_cls(path=source, output=output, config=config)
+
+    if config.optipng and not command_exists(config.optipngpath):
+        parser.error("'optipng' seems to be unavailable. You need to "
+                     "install it before using --optipng, or "
+                     "provide a path using --optipngpath.")
 
     if manager.config.watch:
         WatchManager(path=source, action=manager.process).run()
