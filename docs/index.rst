@@ -16,7 +16,7 @@ Glue is a simple command line tool to generate CSS sprites::
 * Multiple algorithms available.
 * Automatic crop of unnecessary transparent borders around source images.
 * Configurable paddings per image, sprite or project.
-* Optional .less output format.
+* Configurable output CSS file extension (.less, .scss, etc).
 * Automatic sprite images post-processing using OptiPNG.
 * Sprite- and Project-level configuration via static config files.
 * Configurable cache busting for sprite images.

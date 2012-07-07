@@ -37,15 +37,15 @@ Usually designers add some unnecessary transparent space around the images becau
 
     $ glue source output --crop
 
--l --less
----------
-`less <http://lesscss.org/>`_  is a dynamic stylesheet language that extends CSS with dynamic behaviors.
-``glue`` can also create ``.less`` files adding the ``--less`` option.
-This files contain exactly the same CSS code. This option only changes the file format.
+-e --extension
+--------------
+You may need to specify the file format for the CSS code. For example, `less <http://lesscss.org/>`_ and `SASS <http://sass-lang.com/>`_ utilise CSS files with different extensions (.less and .scss respectively).
+``glue`` can create CSS files with a different extension using the ``--extension=<file-extension-here>`` option.
+These files contain exactly the same CSS code. This option only changes the file extension.
 
 .. code-block:: bash
 
-    $ glue source output --less
+    $ glue source output --extension=less
 
 -u --url
 ---------

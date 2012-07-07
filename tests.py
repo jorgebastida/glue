@@ -532,14 +532,14 @@ class TestGlue(unittest.TestCase):
         self.assertEqualCSS(css.read(), EXPECTED_PADDING_NOPADDING)
         css.close()
 
-    def test_less(self):
+    def test_extension(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                        'verysimple',
-                                       {'less': True})
+                                       {'extension': 'less'})
         manager.process()
 
-        less_path = os.path.join(self.output_path, 'verysimple.less')
-        self.assertTrue(os.path.isfile(less_path))
+        extension_path = os.path.join(self.output_path, 'verysimple.less')
+        self.assertTrue(os.path.isfile(extension_path))
 
     def test_url(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -866,7 +866,7 @@ class TestConfigManager(unittest.TestCase):
                     'global_template': 'global_template',
                     'html': True,
                     'ignore_filename_paddings': True,
-                    'less': True,
+                    'extension': 'less',
                     'margin': '2',
                     'namespace': 'test',
                     'optipng': True,

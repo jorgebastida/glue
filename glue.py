@@ -35,7 +35,7 @@ DEFAULT_SETTINGS = {
     'namespace': 'sprite',
     'crop': False,
     'url': '',
-    'less': False,
+    'extension': 'css',
     'optipng': False,
     'html': False,
     'ignore_filename_paddings': False,
@@ -735,12 +735,12 @@ class Sprite(object):
                     save()
 
     def save_css(self):
-        """Create the CSS or LESS file for this sprite."""
-        format = 'less' if self.config.less else 'css'
-        self.manager.log("Creating '%s' %s file..." % (self.name, format))
+        """Create the CSS file for this sprite with the specified extension."""
+        extension = self.config.extension
+        self.manager.log("Creating '%s' %s file..." % (self.name, extension))
 
         output_path = self.manager.output_path('css')
-        filename = '%s.%s' % (self.filename, format)
+        filename = '%s.%s' % (self.filename, extension)
         css_filename = os.path.join(output_path, filename)
 
         # Fix css urls on Windows
@@ -801,8 +801,8 @@ class Sprite(object):
         filename = '%s.html' % self.filename
         html_filename = os.path.join(output_path, filename)
 
-        # CSS output format
-        format = 'less' if self.config.less else 'css'
+        # CSS output extension
+        extension = self.config.extension
 
         # Fix css urls on Windows
         html_filename = '/'.join(html_filename.split('\\'))
@@ -818,7 +818,7 @@ class Sprite(object):
 
         file_template = TEST_HTML_TEMPLATE.decode('unicode-escape')
         html_file.write(file_template % {'sprites': ''.join(sprites_html),
-                                         'css_url': '%s.%s' % (self.filename, format),
+                                         'css_url': '%s.%s' % (self.filename, extension),
                                          'version': __version__})
         html_file.close()
 
@@ -1186,8 +1186,8 @@ def main():
             help="generate sprites for multiple folders")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
             help="crop images removing unnecessary transparent margins")
-    parser.add_option("-l", "--less", dest="less", action='store_true',
-            help="generate output stylesheets as .less instead of .css")
+    parser.add_option("-e", "--extension", dest="extension",
+            help="generate output stylesheets with the specified extension")
     parser.add_option("-u", "--url", dest="url",
             help="prepend this url to the sprites filename")
     parser.add_option("-q", "--quiet", dest="quiet", action='store_true',

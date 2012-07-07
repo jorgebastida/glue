@@ -62,7 +62,7 @@ algorithm                'maxside'
 namespace                'sprite'
 crop                     False
 url                      ''
-less                     False
+extension                'css'
 optipng                  False
 html                     False
 ignore_filename_paddings False
