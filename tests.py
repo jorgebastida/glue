@@ -770,7 +770,7 @@ class TestGlue(unittest.TestCase):
         # Test no-size template
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'verysimple',
-                                        {'each_template': ('%(class_name)s{background-position:%(x)s %(y)s;}\n')})
+                                        {'each_template': ('.%(class_name)s{background-position:%(x)s %(y)s;}\n')})
         manager.process()
 
         css_path = os.path.join(self.output_path, 'verysimple.css')
