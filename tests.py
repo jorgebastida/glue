@@ -179,7 +179,7 @@ EXPECTED_VERYSIMPLE_RATIOS = """.sprite-verysimple-red,
 
 class SimpleCssCompiler(object):
 
-    def __init__(self, css_text, ignore=['background-position']):
+    def __init__(self, css_text, ignore=[]):
         self._rules = {}
 
         css_text = css_text.replace('\n', '')
@@ -201,9 +201,9 @@ class SimpleCssCompiler(object):
 
 class TestGlue(unittest.TestCase):
 
-    def assertEqualCSS(self, css_text1, css_text2):
-        css1 = SimpleCssCompiler(css_text1)
-        css2 = SimpleCssCompiler(css_text2)
+    def assertEqualCSS(self, css_text1, css_text2, ignore=[]):
+        css1 = SimpleCssCompiler(css_text1, ignore)
+        css2 = SimpleCssCompiler(css_text2, ignore)
         assert css1 == css2
 
     def assertAreaColor(self, area, color):
@@ -233,7 +233,7 @@ class TestGlue(unittest.TestCase):
         manager = self.generate_manager(glue.SimpleSpriteManager, 'simple')
         manager.process()
 
-        # Test default algorith
+        # Test default algorithm
         img_path = os.path.join(self.output_path, 'simple.png')
         css_path = os.path.join(self.output_path, 'simple.css')
         self.assertTrue(os.path.isfile(img_path))
@@ -249,10 +249,12 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((25, 25)), GREEN)
         self.assertEqual(image.getpixel((50, 25)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS,
+                           ['background-position'])
+
         css.close()
 
-        # Test vertical algorith
+        # Test vertical algorithm
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'simple',
                                         {'algorithm': 'vertical'})
@@ -273,10 +275,12 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((0, 100)), CYAN)
         self.assertEqual(image.getpixel((0, 125)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS,
+                           ['background-position'])
+
         css.close()
 
-        # Test horizontal algorith
+        # Test horizontal algorithm
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'simple',
                                         {'algorithm': 'horizontal'})
@@ -321,10 +325,12 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((100, 100)), CYAN)
         self.assertEqual(image.getpixel((125, 125)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS,
+                            ['background-position'])
+
         css.close()
 
-        # Test horizontal-bottom algorith
+        # Test horizontal-bottom algorithm
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'ordering',
                                         {'algorithm': 'horizontal-bottom'})
@@ -345,7 +351,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqualCSS(css.read(), EXPECTED_ORDERING_CSS)
         css.close()
 
-        # Test vertical-right algorith
+        # Test vertical-right algorithm
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'ordering',
                                         {'algorithm': 'vertical-right'})
@@ -363,7 +369,9 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((6, 17)), BLUE)
         self.assertEqual(image.getpixel((16, 42)), RED)
 
-        self.assertEqualCSS(css.read(), EXPECTED_ORDERING_CSS)
+        self.assertEqualCSS(css.read(), EXPECTED_ORDERING_CSS,
+                           ['background-position'])
+
         css.close()
 
     def test_project_manager(self):
@@ -478,7 +486,9 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((100, 55)), BLUE)
         self.assertEqual(image.getpixel((124, 79)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
+        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS,
+                           ['background-position'])
+
         css.close()
 
     def test_pseudoclass(self):
@@ -532,14 +542,14 @@ class TestGlue(unittest.TestCase):
         self.assertEqualCSS(css.read(), EXPECTED_PADDING_NOPADDING)
         css.close()
 
-    def test_less(self):
+    def test_extension(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                        'verysimple',
-                                       {'less': True})
+                                       {'extension': 'less'})
         manager.process()
 
-        less_path = os.path.join(self.output_path, 'verysimple.less')
-        self.assertTrue(os.path.isfile(less_path))
+        extension_path = os.path.join(self.output_path, 'verysimple.less')
+        self.assertTrue(os.path.isfile(extension_path))
 
     def test_url(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -760,7 +770,7 @@ class TestGlue(unittest.TestCase):
         # Test no-size template
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'verysimple',
-                                        {'each_template': ('%(class_name)s{background-position:%(x)s %(y)s;}\n')})
+                                        {'each_template': ('.%(class_name)s{background-position:%(x)s %(y)s;}\n')})
         manager.process()
 
         css_path = os.path.join(self.output_path, 'verysimple.css')
@@ -866,7 +876,7 @@ class TestConfigManager(unittest.TestCase):
                     'global_template': 'global_template',
                     'html': True,
                     'ignore_filename_paddings': True,
-                    'less': True,
+                    'extension': 'less',
                     'margin': '2',
                     'namespace': 'test',
                     'optipng': True,
