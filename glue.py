@@ -53,7 +53,7 @@ DEFAULT_SETTINGS = {
         ('%(all_classes)s{background-image:url(%(sprite_url)s);'
          'background-repeat:no-repeat}\n'),
     'each_template':
-        ('%(class_name)s{background-position:%(x)s %(y)s;'
+        ('.%(class_name)s{background-position:%(x)s %(y)s;'
          'width:%(width)s;height:%(height)s;}\n'),
     'ratio_template':
         ('@media '
@@ -770,7 +770,7 @@ class Sprite(object):
             width = '%spx' % round_up((image.width / self.max_ratio) + image.horizontal_padding)
 
             template = self.config.each_template.decode('unicode-escape')
-            css_file.write(template % {'class_name': '.%s' % image.class_name,
+            css_file.write(template % {'class_name': image.class_name,
                                        'sprite_url': self.image_url(),
                                        'height': height,
                                        'width': width,
