@@ -24,7 +24,7 @@ setup(
     py_modules=['glue'],
     platforms='any',
     install_requires=[
-        'PIL>=1.1.6'
+        'Pillow==1.7.6'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
