@@ -1,10 +1,9 @@
 Installing Glue
 ===============
 
-Glue only depends on one external library, `PIL <http://www.pythonware.com/products/pil/>`_.
-``PIL`` is a graphic library for python and it's used to create the sprite images.
+Glue only depends on one external library, `Pillow <http://pypi.python.org/pypi/Pillow/>`_. a friendly fork of `PIL <http://www.pythonware.com/products/pil/>`_.
 
-By default some Linux distributions and OSX don't have the required codecs to manipulate ``jpeg`` images so it's necessary to install them manually.
+This libraries require some external codes in order to manipulate ``jpeg`` images. These codecs aren't available by default in some Linux distributions neither OSX, so it's necessary to install them manually.
 
 OSX
 ---
@@ -14,10 +13,10 @@ Before installing ``Homebrew`` you'll need to install Xcode, then you can follow
 .. code-block:: bash
 
     $ sudo brew install jpeg
-
     $ sudo pip install glue
-    # or
-    $ sudo easy_install glue
+
+.. note::
+    If you are using Snow Leopard (10.6) you should install glue using ``sudo env ARCHFLAGS='-arch i386 -arch x86_64' pip install glue``
 
 Debian/Ubuntu
 -------------
@@ -26,10 +25,13 @@ If you are using Debian/Ubuntu installing ``glue`` is really easy:
 .. code-block:: bash
 
     $ apt-get install libjpeg62 libjpeg62-dev zlib1g-dev
-
     $ sudo pip install glue
-    # or
-    $ sudo easy_install glue
+
+You can also install it using the native package:
+
+.. code-block:: bash
+
+    $ apt-get install glue-sprite
 
 Windows
 -------
