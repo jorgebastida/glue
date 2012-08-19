@@ -5,7 +5,7 @@ python:
 install:
   - sudo apt-get install zlib1g-dev
   - sudo ln -s /usr/lib/i386-linux-gnu/libz.so /usr/lib
-  - pip install PIL
+  - python setup.py install
 script:
   - python tests.py
 branches:
