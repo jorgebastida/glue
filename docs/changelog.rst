@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.2.7
+^^^^^
+* Glue now require Pillow instead of PIL (http://pypi.python.org/pypi/Pillow/)
+
 0.2.6.1
 ^^^^^^
 * Fix bug with images that only contain digits like. Thanks to Russ Ferriday and Paul Hallett.
