@@ -4,6 +4,7 @@ Changelog
 0.2.7
 ^^^^^
 * Glue now require Pillow instead of PIL (http://pypi.python.org/pypi/Pillow/)
+* Improve compatibility with less allowing variables in the urls (Thanks rafeca).
 
 0.2.6.1
 ^^^^^^
