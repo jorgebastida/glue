@@ -50,7 +50,7 @@ DEFAULT_SETTINGS = {
     'cachebuster': False,
     'cachebuster-filename': False,
     'global_template':
-        ('%(all_classes)s{background-image:url(%(sprite_url)s);'
+        ('%(all_classes)s{background-image:url(\'%(sprite_url)s\');'
          'background-repeat:no-repeat}\n'),
     'each_template':
         ('%(class_name)s{background-position:%(x)s %(y)s;'
@@ -61,7 +61,7 @@ DEFAULT_SETTINGS = {
          'only screen and (min--moz-device-pixel-ratio: %(ratio)s), '
          'only screen and (-o-min-device-pixel-ratio: %(ratio_fraction)s), '
          'only screen and (min-device-pixel-ratio: %(ratio)s) {'
-         '%(all_classes)s{background-image:url(%(sprite_url)s);'
+         '%(all_classes)s{background-image:url(\'%(sprite_url)s\');'
          '-webkit-background-size: %(width)s %(height)s;'
          '-moz-background-size: %(width)s %(height)s;'
          'background-size: %(width)s %(height)s;'

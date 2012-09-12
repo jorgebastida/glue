@@ -25,7 +25,7 @@ EXPECTED_SIMPLE_CSS = """.sprite-simple-yellow,
 .sprite-simple-pink,
 .sprite-simple-green,
 .sprite-simple-cyan,
-.sprite-simple-blue{background-image:url(simple.png);background-repeat:no-repeat;}
+.sprite-simple-blue{background-image:url('simple.png');background-repeat:no-repeat;}
 .sprite-simple-yellow{background-position:0px 0px;width:25px;height:25px;}
 .sprite-simple-red{background-position:-25px 0px;width:25px;height:25px;}
 .sprite-simple-pink{background-position:-50px 0px;width:25px;height:25px;}
@@ -36,7 +36,7 @@ EXPECTED_SIMPLE_CSS = """.sprite-simple-yellow,
 
 EXPECTED_PROJECT_MIX_CSS = """.sprite-mix-yellow,
 .sprite-mix-pink,
-.sprite-mix-cyan{background-image:url(mix.png);background-repeat:no-repeat;}
+.sprite-mix-cyan{background-image:url('mix.png');background-repeat:no-repeat;}
 .sprite-mix-yellow{background-position:0px 0px;width:25px;height:25px;}
 .sprite-mix-pink{background-position:-25px 0px;width:25px;height:25px;}
 .sprite-mix-cyan{background-position:0px -25px;width:25px;height:25px;}
@@ -44,7 +44,7 @@ EXPECTED_PROJECT_MIX_CSS = """.sprite-mix-yellow,
 
 EXPECTED_PROJECT_RGB_CSS = """.sprite-rgb-red,
 .sprite-rgb-green,
-.sprite-rgb-blue{background-image:url(rgb.png);background-repeat:no-repeat;}
+.sprite-rgb-blue{background-image:url('rgb.png');background-repeat:no-repeat;}
 .sprite-rgb-red{background-position:0px 0px;width:25px;height:25px;}
 .sprite-rgb-green{background-position:-25px 0px;width:25px;height:25px;}
 .sprite-rgb-blue{background-position:0px -25px;width:25px;height:25px;}
@@ -52,7 +52,7 @@ EXPECTED_PROJECT_RGB_CSS = """.sprite-rgb-red,
 
 EXPECTED_SIMPLE_CROP = """.sprite-crop-red_border,
 .sprite-crop-green_border,
-.sprite-crop-blue_border{background-image:url(crop.png);background-repeat:no-repeat;}
+.sprite-crop-blue_border{background-image:url('crop.png');background-repeat:no-repeat;}
 .sprite-crop-red_border{background-position:0px 0px;width:25px;height:25px;}
 .sprite-crop-green_border{background-position:-25px 0px;width:25px;height:25px;}
 .sprite-crop-blue_border{background-position:0px -25px;width:25px;height:25px;}
@@ -61,7 +61,7 @@ EXPECTED_SIMPLE_CROP = """.sprite-crop-red_border,
 EXPECTED_SIMPLE_PADDING = """.sprite-padding-red,
 .sprite-padding-green,
 .sprite-padding-blue,
-.sprite-padding-500{background-image:url(padding.png);background-repeat:no-repeat}
+.sprite-padding-500{background-image:url('padding.png');background-repeat:no-repeat}
 .sprite-padding-red{background-position:0px 0px;width:45px;height:45px;}
 .sprite-padding-green{background-position:-45px 0px;width:45px;height:35px;}
 .sprite-padding-blue{background-position:0px -45px;width:31px;height:29px;}
@@ -70,7 +70,7 @@ EXPECTED_SIMPLE_PADDING = """.sprite-padding-red,
 
 EXPECTED_VERYSIMPLE_URL = """.sprite-verysimple-red,
 .sprite-verysimple-green,
-.sprite-verysimple-blue{background-image:url(/static/verysimple.png);background-repeat:no-repeat;}
+.sprite-verysimple-blue{background-image:url('/static/verysimple.png');background-repeat:no-repeat;}
 .sprite-verysimple-red{background-position:0px 0px;width:25px;height:25px;}
 .sprite-verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
 .sprite-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
@@ -79,7 +79,7 @@ EXPECTED_VERYSIMPLE_URL = """.sprite-verysimple-red,
 EXPECTED_VERYSIMPLE_NOSIZE = """
 .sprite-verysimple-red,
 .sprite-verysimple-green,
-.sprite-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
+.sprite-verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat;}
 .sprite-verysimple-red{background-position:0px 0px;}
 .sprite-verysimple-green{background-position:-25px 0px;}
 .sprite-verysimple-blue{background-position:0px -25px;}
@@ -88,7 +88,7 @@ EXPECTED_VERYSIMPLE_NOSIZE = """
 EXPECTED_PADDING_NOPADDING = """.sprite-padding-red_10,
 .sprite-padding-green_5-10,
 .sprite-padding-blue_1-2-3-4,
-.sprite-padding-500{background-image:url(padding.png);background-repeat:no-repeat}
+.sprite-padding-500{background-image:url('padding.png');background-repeat:no-repeat}
 .sprite-padding-red_10{background-position:0px 0px;width:25px;height:25px;}
 .sprite-padding-green_5-10{background-position:-25px 0px;width:25px;height:25px;}
 .sprite-padding-blue_1-2-3-4{background-position:0px -25px;width:25px;height:25px;}
@@ -99,7 +99,7 @@ EXPECTED_PADDING_NOPADDING = """.sprite-padding-red_10,
 EXPECTED_VERYSIMPLE_NAMESPACE = """
 .abc-verysimple-red,
 .abc-verysimple-green,
-.abc-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
+.abc-verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat;}
 .abc-verysimple-red{background-position:0px 0px;width:25px;height:25px;}
 .abc-verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
 .abc-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
@@ -108,7 +108,7 @@ EXPECTED_VERYSIMPLE_NAMESPACE = """
 EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 .verysimple-red,
 .verysimple-green,
-.verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat;}
+.verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat;}
 .verysimple-red{background-position:0px 0px;width:25px;height:25px;}
 .verysimple-green{background-position:-25px 0px;width:25px;height:25px;}
 .verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
@@ -117,7 +117,7 @@ EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 EXPECTED_ORDERING_CSS = """
 .sprite-ordering-green,
 .sprite-ordering-blue,
-.sprite-ordering-red{background-image:url(ordering.png);background-repeat:no-repeat}
+.sprite-ordering-red{background-image:url('ordering.png');background-repeat:no-repeat}
 .sprite-ordering-green{background-position:0px -8px;width:25px;height:17px;}
 .sprite-ordering-blue{background-position:-25px 0px;width:19px;height:25px;}
 .sprite-ordering-red{background-position:-44px -23px;width:9px;height:2px;}
@@ -126,7 +126,7 @@ EXPECTED_ORDERING_CSS = """
 EXPECTED_PSEUDOCLASS = """
 .sprite-pseudoclass-red,
 .sprite-pseudoclass-blue,
-.sprite-pseudoclass-green{background-image:url(pseudoclass.png);background-repeat:no-repeat}
+.sprite-pseudoclass-green{background-image:url('pseudoclass.png');background-repeat:no-repeat}
 .sprite-pseudoclass-red:hover{background-position:0px 0px;width:31px;height:29px;}
 .sprite-pseudoclass-red{background-position:-31px 0px;width:31px;height:29px;}
 .sprite-pseudoclass-blue:hover{background-position:0px -29px;width:31px;height:29px;}
@@ -138,7 +138,7 @@ EXPECTED_PSEUDOCLASS = """
 EXPECTED_VERYSIMPLE_SEP_ = """
 .sprite_verysimple_red,
 .sprite_verysimple_green,
-.sprite_verysimple_blue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.sprite_verysimple_blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .sprite_verysimple_red{background-position:0px 0px;width:25px;height:25px;}
 .sprite_verysimple_green{background-position:-25px 0px;width:25px;height:25px;}
 .sprite_verysimple_blue{background-position:0px -25px;width:25px;height:25px;}
@@ -147,7 +147,7 @@ EXPECTED_VERYSIMPLE_SEP_ = """
 EXPECTED_VERYSIMPLE_SEP_NAMESPACE = """
 .custom_verysimple_red,
 .custom_verysimple_green,
-.custom_verysimple_blue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.custom_verysimple_blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .custom_verysimple_red{background-position:0px 0px;width:25px;height:25px;}
 .custom_verysimple_green{background-position:-25px 0px;width:25px;height:25px;}
 .custom_verysimple_blue{background-position:0px -25px;width:25px;height:25px;}
@@ -156,7 +156,7 @@ EXPECTED_VERYSIMPLE_SEP_NAMESPACE = """
 EXPECTED_VERYSIMPLE_CAMELCASE = """
 .spriteVerysimpleRed,
 .spriteVerysimpleGreen,
-.spriteVerysimpleBlue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.spriteVerysimpleBlue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .spriteVerysimpleRed{background-position:0px 0px;width:25px;height:25px;}
 .spriteVerysimpleGreen{background-position:-25px 0px;width:25px;height:25px;}
 .spriteVerysimpleBlue{background-position:0px -25px;width:25px;height:25px;}
@@ -164,16 +164,16 @@ EXPECTED_VERYSIMPLE_CAMELCASE = """
 
 EXPECTED_VERYSIMPLE_RATIOS = """.sprite-verysimple-red,
 .sprite-verysimple-green,
-.sprite-verysimple-blue{background-image:url(verysimple.png);background-repeat:no-repeat}
+.sprite-verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .sprite-verysimple-red{background-position:-5px -5px;width:13px;height:13px;}
 .sprite-verysimple-green{background-position:-26px -5px;width:13px;height:13px;}
 .sprite-verysimple-blue{background-position:-5px -26px;width:13px;height:13px;}
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (-o-min-device-pixel-ratio: 150/100), only screen and (min-device-pixel-ratio: 1.5) {.sprite-verysimple-red,
 .sprite-verysimple-green,
-.sprite-verysimple-blue{background-image:url(verysimple@1.5x.png);-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}
+.sprite-verysimple-blue{background-image:url('verysimple@1.5x.png');-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}
 @media only screen and (-webkit-min-device-pixel-ratio: 2.0), only screen and (min--moz-device-pixel-ratio: 2.0), only screen and (-o-min-device-pixel-ratio: 200/100), only screen and (min-device-pixel-ratio: 2.0) {.sprite-verysimple-red,
 .sprite-verysimple-green,
-.sprite-verysimple-blue{background-image:url(verysimple@2x.png);-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}
+.sprite-verysimple-blue{background-image:url('verysimple@2x.png');-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}
 """
 
 
