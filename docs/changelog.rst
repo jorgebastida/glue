@@ -5,6 +5,7 @@ Changelog
 ^^^^^
 * Glue now require Pillow instead of PIL (http://pypi.python.org/pypi/Pillow/)
 * Improve compatibility with less allowing variables in the urls (Thanks rafeca).
+* Fix cachebuster issues with --retina and --url
 
 0.2.6.1
 ^^^^^^
