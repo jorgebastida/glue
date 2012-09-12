@@ -878,7 +878,7 @@ class Sprite(object):
                               self.manager.output_path('css'))
 
         if self.config.url:
-            url = os.path.join(self.config.url, '%s.png' % self.filename)
+            url = os.path.join(self.config.url, url)
 
         if self.config.cachebuster:
             url = "%s?%s" % (url, self.cachebuster_hash)
