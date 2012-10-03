@@ -522,7 +522,7 @@ class Image(object):
         """Return the padding information from the filename."""
         for block in self.filename.split('_')[:0:-1]:
             if PADDING_REGEXP.match(block):
-                return  block.split('-')
+                return block.split('-')
         return []
 
     @cached_property
@@ -834,7 +834,7 @@ class Sprite(object):
 
         if separator == CAMELCASE_SEPARATOR:
             namespace = [n.lower().capitalize() if i > 0 else n.lower() \
-                                            for i, n in  enumerate(namespace)]
+                                            for i, n in enumerate(namespace)]
             separator = ''
         return separator.join(namespace)
 
