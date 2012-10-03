@@ -743,9 +743,6 @@ class Sprite(object):
         filename = '%s.%s' % (self.filename, format)
         css_filename = os.path.join(output_path, filename)
 
-        # Fix css urls on Windows
-        css_filename = '/'.join(css_filename.split('\\'))
-
         css_file = open(css_filename, 'w')
 
         # get all the class names and join them
@@ -803,9 +800,6 @@ class Sprite(object):
 
         # CSS output format
         format = 'less' if self.config.less else 'css'
-
-        # Fix css urls on Windows
-        html_filename = '/'.join(html_filename.split('\\'))
 
         html_file = open(html_filename, 'w')
 
@@ -876,6 +870,10 @@ class Sprite(object):
         """
         url = os.path.relpath(self.image_path(ratio),
                               self.manager.output_path('css'))
+
+        # Fix css urls on Windows
+        if os.name == 'nt':
+            url = url.replace('\\', '/')
 
         if self.config.url:
             url = os.path.join(self.config.url, url)
