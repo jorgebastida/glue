@@ -33,6 +33,7 @@ DEFAULT_SETTINGS = {
     'algorithm': 'square',
     'ordering': 'maxside',
     'namespace': 'sprite',
+    'sprite_namespace': '%(sprite)s',
     'crop': False,
     'url': '',
     'less': False,
@@ -473,12 +474,11 @@ class Image(object):
 
         This CSS class name will have the following format:
 
-        ``.[namespace]-[sprite_name]-[image_name]{ ... }``
+        ``.[namespace]-[sprite-namespace]-[image_name]{ ... }``
 
         The image_name will only contain alphanumeric characters,
         ``-`` and ``_``. The default namespace is ``sprite``, but it could
         be overridden using the ``--namespace`` optional argument.
-
 
         * ``animals/cat.png`` will be ``.sprite-animals-cat``
         * ``animals/cow_20.png`` will be ``.sprite-animals-cow``
@@ -505,17 +505,29 @@ class Image(object):
         # Clean filename
         name = re.sub(r'[^\w\-_]', '', name)
 
-        # Customize the name if necessary
         separator = self.sprite.manager.config.separator
-        if separator == CAMELCASE_SEPARATOR:
-            separator = ''
-            if self.sprite.namespace:
-                name = name[:1].capitalize() + name[1:]
 
         # Add pseudo-class information
         name = '%s%s' % (name, self.pseudo)
 
-        return separator.join([self.sprite.namespace, name])
+        # Create the minimal namespace
+        namespace = [name]
+
+        # Add sprite namespace if required
+        if self.sprite.manager.config.sprite_namespace:
+            namespace.insert(0, self.sprite.manager.config.sprite_namespace % {'sprite': self.sprite.name})
+
+        # Add global namespace if required
+        if self.sprite.manager.config.namespace:
+            namespace.insert(0, self.sprite.manager.config.namespace)
+
+        # Handle CamelCase separator
+        if separator == CAMELCASE_SEPARATOR:
+            namespace = [n.lower().capitalize() if i > 0 else n.lower() \
+                                            for i, n in enumerate(namespace)]
+            separator = ''
+
+        return separator.join(namespace)
 
     @cached_property
     def _padding_info(self):
@@ -603,7 +615,22 @@ class Sprite(object):
         # Create a sorted list of ratios
         self.ratios = sorted(self.ratios)
 
-        self.process()
+        # Locate images
+        self.images = self._locate_images()
+
+    def validate(self):
+        """Validate this sprite cheking that all images will have different
+        CCS class names.
+        """
+        class_names = [i.class_name for i in self.images]
+        if len(set(class_names)) != len(self.images):
+            dup = [i for i in self.images if class_names.count(i.class_name) > 1]
+            raise MultipleImagesWithSameNameError(dup)
+
+        for image in self.images:
+            self.manager.log("\t %s => .%s" % (image.name, image.class_name))
+
+        return True
 
     def process(self):
         """Process a sprite path searching for all the images and then
@@ -616,8 +643,6 @@ class Sprite(object):
             raise InvalidImageAlgorithmError(self.config.algorithm)
 
         self.algorithm = algorithm()
-        self.images = self._locate_images()
-
         self.algorithm.process(self)
 
     def _locate_images(self):
@@ -641,15 +666,6 @@ class Sprite(object):
 
         if not len(images):
             raise SourceImagesNotFoundError()
-
-        # Check if there are duplicate class names
-        class_names = [i.class_name for i in images]
-        if len(set(class_names)) != len(images):
-            dup = [i for i in images if class_names.count(i.class_name) > 1]
-            raise MultipleImagesWithSameNameError(dup)
-
-        for image in images:
-            self.manager.log("\t %s => .%s" % (image.name, image.class_name))
 
         return sorted(images, reverse=self.config.ordering[0] != '-')
 
@@ -755,8 +771,7 @@ class Sprite(object):
         # add the global style for all the sprites for less bloat
         template = self.config.global_template.decode('unicode-escape')
         css_file.write(template % {'all_classes': class_names,
-                                   'sprite_url': self.image_url(),
-                                   'namespace': self.namespace})
+                                   'sprite_url': self.image_url()})
 
         # compile one template for each file
         margin = int(self.config.margin)
@@ -821,22 +836,6 @@ class Sprite(object):
                                          'css_url': '%s.%s' % (self.filename, format),
                                          'version': __version__})
         html_file.close()
-
-    @cached_property
-    def namespace(self):
-        """Return the namespace for this sprite."""
-
-        namespace = [self.name]
-        separator = self.config.separator
-
-        if self.config.namespace:
-            namespace.insert(0, self.config.namespace)
-
-        if separator == CAMELCASE_SEPARATOR:
-            namespace = [n.lower().capitalize() if i > 0 else n.lower() \
-                                            for i, n in enumerate(namespace)]
-            separator = ''
-        return separator.join(namespace)
 
     @cached_property
     def filename(self):
@@ -962,13 +961,34 @@ class BaseManager(object):
         :param path: Sprite path.
         :param name: Sprite name.
         """
-        self.log("Processing '%s':" % name)
         sprite = Sprite(name=name, path=path, manager=self)
         self.sprites.append(sprite)
 
+    def validate(self):
+        """Validate CSS class names collision between sprites"""
+
+        class_names = reduce(lambda x, y: x + y, [[i.class_name for i in sprite.images] for sprite in self.sprites])
+
+        if len(class_names) != len(set(class_names)):
+            dup = [[i for i in sprite.images if class_names.count(i.class_name) > 1] for sprite in self.sprites]
+            dup = reduce(lambda x, y: x + y, dup)
+            raise MultipleImagesWithSameNameError(dup)
+
+        return True
+
     def save(self):
         """Save all the sprites inside this manager."""
+
+        # Validate sprites individualy
         for sprite in self.sprites:
+            self.log("Processing '%s':" % sprite.name)
+            sprite.validate()
+
+        # Validate collisions between sprites
+        self.validate()
+
+        for sprite in self.sprites:
+            sprite.process()
             sprite.save_image()
             sprite.save_css()
             if sprite.manager.config.html:
@@ -1225,6 +1245,8 @@ def main():
             help="force this margin in all images")
     group.add_option("--namespace", dest="namespace",
             help="namespace for all css classes (default: sprite)")
+    group.add_option("--sprite-namespace", dest="sprite_namespace",
+            help="namespace for all sprites (default: sprite name)")
     group.add_option("--png8", action="store_true", dest="png8",
             help="the output image format will be png8 instead of png32")
     group.add_option("--ignore-filename-paddings", action='store_true',
@@ -1328,7 +1350,8 @@ def main():
     except MultipleImagesWithSameNameError, e:
         sys.stderr.write("Error: Some images will have the same class name:\n")
         for image in e.args[0]:
-            sys.stderr.write('\t %s => .%s\n' % (image.name, image.class_name))
+            rel = os.path.relpath(os.path.join(image.sprite.name, image.name))
+            sys.stderr.write('\t%s => .%s\n' % (rel, image.class_name))
         sys.exit(e.error_code)
     except SourceImagesNotFoundError, e:
         sys.stderr.write("Error: No images found.\n")

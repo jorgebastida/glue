@@ -170,6 +170,32 @@ By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class
 
     $ glue source output --namespace=my-namespace
 
+
+If you want to completely remove the namespace (both the global and the sprite part) you can use:
+
+.. code-block:: bash
+
+    $ glue source output --sprite-namespace= --namespace=
+
+
+--sprite-namespace
+------------------
+By default ``glue`` adds the sprite's name as past of the CSS class namespace. If you want to use your own namespace you can override the default one using the ``--sprite-namespace`` option.
+
+.. code-block:: bash
+
+    $ glue source output --sprite-namespace=custom
+
+
+As part of the new sprite namespace you can use the key ``%(sprite)s`` to refer to the original namespace.
+
+If you want to completely remove the namespace (both the global and the sprite part) you can use:
+
+.. code-block:: bash
+
+    $ glue source output --sprite-namespace= --namespace=
+
+
 --png8
 ------
 By using the flag ``png8`` the output image format will be png8 instead of png32.
