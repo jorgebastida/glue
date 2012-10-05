@@ -114,6 +114,33 @@ EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 .verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
+EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE ="""
+.sprite-foo-red,
+.sprite-foo-green,
+.sprite-foo-blue{background-image:url('verysimple.png');background-repeat:no-repeat}
+.sprite-foo-red{background-position:0px 0px;width:25px;height:25px;}
+.sprite-foo-green{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-foo-blue{background-position:0px -25px;width:25px;height:25px;}
+"""
+
+EXPECTED_VERYSIMPLE_NO_NAMESPACE ="""
+.red,
+.green,
+.blue{background-image:url('verysimple.png');background-repeat:no-repeat}
+.red{background-position:0px 0px;width:25px;height:25px;}
+.green{background-position:-25px 0px;width:25px;height:25px;}
+.blue{background-position:0px -25px;width:25px;height:25px;}
+"""
+
+EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE_EMPTY ="""
+.sprite-red,
+.sprite-green,
+.sprite-blue{background-image:url('verysimple.png');background-repeat:no-repeat}
+.sprite-red{background-position:0px 0px;width:25px;height:25px;}
+.sprite-green{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-blue{background-position:0px -25px;width:25px;height:25px;}
+"""
+
 EXPECTED_ORDERING_CSS = """
 .sprite-ordering-green,
 .sprite-ordering-blue,
@@ -674,7 +701,7 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_EMPTYNAMESPACE)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NO_NAMESPACE)
         css.close()
 
     def test_separator(self):
