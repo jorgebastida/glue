@@ -637,6 +637,46 @@ class TestGlue(unittest.TestCase):
         self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_EMPTYNAMESPACE)
         css.close()
 
+    def test_sprite_namespace(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'sprite_namespace': 'foo'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE)
+        css.close()
+
+        # Empty namespace
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'sprite_namespace': ''})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE_EMPTY)
+        css.close()
+
+    def test_remove_all_namespaces(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'sprite_namespace': '',
+                                         'namespace': ''})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_EMPTYNAMESPACE)
+        css.close()
+
     def test_separator(self):
         # Custom separator
         manager = self.generate_manager(glue.SimpleSpriteManager,
