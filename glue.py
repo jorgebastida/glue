@@ -47,6 +47,8 @@ DEFAULT_SETTINGS = {
     'optipngpath': 'optipng',
     'optipng': False,
     'project': False,
+    'recursive': False,
+    'follow_links': False,
     'quiet': False,
     'cachebuster': False,
     'cachebuster-filename': False,
@@ -372,7 +374,7 @@ ALGORITHMS = {'square': SquareAlgorithm,
 
 class Image(object):
 
-    def __init__(self, name, sprite):
+    def __init__(self, name, sprite, path=None):
         """Image constructor
 
         :param name: Image name.
@@ -386,8 +388,8 @@ class Image(object):
         pseudo = set(self.filename.split('_')).intersection(PSEUDO_CLASSES)
         self.pseudo = ':%s' % list(pseudo)[-1] if pseudo else ''
 
-        image_path = os.path.join(sprite.path, name)
-        image_file = open(image_path, "rb")
+        self.path = path or os.path.join(sprite.path, name)
+        image_file = open(self.path, "rb")
 
         try:
             source_image = PImage.open(image_file)
@@ -660,11 +662,16 @@ class Sprite(object):
         extensions = '|'.join(VALID_IMAGE_EXTENSIONS)
         extension_re = re.compile('.+\.(%s)$' % extensions, re.IGNORECASE)
         files = sorted(os.listdir(self.path))
-        images = [Image(n, sprite=self) for n in files if \
-                                    not n.startswith('.') and \
-                                    extension_re.match(n)]
 
-        if not len(images):
+        images = []
+        for root, dirs, files in os.walk(self.path, followlinks=self.config.follow_links):
+            for f in files:
+                if not f.startswith('.') and extension_re.match(f):
+                    images.append(Image(f, path=os.path.join(root, f), sprite=self))
+            if not self.config.recursive:
+                break
+
+        if not images:
             raise SourceImagesNotFoundError()
 
         return sorted(images, reverse=self.config.ordering[0] != '-')
@@ -1055,13 +1062,21 @@ class ProjectSpriteManager(BaseManager):
         This is not the default manager. It is only used if you use
         the ``--project`` argument.
         """
+
         for sprite_name in os.listdir(self.path):
+
             # Only process folders
             path = os.path.join(self.path, sprite_name)
-            if os.path.isdir(path) and not sprite_name.startswith('.'):
+
+            # Ignore folders starting with '.'
+            if sprite_name.startswith('.'):
+                continue
+
+            # Ignore symlinks if necessary.
+            if self.config.follow_links or not os.path.islink(path):
                 self.process_sprite(path=path, name=sprite_name)
 
-        if not len(self.sprites):
+        if not self.sprites:
             raise NoSpritesFoldersFoundError()
 
         self.save()
@@ -1204,6 +1219,11 @@ def main():
                                  "| --css=<dir> --img=<dir>]"))
     parser.add_option("--project", action="store_true", dest="project",
             help="generate sprites for multiple folders")
+    parser.add_option("-r", "--recursive", dest="recursive", action='store_true',
+            help=("Read directories recursively and add all the "
+                  "images to the same sprite."))
+    parser.add_option("--follow-links", dest="follow_links", action='store_true',
+            help="Follow symbolic links.")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
             help="crop images removing unnecessary transparent margins")
     parser.add_option("-l", "--less", dest="less", action='store_true',
@@ -1350,8 +1370,8 @@ def main():
     except MultipleImagesWithSameNameError, e:
         sys.stderr.write("Error: Some images will have the same class name:\n")
         for image in e.args[0]:
-            rel = os.path.relpath(os.path.join(image.sprite.name, image.name))
-            sys.stderr.write('\t%s => .%s\n' % (rel, image.class_name))
+            rel_path = os.path.relpath(image.path)
+            sys.stderr.write('\t%s => .%s\n' % (rel_path, image.class_name))
         sys.exit(e.error_code)
     except SourceImagesNotFoundError, e:
         sys.stderr.write("Error: No images found.\n")
@@ -1372,6 +1392,7 @@ def main():
                           "images.\n") % e.args[0])
         sys.exit(e.error_code)
     except Exception:
+        raise
         if config.debug:
             import platform
             sys.stderr.write("Glue version: %s\n" % __version__)
@@ -1380,7 +1401,7 @@ def main():
             sys.stderr.write("Config: %s\n" % config.sources)
             sys.stderr.write("Args: %s\n" % sys.argv)
             sys.stderr.write("\n")
-            raise
+
         sys.stderr.write("Error: Unknown Error.\n")
         sys.exit(1)
 
