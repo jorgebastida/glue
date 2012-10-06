@@ -12,6 +12,7 @@ import ConfigParser
 from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
+from PIL import PngImagePlugin
 
 __version__ = '0.2.8'
 
@@ -37,6 +38,7 @@ DEFAULT_SETTINGS = {
     'crop': False,
     'url': '',
     'less': False,
+    'force': False,
     'optipng': False,
     'html': False,
     'ignore_filename_paddings': False,
@@ -600,6 +602,7 @@ class Sprite(object):
         self.images = []
         self.path = path
         self.cachebuster_hash = ''
+        self._processed = False
 
         self.config = manager.config.extend(get_file_config(self.path))
 
@@ -638,6 +641,8 @@ class Sprite(object):
         """Process a sprite path searching for all the images and then
         allocate all of them in the most appropriate position.
         """
+        if self._processed:
+            return
 
         algorithm = ALGORITHMS.get(self.config.algorithm)
 
@@ -646,6 +651,7 @@ class Sprite(object):
 
         self.algorithm = algorithm()
         self.algorithm.process(self)
+        self._processed = True
 
     def _locate_images(self):
         """Return all valid images within a folder.
@@ -693,6 +699,29 @@ class Sprite(object):
         """Create the image file for this sprite."""
         self.manager.log("Creating '%s' image file..." % self.name)
 
+        # Check if we need to create any sprite.
+        ratios_to_process = []
+
+        for ratio in self.ratios:
+            sprite_image_path = self.image_path(ratio)
+            try:
+                assert not self.config.force
+                existing_sprite = PImage.open(sprite_image_path)
+                assert existing_sprite.info['glue'] == __version__
+                assert existing_sprite.info['hash'] == self.hash
+                already_created = True
+            except Exception:
+                already_created = False
+
+            if not already_created:
+                ratios_to_process.append(ratio)
+
+        if not ratios_to_process:
+            return
+
+        # Process the sprite if necessary.
+        self.process()
+
         # Create the sprite canvas
         width, height = self.canvas_size
         canvas = PImage.new('RGBA', (width, height), (0, 0, 0, 0))
@@ -708,8 +737,12 @@ class Sprite(object):
             self.cachebuster_hash = hashlib.sha1(canvas.tostring()
                                                 ).hexdigest()[:6]
 
+        meta = PngImagePlugin.PngInfo()
+        meta.add_text('glue', __version__)
+        meta.add_text('hash', self.hash)
+
         # Customize how the png is going to be saved
-        kwargs = dict(optimize=True)
+        kwargs = dict(optimize=True, pnginfo=meta)
 
         if self.config.png8:
             # Get the alpha band
@@ -727,9 +760,7 @@ class Sprite(object):
             kwargs.update({'transparency': 255})
 
         # Loop all over the ratios and save one image for each one
-        for ratio in self.ratios:
-
-            sprite_image_path = self.image_path(ratio)
+        for ratio in ratios_to_process:
 
             # If this canvas isn't the biggest one scale it using the ratio
             if self.max_ratio != ratio:
@@ -765,11 +796,27 @@ class Sprite(object):
         output_path = self.manager.output_path('css')
         filename = '%s.%s' % (self.filename, format)
         css_filename = os.path.join(output_path, filename)
+        hash_line = '/* glue: %s hash: %s */\n' % (__version__, self.hash)
+
+        # Check if the CSS file already exists and has the same hash
+        try:
+            assert not self.config.force
+            with open(css_filename, 'r') as existing_css:
+                first_line = existing_css.readline()
+                assert first_line == hash_line
+                return
+        except Exception:
+            pass
+
+        # Process the sprite if necessary.
+        self.process()
 
         # Fix css urls on Windows
         css_filename = '/'.join(css_filename.split('\\'))
-
         css_file = open(css_filename, 'w')
+
+        # Write the hash line to the file.
+        css_file.write(hash_line)
 
         # get all the class names and join them
         class_names = ',\n'.join(['.%s' % i.class_name for i in self.images \
@@ -891,6 +938,28 @@ class Sprite(object):
 
         return url
 
+    @cached_property
+    def hash(self):
+        """ Return a hash of this sprite. In order to detect any change on
+        the source images  it use the data, order and path of each image.
+        In the same way it use this sprite settings as part of the hash.
+        """
+        hash_list = []
+        for image in self.images:
+            hash_list.append(image.path)
+            hash_list.append(image.image.tostring())
+
+        for key in DEFAULT_SETTINGS:
+
+            # Ignore this settings as they don't change the result.
+            if key in ['html', 'quiet', 'force']:
+                continue
+
+            hash_list.append(key)
+            hash_list.append(str(getattr(self.config, key)))
+
+        return hashlib.sha1(''.join(hash_list)).hexdigest()[:10]
+
 
 class ConfigManager(object):
     """Manage all the available configuration.
@@ -995,7 +1064,6 @@ class BaseManager(object):
         self.validate()
 
         for sprite in self.sprites:
-            sprite.process()
             sprite.save_image()
             sprite.save_css()
             if sprite.manager.config.html:
@@ -1238,6 +1306,9 @@ def main():
             help="Create sprites based on these ratios")
     parser.add_option("--retina", dest="retina", action='store_true',
             help="Shortcut for --ratios=2,1")
+    parser.add_option("-f", "--force", dest="force", action='store_true',
+            help=("force glue to create every sprite and CSS file even if "
+                  "they already exists in the output directory."))
     parser.add_option("-w", "--watch", dest="watch", default=False,
             action='store_true',
             help=("Watch the source folder for changes and rebuild "
