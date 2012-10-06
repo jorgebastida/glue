@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.2.8
+^^^^^
+* New ``--recursive`` option.
+* New ``--follow-links`` option.
+* New ``--sprite-namespace`` option.
+* Glue now require Pillow>=1.7.8 in order to fix OS X png8 Segmentation faults.
+
 0.2.7
 ^^^^^
 * Glue now require Pillow instead of PIL (http://pypi.python.org/pypi/Pillow/)

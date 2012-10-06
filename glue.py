@@ -1392,7 +1392,6 @@ def main():
                           "images.\n") % e.args[0])
         sys.exit(e.error_code)
     except Exception:
-        raise
         if config.debug:
             import platform
             sys.stderr.write("Glue version: %s\n" % __version__)
