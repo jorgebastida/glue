@@ -26,6 +26,40 @@ The suggested setup is to create a new folder for every sprite, and add inside a
 .. note::
     This was the default behaviour prior to the version ``0.2``, after ``2.0`` is not.
 
+-r --recursive
+--------------
+
+Read directories recursively and add all the images to the same sprite.
+
+Example structure::
+
+    source
+    ├── actions
+    │   ├── add.png
+    │   └── remove.png
+    ├── borders
+    │   ├── top_left.png
+    │   └── top_right.png
+    └── icons
+        ├── comment.png
+        ├── new.png
+        ├── rss.png
+        └── blog
+            ├── rss.png
+            └── atom.png
+
+If you want to create only one sprite image you should use.
+
+.. code-block:: bash
+
+    $ glue source output --recursive
+
+On the other hand if you want to create three different sprites (one per folder) you can combine ``--project`` and ``--recursive``.
+
+.. code-block:: bash
+
+    $ glue source output --recursive --project
+
 -c --crop
 ---------
 
@@ -355,3 +389,15 @@ After --cachebuster:
     .sprite-icons-zoom{ background:url('sprites/icons/icons_p3c54d.png'); top:0; left:0; no-repeat;}
     .sprite-icons-wrench_orange{ background:url('sprites/icons/icons_p3c54d.png'); top:0; left:-16; no-repeat;}
     ...
+
+--follow-links
+--------------
+
+Follow symbolic links.
+
+.. code-block:: bash
+
+    $ glue source output --follow-links
+
+.. note::
+    Be aware that following links can lead to infinite recursion if a link points to a parent directory of itself. ``glue`` does not keep track of the directories it visited already.

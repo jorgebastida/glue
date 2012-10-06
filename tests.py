@@ -203,6 +203,15 @@ EXPECTED_VERYSIMPLE_RATIOS = """.sprite-verysimple-red,
 .sprite-verysimple-blue{background-image:url('verysimple@2x.png');-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}
 """
 
+EXPECTED_RECURSIVE = """
+.sprite-recursive-red,
+.sprite-recursive-green,
+.sprite-recursive-blue{background-image:url('recursive.png');background-repeat:no-repeat}
+.sprite-recursive-red{background-position:0px 0px;width:25px;height:25px;}
+.sprite-recursive-green{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-recursive-blue{background-position:0px -25px;width:25px;height:25px;}
+"""
+
 
 class SimpleCssCompiler(object):
 
@@ -876,6 +885,19 @@ class TestGlue(unittest.TestCase):
 
         css = open(css_path)
         self.assertEqual(css.read(), EXPECTED_VERYSIMPLE_RATIOS)
+        css.close()
+
+    def test_recursive(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'recursive',
+                                        {'recursive': True})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'recursive.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_RECURSIVE)
         css.close()
 
 
