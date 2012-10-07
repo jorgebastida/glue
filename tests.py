@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import shutil
 import unittest
 
@@ -879,6 +880,74 @@ class TestGlue(unittest.TestCase):
         css = open(css_path)
         self.assertEqualCSS(css.read(), EXPECTED_RECURSIVE)
         css.close()
+
+    def test_metadata(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                       'verysimple')
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+
+        # Comment format: /* glue: 0.2.8 hash: 2973af2c6c */
+        with open(css_path) as css_file:
+            css_data = css_file.read()
+            _, version, _, css_sprite_hash = css_data.split('\n', 1)[0][3:-3].split()
+            self.assertEqual(version, glue.__version__)
+            self.assertTrue(css_sprite_hash.isalnum())
+            self.assertEqual(len(css_sprite_hash), 10)
+
+        img_path = os.path.join(self.output_path, 'verysimple.png')
+        img = Image.open(img_path)
+        self.assertEqual(img.info['glue'], glue.__version__)
+        self.assertEqual(img.info['hash'], css_sprite_hash)
+
+        run_1_css_mtime = os.path.getmtime(css_path)
+        run_1_img_mtime = os.path.getmtime(img_path)
+
+        # Check if running the command again doesn't override the files.
+        # We need to stop 1s in order to get a different mtime
+        time.sleep(1)
+
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                       'verysimple')
+        manager.process()
+
+        run_2_css_mtime = os.path.getmtime(css_path)
+        run_2_img_mtime = os.path.getmtime(img_path)
+
+        self.assertEqual(run_1_css_mtime, run_2_css_mtime)
+        self.assertEqual(run_1_img_mtime, run_2_img_mtime)
+
+        # Check if changing preferences.
+        # We need to stop 1s in order to get a different mtime
+        time.sleep(1)
+
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                       'verysimple',
+                                       {'padding': '5'})
+        manager.process()
+
+        run_3_css_mtime = os.path.getmtime(css_path)
+        run_3_img_mtime = os.path.getmtime(img_path)
+
+        self.assertNotEqual(run_1_css_mtime, run_3_css_mtime)
+        self.assertNotEqual(run_1_img_mtime, run_3_img_mtime)
+
+        # Check --force option
+        # We need to stop 1s in order to get a different mtime
+        time.sleep(1)
+
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                       'verysimple',
+                                       {'padding': '5',
+                                        'force': True})
+        manager.process()
+
+        run_4_css_mtime = os.path.getmtime(css_path)
+        run_4_img_mtime = os.path.getmtime(img_path)
+
+        self.assertNotEqual(run_3_css_mtime, run_4_css_mtime)
+        self.assertNotEqual(run_3_img_mtime, run_4_img_mtime)
 
 
 class TestConfigManager(unittest.TestCase):
