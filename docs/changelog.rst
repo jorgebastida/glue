@@ -6,7 +6,9 @@ Changelog
 * New ``--recursive`` option.
 * New ``--follow-links`` option.
 * New ``--sprite-namespace`` option.
-* Speed up improvements: Glue now store some metadata inside the generated sprite in order to not rebuild it again if the source images and settings are the same.
+* Speed up improvement: Glue is now 1.3x faster in a cold run.
+* Speed up improvement: Glue is now 14x faster for already created sprites.
+* Glue now store some metadata inside the generated sprites in order to not rebuild them again if the source images and settings are the same.
 * New ``--force`` option to make glue rebuild the sprites.
 * Glue now require Pillow>=1.7.8. This version fix some segmentation faults on OS X while using --png8.
 

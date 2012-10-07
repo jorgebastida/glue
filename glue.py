@@ -6,6 +6,7 @@ import sys
 import copy
 import time
 import signal
+import StringIO
 import hashlib
 import subprocess
 import ConfigParser
@@ -391,65 +392,82 @@ class Image(object):
         self.pseudo = ':%s' % list(pseudo)[-1] if pseudo else ''
 
         self.path = path or os.path.join(sprite.path, name)
-        image_file = open(self.path, "rb")
 
+        with open(self.path, "rb") as image_file:
+            self._data = image_file.read()
+
+    @cached_property
+    def image(self):
+        """Return a Pil representation of this image """
+        io = StringIO.StringIO(self._data)
         try:
-            source_image = PImage.open(image_file)
-            source_image.load()
-            self.image = PImage.new('RGBA', source_image.size, (0, 0, 0, 0))
+            source_image = PImage.open(io)
+            img = PImage.new('RGBA', source_image.size, (0, 0, 0, 0))
 
             if source_image.mode == 'L':
                 alpha = source_image.split()[0]
                 transparency = source_image.info.get('transparency')
                 mask = PImage.eval(alpha, lambda a: 0 if a == transparency else 255)
-                self.image.paste(source_image, (0, 0), mask=mask)
+                img.paste(source_image, (0, 0), mask=mask)
             else:
-                self.image.paste(source_image, (0, 0))
-
+                img.paste(source_image, (0, 0))
         except IOError, e:
             raise PILUnavailableError(e.args[0].split()[1])
+        finally:
+            io.close()
 
-        image_file.close()
+        # Crop the image searching for the smallest possible bounding box
+        # without losing any non-transparent pixel.
+        # This crop is only used if the crop flag is set in the config.
 
         if self.sprite.config.crop:
-            self._crop_image()
+            width, height = img.size
+            maxx = maxy = 0
+            minx = miny = sys.maxint
 
-        self.width, self.height = self.image.size
+            for x in xrange(width):
+                for y in xrange(height):
+                    if y > miny and y < maxy and maxx == x:
+                        continue
+                    if img.getpixel((x, y)) != TRANSPARENT:
+                        if x < minx:
+                            minx = x
+                        if x > maxx:
+                            maxx = x
+                        if y < miny:
+                            miny = y
+                        if y > maxy:
+                            maxy = y
+            img = img.crop((minx, miny, maxx + 1, maxy + 1))
+
+        return img
+
+    @cached_property
+    def width(self):
+        """Return Image width"""
+        return self.image.size[0]
+
+    @cached_property
+    def height(self):
+        """Return Image height"""
+        return self.image.size[1]
+
+    @cached_property
+    def absolute_width(self):
+        """Return the total width of the image taking count of the margin,
+        padding and ratio."""
         margin = int(self.sprite.config.margin)
-
-        # Both absolute_width and absolute_height are the real absolute space
-        # that we need to allocate into the sprite for this image.
-        # It's calculated using the width/height, padding and margin
-        # of this image multiplied by the max_ratio.
-        self.absolute_width = round_up(self.width +
+        return round_up(self.width +
                 (self.horizontal_padding + 2 * margin) * self.sprite.max_ratio)
-        self.absolute_height = round_up(self.height +
-                (self.vertical_padding + 2 * margin) * self.sprite.max_ratio)
 
-    def _crop_image(self):
-        """Crop the image searching for the smallest possible bounding box
-        without losing any non-transparent pixel.
-
-        This crop is only used if the crop flag is set in the config.
+    @cached_property
+    def absolute_height(self):
+        """Return the total height of the image taking count of the margin,
+        padding and ratio.
         """
-        width, height = self.image.size
-        maxx = maxy = 0
-        minx = miny = sys.maxint
-
-        for x in xrange(width):
-            for y in xrange(height):
-                if y > miny and y < maxy and maxx == x:
-                    continue
-                if self.image.getpixel((x, y)) != TRANSPARENT:
-                    if x < minx:
-                        minx = x
-                    if x > maxx:
-                        maxx = x
-                    if y < miny:
-                        miny = y
-                    if y > maxy:
-                        maxy = y
-        self.image = self.image.crop((minx, miny, maxx + 1, maxy + 1))
+        margin = int(self.sprite.config.margin)
+        return round_up(self.height +
+                (self.vertical_padding + 2 * margin) * self.sprite.max_ratio)
 
     def _generate_padding(self, padding):
         """Return a 4-elements list with the desired padding.
@@ -519,7 +537,8 @@ class Image(object):
 
         # Add sprite namespace if required
         if self.sprite.manager.config.sprite_namespace:
-            namespace.insert(0, self.sprite.manager.config.sprite_namespace % {'sprite': self.sprite.name})
+            sprite_name = re.sub(r'[^\w\-_]', '', self.sprite.name)
+            namespace.insert(0, self.sprite.manager.config.sprite_namespace % {'sprite': sprite_name})
 
         # Add global namespace if required
         if self.sprite.manager.config.namespace:
@@ -560,10 +579,12 @@ class Image(object):
 
     @cached_property
     def horizontal_padding(self):
+        """Return the horizontal padding for this image."""
         return self.padding[1] + self.padding[3]
 
     @cached_property
     def vertical_padding(self):
+        """Return the vertical padding for this image."""
         return self.padding[0] + self.padding[2]
 
     def __lt__(self, img):
@@ -649,6 +670,7 @@ class Sprite(object):
             raise InvalidImageAlgorithmError(self.config.algorithm)
 
         self.algorithm = algorithm()
+        self.images = sorted(self.images, reverse=self.config.ordering[0] != '-')
         self.algorithm.process(self)
         self._processed = True
 
@@ -670,7 +692,7 @@ class Sprite(object):
 
         images = []
         for root, dirs, files in os.walk(self.path, followlinks=self.config.follow_links):
-            for f in files:
+            for f in sorted(files):
                 if not f.startswith('.') and extension_re.match(f):
                     images.append(Image(f, path=os.path.join(root, f), sprite=self))
             if not self.config.recursive:
@@ -679,7 +701,7 @@ class Sprite(object):
         if not images:
             raise SourceImagesNotFoundError()
 
-        return sorted(images, reverse=self.config.ordering[0] != '-')
+        return images
 
     @cached_property
     def canvas_size(self):
@@ -696,7 +718,6 @@ class Sprite(object):
 
     def save_image(self):
         """Create the image file for this sprite."""
-        self.manager.log("Creating '%s' image file..." % self.name)
 
         # Check if we need to create any sprite.
         ratios_to_process = []
@@ -716,7 +737,10 @@ class Sprite(object):
                 ratios_to_process.append(ratio)
 
         if not ratios_to_process:
+            self.manager.log("Already exists '%s' image file..." % self.name)
             return
+
+        self.manager.log("Creating '%s' image file..." % self.name)
 
         # Process the sprite if necessary.
         self.process()
@@ -788,7 +812,6 @@ class Sprite(object):
     def save_css(self):
         """Create the CSS or LESS file for this sprite."""
         format = 'less' if self.config.less else 'css'
-        self.manager.log("Creating '%s' %s file..." % (self.name, format))
 
         output_path = self.manager.output_path('css')
         filename = '%s.%s' % (self.filename, format)
@@ -801,9 +824,12 @@ class Sprite(object):
             with open(css_filename, 'r') as existing_css:
                 first_line = existing_css.readline()
                 assert first_line == hash_line
+                self.manager.log("Already exists '%s' %s file..." % (self.name, format))
                 return
         except Exception:
             pass
+
+        self.manager.log("Creating '%s' %s file..." % (self.name, format))
 
         # Process the sprite if necessary.
         self.process()
@@ -861,6 +887,7 @@ class Sprite(object):
         css_file.close()
 
     def save_html(self):
+        """Create the HTML file for this sprite."""
         self.manager.log("Creating '%s' html file..." % self.name)
 
         output_path = self.manager.output_path('css')
@@ -942,9 +969,9 @@ class Sprite(object):
         In the same way it use this sprite settings as part of the hash.
         """
         hash_list = []
-        for image in self.images:
+        for image in sorted(self.images, key=lambda i: i.path):
             hash_list.append(image.path)
-            hash_list.append(image.image.tostring())
+            hash_list.append(image._data)
 
         for key in DEFAULT_SETTINGS:
 
@@ -1128,7 +1155,7 @@ class ProjectSpriteManager(BaseManager):
         the ``--project`` argument.
         """
 
-        for sprite_name in os.listdir(self.path):
+        for sprite_name in sorted(os.listdir(self.path)):
 
             # Only process folders
             path = os.path.join(self.path, sprite_name)
