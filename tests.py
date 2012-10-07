@@ -1,6 +1,5 @@
 import os
 import re
-import hashlib
 import shutil
 import unittest
 
@@ -76,8 +75,7 @@ EXPECTED_VERYSIMPLE_URL = """.sprite-verysimple-red,
 .sprite-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_NOSIZE = """
-.sprite-verysimple-red,
+EXPECTED_VERYSIMPLE_NOSIZE = """.sprite-verysimple-red,
 .sprite-verysimple-green,
 .sprite-verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat;}
 .sprite-verysimple-red{background-position:0px 0px;}
@@ -96,8 +94,7 @@ EXPECTED_PADDING_NOPADDING = """.sprite-padding-red_10,
 """
 
 
-EXPECTED_VERYSIMPLE_NAMESPACE = """
-.abc-verysimple-red,
+EXPECTED_VERYSIMPLE_NAMESPACE = """.abc-verysimple-red,
 .abc-verysimple-green,
 .abc-verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat;}
 .abc-verysimple-red{background-position:0px 0px;width:25px;height:25px;}
@@ -105,8 +102,7 @@ EXPECTED_VERYSIMPLE_NAMESPACE = """
 .abc-verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
-.verysimple-red,
+EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """.verysimple-red,
 .verysimple-green,
 .verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat;}
 .verysimple-red{background-position:0px 0px;width:25px;height:25px;}
@@ -114,8 +110,7 @@ EXPECTED_VERYSIMPLE_EMPTYNAMESPACE = """
 .verysimple-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE ="""
-.sprite-foo-red,
+EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE =""".sprite-foo-red,
 .sprite-foo-green,
 .sprite-foo-blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .sprite-foo-red{background-position:0px 0px;width:25px;height:25px;}
@@ -123,8 +118,7 @@ EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE ="""
 .sprite-foo-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_NO_NAMESPACE ="""
-.red,
+EXPECTED_VERYSIMPLE_NO_NAMESPACE =""".red,
 .green,
 .blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .red{background-position:0px 0px;width:25px;height:25px;}
@@ -132,8 +126,7 @@ EXPECTED_VERYSIMPLE_NO_NAMESPACE ="""
 .blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE_EMPTY ="""
-.sprite-red,
+EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE_EMPTY =""".sprite-red,
 .sprite-green,
 .sprite-blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .sprite-red{background-position:0px 0px;width:25px;height:25px;}
@@ -141,8 +134,7 @@ EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE_EMPTY ="""
 .sprite-blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_ORDERING_CSS = """
-.sprite-ordering-green,
+EXPECTED_ORDERING_CSS = """.sprite-ordering-green,
 .sprite-ordering-blue,
 .sprite-ordering-red{background-image:url('ordering.png');background-repeat:no-repeat}
 .sprite-ordering-green{background-position:0px -8px;width:25px;height:17px;}
@@ -150,8 +142,7 @@ EXPECTED_ORDERING_CSS = """
 .sprite-ordering-red{background-position:-44px -23px;width:9px;height:2px;}
 """
 
-EXPECTED_PSEUDOCLASS = """
-.sprite-pseudoclass-red,
+EXPECTED_PSEUDOCLASS = """.sprite-pseudoclass-red,
 .sprite-pseudoclass-blue,
 .sprite-pseudoclass-green{background-image:url('pseudoclass.png');background-repeat:no-repeat}
 .sprite-pseudoclass-red:hover{background-position:0px 0px;width:31px;height:29px;}
@@ -162,8 +153,7 @@ EXPECTED_PSEUDOCLASS = """
 .sprite-pseudoclass-green{background-position:-62px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_SEP_ = """
-.sprite_verysimple_red,
+EXPECTED_VERYSIMPLE_SEP_ = """.sprite_verysimple_red,
 .sprite_verysimple_green,
 .sprite_verysimple_blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .sprite_verysimple_red{background-position:0px 0px;width:25px;height:25px;}
@@ -171,8 +161,7 @@ EXPECTED_VERYSIMPLE_SEP_ = """
 .sprite_verysimple_blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_SEP_NAMESPACE = """
-.custom_verysimple_red,
+EXPECTED_VERYSIMPLE_SEP_NAMESPACE = """.custom_verysimple_red,
 .custom_verysimple_green,
 .custom_verysimple_blue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .custom_verysimple_red{background-position:0px 0px;width:25px;height:25px;}
@@ -180,8 +169,7 @@ EXPECTED_VERYSIMPLE_SEP_NAMESPACE = """
 .custom_verysimple_blue{background-position:0px -25px;width:25px;height:25px;}
 """
 
-EXPECTED_VERYSIMPLE_CAMELCASE = """
-.spriteVerysimpleRed,
+EXPECTED_VERYSIMPLE_CAMELCASE = """.spriteVerysimpleRed,
 .spriteVerysimpleGreen,
 .spriteVerysimpleBlue{background-image:url('verysimple.png');background-repeat:no-repeat}
 .spriteVerysimpleRed{background-position:0px 0px;width:25px;height:25px;}
@@ -203,8 +191,7 @@ EXPECTED_VERYSIMPLE_RATIOS = """.sprite-verysimple-red,
 .sprite-verysimple-blue{background-image:url('verysimple@2x.png');-webkit-background-size: 45px 45px;-moz-background-size: 45px 45px;background-size: 45px 45px;}}
 """
 
-EXPECTED_RECURSIVE = """
-.sprite-recursive-red,
+EXPECTED_RECURSIVE = """.sprite-recursive-red,
 .sprite-recursive-green,
 .sprite-recursive-blue{background-image:url('recursive.png');background-repeat:no-repeat}
 .sprite-recursive-red{background-position:0px 0px;width:25px;height:25px;}
@@ -218,7 +205,9 @@ class SimpleCssCompiler(object):
     def __init__(self, css_text, ignore=['background-position']):
         self._rules = {}
 
-        css_text = css_text.replace('\n', '')
+        # Remove glue comment
+        css_text = re.sub(r'(\/\* glue\: [\d\.]* hash\: \w+ \*\/\n)', '', css_text)
+
         rules = ['%s}' % r for r in css_text.split('}') if r.strip()]
 
         for rule in rules:
@@ -761,13 +750,11 @@ class TestGlue(unittest.TestCase):
         manager.process()
 
         css_path = os.path.join(self.output_path, 'verysimple.css')
-        img_path = os.path.join(self.output_path, 'verysimple.png')
         self.assertTrue(os.path.isfile(css_path))
 
-        image = Image.open(img_path)
         css = open(css_path)
 
-        img_hash = hashlib.sha1(image.tostring()).hexdigest()[:6]
+        img_hash = manager.sprites[0].hash[:6]
         self.assertTrue('verysimple.png?%s' % img_hash in css.read())
 
         css.close()
@@ -788,18 +775,11 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, css_filename)
 
         css = open(css_path)
-        css_text = css.read()
         css.close()
 
-        img_hash = re.findall(r'verysimple_(\w+).png', css_text)[0]
-
+        img_hash = manager.sprites[0].hash[:6]
         img_path = os.path.join(self.output_path, 'verysimple_%s.png' % img_hash)
         self.assertTrue(os.path.isfile(img_path))
-
-        image = Image.open(img_path)
-        real_img_hash = hashlib.sha1(image.tostring()).hexdigest()[:6]
-
-        self.assertTrue(real_img_hash == img_hash)
 
     def test_png8(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -884,7 +864,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(img_2x.getpixel((34, 79)), BLUE)
 
         css = open(css_path)
-        self.assertEqual(css.read(), EXPECTED_VERYSIMPLE_RATIOS)
+        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_RATIOS)
         css.close()
 
     def test_recursive(self):
