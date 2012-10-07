@@ -401,3 +401,10 @@ Follow symbolic links.
 
 .. note::
     Be aware that following links can lead to infinite recursion if a link points to a parent directory of itself. ``glue`` does not keep track of the directories it visited already.
+
+--force
+-------
+
+By default ``glue`` store some metadata inside the generated sprites in order to not rebuild it again if the source images and settings are the same. Glue set two different keys, ``glue`` with the version number the sprite was build and ``hash``, generated using the source images data, name and all the relevant sprite settings like padding, margin etc...
+
+In order to avoid this behaviour you can use ``--force`` and ``glue`` will always build the sprites.

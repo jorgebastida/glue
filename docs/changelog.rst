@@ -6,7 +6,9 @@ Changelog
 * New ``--recursive`` option.
 * New ``--follow-links`` option.
 * New ``--sprite-namespace`` option.
-* Glue now require Pillow>=1.7.8 in order to fix OS X png8 Segmentation faults.
+* Speed up improvements: Glue now store some metadata inside the generated sprite in order to not rebuild it again if the source images and settings are the same.
+* New ``--force`` option to make glue rebuild the sprites.
+* Glue now require Pillow>=1.7.8. This version fix some segmentation faults on OS X while using --png8.
 
 0.2.7
 ^^^^^
