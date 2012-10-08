@@ -53,6 +53,8 @@ DEFAULT_SETTINGS = {
     'recursive': False,
     'follow_links': False,
     'quiet': False,
+    'no_css': False,
+    'no_img': False,
     'cachebuster': False,
     'cachebuster-filename': False,
     'global_template':
@@ -719,6 +721,9 @@ class Sprite(object):
     def save_image(self):
         """Create the image file for this sprite."""
 
+        if self.config.no_img:
+            return
+
         # Check if we need to create any sprite.
         ratios_to_process = []
 
@@ -811,8 +816,11 @@ class Sprite(object):
 
     def save_css(self):
         """Create the CSS or LESS file for this sprite."""
-        format = 'less' if self.config.less else 'css'
 
+        if self.config.no_css:
+            return
+
+        format = 'less' if self.config.less else 'css'
         output_path = self.manager.output_path('css')
         filename = '%s.%s' % (self.filename, format)
         css_filename = os.path.join(output_path, filename)
@@ -1347,6 +1355,11 @@ def main():
             help="output directory for img files")
     group.add_option("--html", dest="html", action="store_true",
             help="generate test html file using the sprite image and CSS.")
+    group.add_option("--no-css", dest="no_css", action="store_true",
+            help="don't genereate CSS files.")
+    group.add_option("--no-img", dest="no_img", action="store_true",
+            help="don't genereate IMG files.")
+
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Advanced Options")

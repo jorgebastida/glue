@@ -408,3 +408,26 @@ Follow symbolic links.
 By default ``glue`` store some metadata inside the generated sprites in order to not rebuild it again if the source images and settings are the same. Glue set two different keys, ``glue`` with the version number the sprite was build and ``hash``, generated using the source images data, name and all the relevant sprite settings like padding, margin etc...
 
 In order to avoid this behaviour you can use ``--force`` and ``glue`` will always build the sprites.
+
+.. code-block:: bash
+
+    $ glue source output --force
+
+--no-img
+--------
+
+Don't create any sprite image.
+
+.. code-block:: bash
+
+    $ glue source output --no-img
+
+--no-css
+--------
+
+Don't create any CSS file.
+
+.. code-block:: bash
+
+    $ glue source output --no-css
+
