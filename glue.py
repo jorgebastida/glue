@@ -732,8 +732,8 @@ class Sprite(object):
             try:
                 assert not self.config.force
                 existing_sprite = PImage.open(sprite_image_path)
-                assert existing_sprite.info['glue'] == __version__
-                assert existing_sprite.info['hash'] == self.hash
+                assert existing_sprite.info['Software'] == 'glue-%s' % __version__
+                assert existing_sprite.info['Comment'] == self.hash
                 already_created = True
             except Exception:
                 already_created = False
@@ -762,11 +762,11 @@ class Sprite(object):
                  round_up(image.y + (image.padding[0] + margin) * self.max_ratio)))
 
         meta = PngImagePlugin.PngInfo()
-        meta.add_text('glue', __version__)
-        meta.add_text('hash', self.hash)
+        meta.add_text('Software', 'glue-%s' % __version__)
+        meta.add_text('Comment', self.hash)
 
         # Customize how the png is going to be saved
-        kwargs = dict(optimize=True, pnginfo=meta)
+        kwargs = dict(optimize=False, pnginfo=meta)
 
         if self.config.png8:
             # Get the alpha band
