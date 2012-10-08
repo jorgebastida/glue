@@ -898,8 +898,8 @@ class TestGlue(unittest.TestCase):
 
         img_path = os.path.join(self.output_path, 'verysimple.png')
         img = Image.open(img_path)
-        self.assertEqual(img.info['glue'], glue.__version__)
-        self.assertEqual(img.info['hash'], css_sprite_hash)
+        self.assertEqual(img.info['Software'], 'glue-%s' % glue.__version__)
+        self.assertEqual(img.info['Comment'], css_sprite_hash)
 
         run_1_css_mtime = os.path.getmtime(css_path)
         run_1_img_mtime = os.path.getmtime(img_path)
@@ -948,6 +948,43 @@ class TestGlue(unittest.TestCase):
 
         self.assertNotEqual(run_3_css_mtime, run_4_css_mtime)
         self.assertNotEqual(run_3_img_mtime, run_4_img_mtime)
+
+    def test_no_css(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'no_css': True})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        img_path = os.path.join(self.output_path, 'verysimple.png')
+
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertFalse(os.path.isfile(css_path))
+
+    def test_no_img(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'no_img': True})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        img_path = os.path.join(self.output_path, 'verysimple.png')
+
+        self.assertFalse(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+    def test_no_img_no_css(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'verysimple',
+                                        {'no_img': True,
+                                         'no_css': True})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'verysimple.css')
+        img_path = os.path.join(self.output_path, 'verysimple.png')
+
+        self.assertFalse(os.path.isfile(img_path))
+        self.assertFalse(os.path.isfile(css_path))
 
 
 class TestConfigManager(unittest.TestCase):
