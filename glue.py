@@ -1034,18 +1034,33 @@ class ConfigManager(object):
         if name in self._cache:
             return self._cache[name]
 
-        sources = [self.priority] + self.sources
+        if '_%s' % name in dir(self):
+            value = self.__getattribute__('_%s' % name)()
+            self._cache[name] = value
+            return value
 
-        for source in sources:
-            value = source.get(name)
-            if value is not None:
-                self._cache[name] = value
-                break
-
-        if name not in self._cache:
-            self._cache[name] = self.defaults.get(name)
+        self._cache[name] = self.find(name)
 
         return self._cache[name]
+
+    @cached_property
+    def _sources(self):
+        return [self.priority] + self.sources
+
+    def find(self, name):
+        for source in self._sources:
+            value = source.get(name)
+            if value is not None:
+                return value
+        return self.defaults.get(name)
+
+    def _margin(self):
+        """Make retina sprites have at least 2px of margin to avoid noise
+        issues while resizing the sprite from 2x to 1x. If the --margin option
+        is present this setting will be ignored."""
+        if (self.find('retina') or self.find('ratios')) and int(self.find('margin')) < 2:
+            return 2
+        return int(self.find('margin'))
 
 
 class BaseManager(object):
@@ -1463,12 +1478,6 @@ def main():
     options = options.__dict__
 
     config = ConfigManager(config, priority=options, defaults=DEFAULT_SETTINGS)
-
-    # Make retina sprites have at least 2px of margin to avoid noise issues
-    # while resizing the sprite from 2x to 1x. If the --margin option is
-    # present this setting will be ignored.
-    if (config.retina or config.ratios) and int(config.margin) < 2:
-        config = config.extend({'margin': '2'})
 
     manager = manager_cls(path=source, output=output, config=config)
 
