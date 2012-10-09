@@ -159,7 +159,8 @@ class cached_property(object):
 
 def round_up(value):
     int_value = int(value)
-    return int_value + 1 if value != int_value else int_value
+    diff = 1 if int_value > 0 else -1
+    return int_value + diff if value != int_value else int_value
 
 
 def nearest_fration(value):

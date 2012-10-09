@@ -12,6 +12,7 @@ Changelog
 * New ``--force`` option to make glue rebuild the sprites.
 * Glue now require Pillow>=1.7.8. This version fix some segmentation faults on OS X while using --png8.
 * New ``--no-img`` and ``--no-css`` options.
+* Fix some CSS aligment issues related with odd sized images.
 
 0.2.7
 ^^^^^
