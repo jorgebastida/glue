@@ -13,6 +13,7 @@ Changelog
 * Glue now require Pillow>=1.7.8. This version fix some segmentation faults on OS X while using --png8.
 * New ``--no-img`` and ``--no-css`` options.
 * Fix some CSS aligment issues related with odd sized images.
+* A soft default of 2px of margin is going to be added while using glue with --ratios or --retina in order to fix scaling noise.
 
 0.2.7
 ^^^^^

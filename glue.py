@@ -1463,6 +1463,13 @@ def main():
     options = options.__dict__
 
     config = ConfigManager(config, priority=options, defaults=DEFAULT_SETTINGS)
+
+    # Make retina sprites have at least 2px of margin to avoid noise issues
+    # while resizing the sprite from 2x to 1x. If the --margin option is
+    # present this setting will be ignored.
+    if (config.retina or config.ratios) and int(config.margin) < 2:
+        config = config.extend({'margin': '2'})
+
     manager = manager_cls(path=source, output=output, config=config)
 
     if config.optipng and not command_exists(config.optipngpath):
