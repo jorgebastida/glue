@@ -10,7 +10,6 @@ Changelog
 * Speed up improvement: Glue is now 14x faster for already created sprites.
 * Glue now store some metadata inside the generated sprites in order to not rebuild them again if the source images and settings are the same.
 * New ``--force`` option to make glue rebuild the sprites.
-* Glue now require Pillow>=1.7.8. This version fix some segmentation faults on OS X while using --png8.
 * New ``--no-img`` and ``--no-css`` options.
 * Fix some CSS aligment issues related with odd sized images.
 * A soft default of 2px of margin is going to be added while using glue with --ratios or --retina in order to fix scaling noise.
