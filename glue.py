@@ -964,6 +964,7 @@ class Sprite(object):
         else:
             image_path = self.image_path(ratio)
             url = os.path.relpath(image_path, self.manager.output_path('css'))
+            url = os.path.normpath(url)
 
         # Fix css urls on Windows
         if os.name == 'nt':
