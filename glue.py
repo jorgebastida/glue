@@ -1383,11 +1383,12 @@ def main():
 
     group = OptionGroup(parser, "Advanced Options")
     group.add_option("-a", "--algorithm", dest="algorithm", metavar='NAME',
-            help=("allocation algorithm: square, vertical, horizontal "
-                  "(default: square)"), )
+            help=("allocation algorithm: square, vertical, horizontal, "
+                  "vertical-right, horizontal-bottom, diagonal. "
+                  "(default: square)"))
     group.add_option("--ordering", dest="ordering", metavar='NAME',
             help=("ordering criteria: maxside, width, height or "
-                  "area (default: maxside)"), )
+                  "area (default: maxside)"))
     group.add_option("--margin", dest="margin", type=int,
             help="force this margin in all images")
     group.add_option("--namespace", dest="namespace",
