@@ -13,6 +13,7 @@ Changelog
 * New ``--no-img`` and ``--no-css`` options.
 * Fix some CSS aligment issues related with odd sized images.
 * A soft default of 2px of margin is going to be added while using glue with --ratios or --retina in order to fix scaling noise.
+* Fix ``--url`` in order to override relative path calculated by ``--img`` and ``--css``.
 
 0.2.7
 ^^^^^
