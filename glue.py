@@ -926,14 +926,16 @@ class Sprite(object):
             return '%s_%s' % (self.name, self.hash[:6])
         return self.name
 
-    def image_path(self, ratio=1):
+    def image_path(self, ratio=1, full=True):
         reference = self.__get_reference(ratio)
         """Return the output path for the image file.
-
+        If full, prepend the img output path, if not only return the filename.
         :param ratio: Ratio.
         """
-        return os.path.join(self.manager.output_path('img'),
-                            '%s%s.png' % (self.filename, reference))
+        filename = '%s%s.png' % (self.filename, reference)
+        if full:
+            return os.path.join(self.manager.output_path('img'), filename)
+        return filename
 
     def __get_reference(self, ratio):
         """ Return the reference @Nx for this ratio.
@@ -955,15 +957,17 @@ class Sprite(object):
 
         :param ratio: Ratio.
         """
-        url = os.path.relpath(self.image_path(ratio),
-                              self.manager.output_path('css'))
+
+        if self.config.url:
+            image_path = self.image_path(ratio, full=False)
+            url = os.path.join(self.config.url, image_path)
+        else:
+            image_path = self.image_path(ratio)
+            url = os.path.relpath(image_path, self.manager.output_path('css'))
 
         # Fix css urls on Windows
         if os.name == 'nt':
             url = url.replace('\\', '/')
-
-        if self.config.url:
-            url = os.path.join(self.config.url, url)
 
         if self.config.cachebuster:
             url = "%s?%s" % (url, self.hash[:6])
