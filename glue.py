@@ -1038,10 +1038,12 @@ class ConfigManager(object):
         if name in self._cache:
             return self._cache[name]
 
-        if '_%s' % name in dir(self):
-            value = self.__getattribute__('_%s' % name)()
+        try:
+            value = super(ConfigManager, self).__getattribute__('_%s' % name)()
             self._cache[name] = value
             return value
+        except AttributeError:
+            pass
 
         self._cache[name] = self.find(name)
 
