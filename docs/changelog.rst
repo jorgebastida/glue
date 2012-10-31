@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.8.1
+^^^^^^^
+* Fix maximum recursion depth issues in ``ConfigManager``
+* Update Documentation.
+
 0.2.8
 ^^^^^
 * New ``--recursive`` option.
@@ -12,7 +17,7 @@ Changelog
 * New ``--force`` option to make glue rebuild the sprites.
 * New ``--no-img`` and ``--no-css`` options.
 * Fix some CSS aligment issues related with odd sized images.
-* A soft default of 2px of margin is going to be added while using glue with --ratios or --retina in order to fix scaling noise.
+* A soft default of 2px of margin is going to be added while using glue with ``--ratios`` or ``--retina`` in order to fix scaling noise.
 * Fix ``--url`` in order to override relative path calculated by ``--img`` and ``--css``.
 
 0.2.7
