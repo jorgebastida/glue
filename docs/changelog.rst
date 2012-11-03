@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.2.9
+^^^^^^^
+* Improve error messages.
+
 0.2.8.1
 ^^^^^^^
 * Fix maximum recursion depth issues in ``ConfigManager``
