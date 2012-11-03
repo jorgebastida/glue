@@ -702,7 +702,7 @@ class Sprite(object):
                 break
 
         if not images:
-            raise SourceImagesNotFoundError()
+            raise SourceImagesNotFoundError(self.path)
 
         return images
 
@@ -1199,7 +1199,7 @@ class ProjectSpriteManager(BaseManager):
                 self.process_sprite(path=path, name=sprite_name)
 
         if not self.sprites:
-            raise NoSpritesFoldersFoundError()
+            raise NoSpritesFoldersFoundError(self.path)
 
         self.save()
 
@@ -1506,10 +1506,10 @@ def main():
             sys.stderr.write('\t%s => .%s\n' % (rel_path, image.class_name))
         sys.exit(e.error_code)
     except SourceImagesNotFoundError, e:
-        sys.stderr.write("Error: No images found.\n")
+        sys.stderr.write("Error: No images found in %s.\n" % e.args[0])
         sys.exit(e.error_code)
     except NoSpritesFoldersFoundError, e:
-        sys.stderr.write("Error: No sprites folders found.\n")
+        sys.stderr.write("Error: No sprites folders found in %s.\n" % e.args[0])
         sys.exit(e.error_code)
     except InvalidImageOrderingError, e:
         sys.stderr.write("Error: Invalid image ordering %s.\n" % e.args[0])
