@@ -24,7 +24,7 @@ If you are using Debian/Ubuntu installing ``glue`` is really easy:
 
 .. code-block:: bash
 
-    $ apt-get install libjpeg62 libjpeg62-dev zlib1g-dev
+    $ apt-get install libjpeg62 libjpeg62-dev zlib1g-dev python-dev
     $ sudo pip install glue
 
 You can also install it using the native package:
