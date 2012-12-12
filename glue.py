@@ -43,6 +43,7 @@ DEFAULT_SETTINGS = {
     'optipng': False,
     'html': False,
     'ignore_filename_paddings': False,
+    'format': 'png',
     'png8': False,
     'ratios': '',
     'retina': False,
@@ -768,6 +769,8 @@ class Sprite(object):
 
         # Customize how the png is going to be saved
         kwargs = dict(optimize=False, pnginfo=meta)
+        if self.config.format == 'jpg':
+            kwargs = dict(transparency=0)
 
         if self.config.png8:
             # Get the alpha band
@@ -932,7 +935,16 @@ class Sprite(object):
         If full, prepend the img output path, if not only return the filename.
         :param ratio: Ratio.
         """
-        filename = '%s%s.png' % (self.filename, reference)
+        format = self.config.format
+        if format != 'png' and self.config.optipng:
+            raise ValueError, "optipng is not compatible with format={}".\
+                format(format)
+        if format != 'png' and not all([
+                image.name.endswith(format) for image in self.images]):
+            raise ValueError, "cannot sprite to format={} with non-{} images".\
+                format(format, format)
+
+        filename = '%s%s.%s' % (self.filename, reference, format)
         if full:
             return os.path.join(self.manager.output_path('img'), filename)
         return filename
@@ -1400,6 +1412,8 @@ def main():
             help="namespace for all sprites (default: sprite name)")
     group.add_option("--png8", action="store_true", dest="png8",
             help="the output image format will be png8 instead of png32")
+    group.add_option("--format", dest="format",
+            help="the output image format, if not png")
     group.add_option("--ignore-filename-paddings", action='store_true',
             dest="ignore_filename_paddings", help="ignore filename paddings")
     group.add_option("--debug", dest="debug", action='store_true',
