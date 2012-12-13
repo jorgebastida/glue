@@ -870,6 +870,7 @@ class Sprite(object):
 
             template = self.config.each_template.decode('unicode-escape')
             css_file.write(template % {'class_name': '.%s' % image.class_name,
+                                       'identifier': image.class_name,
                                        'sprite_url': self.image_url(),
                                        'height': height,
                                        'width': width,
