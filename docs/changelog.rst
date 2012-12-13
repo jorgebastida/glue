@@ -4,6 +4,8 @@ Changelog
 0.2.9
 ^^^^^^^
 * Improve error messages.
+* Added variable ``identifier`` to ``--each-template``.
+* Glue now require ``Pillow==1.7.8``
 
 0.2.8.1
 ^^^^^^^
