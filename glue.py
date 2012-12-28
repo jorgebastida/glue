@@ -1196,7 +1196,7 @@ class ProjectSpriteManager(BaseManager):
                 continue
 
             # Ignore symlinks if necessary.
-            if self.config.follow_links or not os.path.islink(path):
+            if os.path.isdir(path) or (os.path.islink(path) and self.config.follow_links):
                 self.process_sprite(path=path, name=sprite_name)
 
         if not self.sprites:
