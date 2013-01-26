@@ -650,10 +650,11 @@ class Sprite(object):
         """Validate this sprite cheking that all images will have different
         CCS class names.
         """
-        class_names = [i.class_name for i in self.images]
-        if len(set(class_names)) != len(self.images):
-            dup = [i for i in self.images if class_names.count(i.class_name) > 1]
-            raise MultipleImagesWithSameNameError(dup)
+        if not self.config.no_css:
+            class_names = [i.class_name for i in self.images]
+            if len(set(class_names)) != len(self.images):
+                dup = [i for i in self.images if class_names.count(i.class_name) > 1]
+                raise MultipleImagesWithSameNameError(dup)
 
         for image in self.images:
             self.manager.log("\t %s => .%s" % (image.name, image.class_name))
@@ -1097,13 +1098,13 @@ class BaseManager(object):
 
     def validate(self):
         """Validate CSS class names collision between sprites"""
+        if not self.config.no_css:
+            class_names = reduce(lambda x, y: x + y, [[i.class_name for i in sprite.images] for sprite in self.sprites])
 
-        class_names = reduce(lambda x, y: x + y, [[i.class_name for i in sprite.images] for sprite in self.sprites])
-
-        if len(class_names) != len(set(class_names)):
-            dup = [[i for i in sprite.images if class_names.count(i.class_name) > 1] for sprite in self.sprites]
-            dup = reduce(lambda x, y: x + y, dup)
-            raise MultipleImagesWithSameNameError(dup)
+            if len(class_names) != len(set(class_names)):
+                dup = [[i for i in sprite.images if class_names.count(i.class_name) > 1] for sprite in self.sprites]
+                dup = reduce(lambda x, y: x + y, dup)
+                raise MultipleImagesWithSameNameError(dup)
 
         return True
 
