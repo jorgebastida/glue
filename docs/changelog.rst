@@ -5,6 +5,7 @@ Changelog
 ^^^
 * New ``--imagemagick`` option. If present, glue will use ImageMagick to scale down retina sprites instead of Pillow.
 * New ``--imagemagickpath`` option.
+* Soft 2px default for margin no longer exists.
 
 0.2.9.1
 ^^^^^^^

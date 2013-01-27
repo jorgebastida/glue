@@ -1083,14 +1083,6 @@ class ConfigManager(object):
                 return value
         return self.defaults.get(name)
 
-    def _margin(self):
-        """Make retina sprites have at least 2px of margin to avoid noise
-        issues while resizing the sprite from 2x to 1x. If the --margin option
-        is present this setting will be ignored."""
-        if (self.find('retina') or self.find('ratios')) and int(self.find('margin')) < 2:
-            return 2
-        return int(self.find('margin'))
-
 
 class BaseManager(object):
 
