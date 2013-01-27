@@ -125,6 +125,25 @@ The option ``--retina`` is only a shortcut for ``--ratios=2,1``.
     $ glue source output --retina
 
 
+--imagemagick
+-------------
+The option ``--imagemagick`` will make ``glue`` scale down your bigger sprite to the appropriate ratio size using ``ImageMagick`` instead of ``Pillow``. In some situations ``Pillow`` scaling algorithm perform really bad and it generates some horrible shades / gray borders.
+
+In order to avoid them you should use the ``--imagemagick`` option.
+
+.. code-block:: bash
+
+    $ glue source output --imagemagick
+
+
+--imagemagickpath
+-----------------
+If ``convert`` (ImageMagick) is not in your computer ``PATH``, you can choose the imagemagick path using this option.
+
+.. code-block:: bash
+
+    $ glue source output --imagemagick --imagemagickpath=<dir>
+
 --watch
 ------------
 While you are developing a site it could be quite frustrating running ``Glue`` once and another every time you change a source image or a filename. ``--watch`` will allow you to keep ``Glue`` running in the background and it'll rebuild the sprite every time it detects changes on the source directory.

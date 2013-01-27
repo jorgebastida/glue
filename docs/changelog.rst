@@ -3,6 +3,8 @@ Changelog
 
 0.3
 ^^^
+* New ``--imagemagick`` option. If present, glue will use ImageMagick to scale down retina sprites instead of Pillow.
+* New ``--imagemagickpath`` option.
 
 0.2.9.1
 ^^^^^^^
