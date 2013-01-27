@@ -46,6 +46,8 @@ DEFAULT_SETTINGS = {
     'png8': False,
     'ratios': '',
     'retina': False,
+    'imagemagick': False,
+    'imagemagickpath': 'convert',
     'separator': '-',
     'optipngpath': 'optipng',
     'optipng': False,
@@ -786,19 +788,39 @@ class Sprite(object):
 
         # Loop all over the ratios and save one image for each one
         for ratio in ratios_to_process:
-
             sprite_image_path = self.image_path(ratio)
+
+            save_full_size = lambda: canvas.save(sprite_image_path, **kwargs)
 
             # If this canvas isn't the biggest one scale it using the ratio
             if self.max_ratio != ratio:
-                reduced_canvas = canvas.resize(
-                    (round_up((width / self.max_ratio) * ratio),
-                     round_up((height / self.max_ratio) * ratio)),
-                    PImage.ANTIALIAS)
-            else:
-                reduced_canvas = canvas
 
-            save = lambda: reduced_canvas.save(sprite_image_path, **kwargs)
+                def pil_save():
+                    reduced_canvas = canvas.resize(
+                            (round_up((width / self.max_ratio) * ratio),
+                             round_up((height / self.max_ratio) * ratio)),
+                            PImage.ANTIALIAS)
+                    reduced_canvas.save(sprite_image_path, **kwargs)
+
+                if self.config.imagemagick:
+                    def save():
+                        save_full_size()
+                        data = {'path': sprite_image_path,
+                                'imagemagickpath': self.config.imagemagickpath,
+                                'ratio': (100.0 / self.max_ratio) * ratio}
+                        command = ["%(imagemagickpath)s %(path)s -resize %(ratio)s%% %(path)s" % data]
+                        error = subprocess.call(command,
+                                                shell=True,
+                                                stdin=subprocess.PIPE,
+                                                stdout=subprocess.PIPE)
+                        if error:
+                            self.manager.log("Error: ImageMagic has failed, using Pillow to scale the sprite.")
+                            pil_save()
+                else:
+                    save = pil_save
+            else:
+                save = save_full_size
+
             save()
 
             # Optimize the image using optipng, if for some reason, it fails
@@ -1435,6 +1457,14 @@ def main():
             help="postprocess images using optipng")
     group.add_option("--optipngpath", dest="optipngpath",
             help="path to optipng (default: optipng)", metavar='PATH')
+    parser.add_option_group(group)
+
+    group = OptionGroup(parser, "ImageMagick Options",
+                "You need to install ImageMagick before using these options")
+    group.add_option("--imagemagick", dest="imagemagick", action='store_true',
+            help="Use ImageMagick to scale down retina sprites instead of Pillow.")
+    group.add_option("--imagemagickpath", dest="imagemagickpath",
+            help="path to imagemagick (default: convert)", metavar='PATH')
     parser.add_option_group(group)
 
     group = OptionGroup(parser, "Browser Cache Invalidation Options")
