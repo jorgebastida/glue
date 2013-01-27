@@ -1,6 +1,9 @@
 Changelog
 =========
 
+0.3
+^^^
+
 0.2.9.1
 ^^^^^^^
 * Fix ProjectSpriteManager issues.
