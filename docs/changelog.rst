@@ -3,9 +3,11 @@ Changelog
 
 0.3
 ^^^
-* New ``--imagemagick`` option. If present, glue will use ImageMagick to scale down retina sprites instead of Pillow.
-* New ``--imagemagickpath`` option.
-* Soft 2px default for margin no longer exists.
+* New ``--imagemagick`` option. If present, glue will use ImageMagick to scale down retina sprites instead of Pillow #72.
+* New ``--imagemagickpath`` option #72.
+* Soft 2px default for margin no longer exists #73.
+* Fix how glue choose which classes to add to the global scope in order to add pseudo-classes if needed #77.
+* Fix camelcase separator as it wasn't preserving original case #74.
 
 0.2.9.1
 ^^^^^^^
