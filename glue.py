@@ -393,8 +393,11 @@ class Image(object):
         self.sprite = sprite
         self.filename, self.format = name.rsplit('.', 1)
 
-        pseudo = set(self.filename.split('_')).intersection(PSEUDO_CLASSES)
-        self.pseudo = ':%s' % list(pseudo)[-1] if pseudo else ''
+        if '_' in self.filename:
+            pseudo = set(self.filename.split('_')).intersection(PSEUDO_CLASSES)
+            self.pseudo = ':%s' % list(pseudo)[-1] if pseudo else ''
+        else:
+            self.pseudo = ''
 
         self.path = path or os.path.join(sprite.path, name)
 

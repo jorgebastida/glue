@@ -8,6 +8,7 @@ Changelog
 * Soft 2px default for margin no longer exists #73.
 * Fix how glue choose which classes to add to the global scope in order to add pseudo-classes if needed #77.
 * Fix camelcase separator as it wasn't preserving original case #74.
+* Fix sprites containing images with filenames included in PSEUDO_CLASSES #59.
 
 0.2.9.1
 ^^^^^^^
