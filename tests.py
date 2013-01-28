@@ -1032,19 +1032,6 @@ class TestConfigManager(unittest.TestCase):
         cm = glue.ConfigManager(self.conf_b, defaults={'a': 'aaa'})
         self.assertEqual(cm.a, 'aaa')
 
-    def test___margin(self):
-        cm = glue.ConfigManager(priority={'retina': True},
-                                defaults=glue.DEFAULT_SETTINGS)
-        self.assertEqual(cm.margin, 2)
-
-        cm = glue.ConfigManager(priority={'ratios': '1,2'},
-                                defaults=glue.DEFAULT_SETTINGS)
-        self.assertEqual(cm.margin, 2)
-
-        cm = glue.ConfigManager(priority={'retina': True, 'margin': 10},
-                                defaults=glue.DEFAULT_SETTINGS)
-        self.assertEqual(cm.margin, 10)
-
     def test_get_file_config(self):
         expected = {'algorithm': 'horizontal',
                     'cachebuster': True,
