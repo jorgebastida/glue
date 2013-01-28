@@ -870,9 +870,14 @@ class Sprite(object):
         # Write the hash line to the file.
         css_file.write(hash_line)
 
-        # get all the class names and join them
-        class_names = ',\n'.join(['.%s' % i.class_name for i in self.images \
-                                                  if ':' not in i.class_name])
+        # Get all the class names
+        class_names = ['.%s' % i.class_name for i in self.images]
+
+        # Exclude pseudo classes if the class is already in the list
+        class_names = [cn for cn in class_names if ':' not in cn or cn.rsplit(':')[0] not in class_names]
+
+        # Join class names
+        class_names = ',\n'.join(class_names)
 
         # add the global style for all the sprites for less bloat
         template = self.config.global_template.decode('unicode-escape')
