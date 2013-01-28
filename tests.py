@@ -154,6 +154,12 @@ EXPECTED_PSEUDOCLASS = """.sprite-pseudoclass-red,
 .sprite-pseudoclass-green{background-position:-62px -25px;width:25px;height:25px;}
 """
 
+EXPECTED_PSEUDOCLASSONLY = """.sprite-pseudoclassonly-red:hover,
+.sprite-pseudoclassonly-blue{background-image:url('pseudoclassonly.png');background-repeat:no-repeat}
+.sprite-pseudoclassonly-red:hover{background-position:0px 0px;width:25px;height:25px;}
+.sprite-pseudoclassonly-blue:hover{background-position:-25px 0px;width:25px;height:25px;}
+.sprite-pseudoclassonly-blue{background-position:0px -25px;width:25px;height:25px;}"""
+
 EXPECTED_VERYSIMPLE_SEP_ = """.sprite_verysimple_red,
 .sprite_verysimple_green,
 .sprite_verysimple_blue{background-image:url('verysimple.png');background-repeat:no-repeat}
@@ -534,6 +540,20 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((86, 49)), GREEN)
 
         self.assertEqualCSS(css.read(), EXPECTED_PSEUDOCLASS)
+        css.close()
+
+    def test_pseudoclassonly(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'pseudoclassonly')
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'pseudoclassonly.png')
+        css_path = os.path.join(self.output_path, 'pseudoclassonly.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_PSEUDOCLASSONLY)
         css.close()
 
     def test_ignore_filename_padding(self):
