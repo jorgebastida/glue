@@ -184,6 +184,14 @@ EXPECTED_VERYSIMPLE_CAMELCASE = """.spriteVerysimpleRed,
 .spriteVerysimpleBlue{background-position:0px -25px;width:25px;height:25px;}
 """
 
+EXPECTED_CAMELCASE = """.spriteCamelcaseBoxredSmall,
+.spriteCamelcaseBoxBlueSmall,
+.spriteCamelcaseBoxGreenSmall{background-image:url('camelcase.png');background-repeat:no-repeat}
+.spriteCamelcaseBoxredSmall{background-position:0px 0px;width:25px;height:25px;}
+.spriteCamelcaseBoxBlueSmall{background-position:-25px 0px;width:25px;height:25px;}
+.spriteCamelcaseBoxGreenSmall{background-position:0px -25px;width:25px;height:25px;}"""
+
+
 EXPECTED_VERYSIMPLE_RATIOS = """.sprite-verysimple-red,
 .sprite-verysimple-green,
 .sprite-verysimple-blue{background-image:url('verysimple.png');background-repeat:no-repeat}
@@ -762,6 +770,20 @@ class TestGlue(unittest.TestCase):
 
         css = open(css_path)
         self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_CAMELCASE)
+        css.close()
+
+    def test_camelcase(self):
+        # camelcase separator
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'camelcase',
+                                        {'separator': 'camelcase'})
+        manager.process()
+
+        css_path = os.path.join(self.output_path, 'camelcase.css')
+        self.assertTrue(os.path.isfile(css_path))
+
+        css = open(css_path)
+        self.assertEqualCSS(css.read(), EXPECTED_CAMELCASE)
         css.close()
 
     def test_cachebuster(self):

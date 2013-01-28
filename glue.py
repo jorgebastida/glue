@@ -551,8 +551,7 @@ class Image(object):
 
         # Handle CamelCase separator
         if separator == CAMELCASE_SEPARATOR:
-            namespace = [n.lower().capitalize() if i > 0 else n.lower() \
-                                            for i, n in enumerate(namespace)]
+            namespace = [n[:1].title() + n[1:] if i > 0 else n for i, n in enumerate(namespace)]
             separator = ''
 
         return separator.join(namespace)
