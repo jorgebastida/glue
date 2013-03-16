@@ -11,7 +11,7 @@ Using the filename of the source images you can customize the pseudo class relat
 
 Using this simple convention you can create for example create button sprites like:
 
-.. image:: _static/buttons.png
+.. image:: img/buttons.png
 
 And generate automatically the following css:
 

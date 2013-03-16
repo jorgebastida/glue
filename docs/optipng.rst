@@ -24,6 +24,9 @@ Windows
 -------
 OptiPNG distributes an executable version for Windows, so you can download it from the `optipng sourceforge page <http://sourceforge.net/projects/optipng/files/OptiPNG/optipng-0.6.5/>`_.
 
+.. note::
+    For some reason you may need to use ``--optipngpath=<OPTIPNG_PATH>`` in order to make ``glue`` work with ``optipng`` on Windows. `More info <https://github.com/jorgebastida/glue/issues/70>`_.
+
 From source
 -----------
 To install optipng from source, `download the last available version <http://sourceforge.net/projects/optipng/files/OptiPNG/optipng-0.6.5/>`_ and then you can install it doing:

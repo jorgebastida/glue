@@ -57,16 +57,26 @@ This is all the available configuration you can add to your ``sprite.conf`` file
 name                     default value
 ======================== ======================================================================================
 padding                  '0'
+margin                   '0'
 algorithm                'maxside'
 namespace                'sprite'
 crop                     False
 url                      ''
 less                     False
 optipng                  False
+html                     False
 ignore_filename_paddings False
 size                     True
 png8                     False
+optipngpath              'optipng'
+optipng                  False
 separator                '-'
+project                  False
+quiet                    False
+cachebuster              False
+cachebuster-filename     False
 global_template          '%(all_classes)s{background-image:url(%(sprite_url)s);background-repeat:no-repeat}\\n'
 each_template            '%(class_name)s{background-position:%(x)s %(y)s;width:%(width)s;height:%(height)s;}\\n'
+ratio_template           '\@media only screen and (-webkit-min-device-pixel-ratio: %(ratio)s), only screen and (min--moz-device-pixel-ratio: %(ratio)s), only screen and (-o-min-device-pixel-ratio: %(ratio_fraction)s), only screen and (min-device-pixel-ratio: %(ratio)s) {%(all_classes)s{background-image:url(%(sprite_url)s);-webkit-background-size: %(width)s %(height)s;-moz-background-size: %(width)s %(height)s;background-size: %(width)s %(height)s;}}\\n'
 ======================== ======================================================================================
+
