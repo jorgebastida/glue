@@ -4,13 +4,13 @@ import re
 import os
 import sys
 import copy
+import math
 import time
 import signal
 import StringIO
 import hashlib
 import subprocess
 import ConfigParser
-import optimizedSquare
 from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
@@ -122,6 +122,12 @@ class InvalidImageOrderingError(Exception):
 class PILUnavailableError(Exception):
     """Raised if some PIL decoder isn't available."""
     error_code = 7
+
+
+class LineSizeExceededError(Exception):
+    """Raised if the size of a line is exceeded."""
+    error_code = 8
+
 
 
 class _Missing(object):
@@ -373,13 +379,314 @@ class DiagonalAlgorithm(object):
             y += image.absolute_height
 
 
+class OptimizedSquareAlgorithm (object):
+    """Optimized Square Algorithm class """
+    MAX_WIDTH = 1200
+    MIN_WIDTH = 0
+
+    # optimized_area min optimized area = total area of the image list
+    _optimized_area = 0
+
+    # real area of the list
+    _real_area = 0
+
+    # optimizedwidth
+    _optimized_width = 0
+    _real_width = 0
+    _min_width = 0
+
+    # optimized height
+    _optimized_height = 0
+    _real_height = 0
+    _min_height = 0
+
+    # placement matrix
+    _matrix = None
+
+    # sprite
+    _sprite = None
+
+    def __init__(self):
+        """OptimizedSquareAlgorithm constructor.
+
+        :param sprite: sprite.
+        """
+        self._min_width = self.MIN_WIDTH
+
+    def generate_optimize_datas(self):
+        """Generate the optimized datas """
+
+        for image in self._sprite.images:
+            # getting the optimized area
+            img_area = image.absolute_width * image.absolute_height
+            self._optimized_area += img_area
+
+            # getting the min width of the sprite
+            if (self._min_width < image.absolute_width):
+                self._min_width = image.absolute_width
+
+            # getting the min height
+            if (self._min_height < image.absolute_height):
+                self._min_height = image.absolute_height
+
+        # getting the optimized width / height
+        sqrt = math.sqrt(self._optimized_area)
+        tmp = min(self.MAX_WIDTH, math.floor(sqrt))
+        self._optimized_width = max(self._min_width, tmp)
+        ceil = math.ceil(self._optimized_area / self._optimized_width)
+        self._optimized_height = max(self._min_height, ceil)
+
+    def process(self, sprite):
+        self._sprite = sprite
+        self.generate_optimize_datas()
+
+        self._matrix = OptimizedSquareSpriteMatrix(self._optimized_width,
+                                                   self._optimized_height)
+
+        for image in self._sprite.images:
+            rp = self._matrix.find_a_place(image)
+            image.x = rp.x
+            image.y = rp.y
+
+        self._real_width = self._matrix.real_width
+        self._real_height = self._matrix.real_height
+        self._real_area = self._real_width * self._real_height
+
+
+class OptimizedSquareSpriteMatrix(object):
+    _min_x = 0
+    _max_x = 0
+    _min_y = 0
+    _max_y = 0
+
+    # _width_left remaining width left on a line
+    _width_left = {}
+    # _current_width position of the last pixel on the line
+    _current_width = {}
+
+    # _rectangle_position_list Rectangle positionned list
+    _rectangle_position_list = []
+
+    def __init__(self, x, y, min_x=0, min_y=0):
+        self._max_x = int(x)
+        self._max_y = int(y)
+        self._min_x = int(min_x)
+        self._min_y = int(min_y)
+
+    @property
+    def real_width(self):
+        """get the real width of the sprite """
+        width = self._max_x
+        for rp in self._rectangle_position_list:
+            width = max(rp.x + rp.width, width)
+
+        return width
+
+    @property
+    def real_height(self):
+        """get the real height of the sprite """
+        height = self._max_y
+        for rp in self._rectangle_position_list:
+            height = max(rp.y + rp.height, height)
+        return height
+
+    def _push_rectangle(self, rp):
+        """Insert a rectangle in the matrix
+            :param rp: SpriteRectanglePosition to add.
+        """
+        # add th rectangle
+        self._rectangle_position_list.append(rp)
+
+        # update cursors
+        yh = rp.y + rp.height
+        for j in range(rp.y, yh):
+            if (self._current_width[j] < (rp.x + rp.width)):
+                self._current_width[j] = rp.x + rp.width
+
+            if (j not in self._width_left or self._width_left[j] == 0):
+                self._width_left[j] = self._max_x - rp.width
+            else:
+                self._width_left[j] -= rp.width
+
+    def is_free(self, x, y, nb=1):
+        """is_free checking if the place is free
+            :param x: x.
+            :param y: y.
+            :param nb: nb place to check.
+            return True / False
+            """
+
+        # if the size is superior than the max, it is not free
+        if ((x + nb) > self._max_x):
+            raise LineSizeExceededError
+
+        for rp in self._rectangle_position_list:
+            if ((x >= rp.x) and
+                    ((x + nb) <= (rp.x + rp.width)) and
+                    (y >= rp.y) and
+                    (y < (rp.y + rp.height))):
+                return False
+
+        return True
+
+    def _is_rectangle_free(self, rp):
+        """isRectangeFree Check is a zone is free
+                :param rp SpriteRectanglePosition to test
+                :return boolean True if free
+        """
+        wx = rp.width + rp.x
+        hy = rp.height + rp.y
+
+        for j in range(rp.y, hy):
+            if (j not in self._current_width):
+                self._current_width[j] = 0
+
+            if (rp.x < self._current_width[j]):
+                return self._current_width[j]
+
+        return True
+
+    def optimize_position(self, rp):
+        """Optimize the position to avoid white space
+                :param rp: positionned rectangle
+                :return rectangle with new position
+        """
+        # We check the all image height,
+        # if we can not put the image a little lower to put it on the right
+        for j in range(rp.y, rp.y + rp.height):
+            if ((rp.x > 0) and
+                    (self._current_width[j] < (rp.x - (rp.width / 2)))):
+                # There is a lot of space behind, we put down the image
+                tmpRp = copy.deepcopy(rp)
+                tmpRp.x = self._current_width[j]
+                tmpRp.y = j
+                if (self._is_rectangle_free(tmpRp) is True):
+                    return self.optimize_position(tmpRp)
+        return rp
+
+    def find_a_place(self, r, put_it_in=True):
+        """find a place for a rectange
+             :param r: Rectangle
+             :param put_it_in: put in if a place is found
+             :return RectanglePosition if found
+        """
+        # for each line of the matrix
+        j = self._min_y
+        while j < self._max_y:
+            start = 0
+
+            # let's find a place on the width
+            x = self._find_width_in_line(j, r.absolute_width, start)
+            while x is not False:
+                # if a place is found
+                # we make a rectanglePosition
+                rp = SpriteRectanglePosition(r.filename, r.absolute_width,
+                                             r.absolute_height, x, j)
+
+                # room is free
+                blocking_pos = self._is_rectangle_free(rp)
+                if (blocking_pos is True):
+                    # let's optimize position
+                    rp = self.optimize_position(rp)
+                    if (put_it_in is True):
+                        self._push_rectangle(rp)
+                    return rp
+                else:
+                    # not available, we increment and retest
+                    start = blocking_pos
+
+                x = self._find_width_in_line(j, r.absolute_width, start)
+
+            if (self._max_y == j + 1):
+                self._max_y += 1
+            j += 1
+
+        return False
+
+    def _find_width_in_line(self, y, w, start=0):
+        """_find_width_in_line find a white space in a line
+            :param y: line
+            :param w: width
+            :param start: start of the line
+            :return void
+        """
+        # let's check if there is available space on the line
+        if (y in self._width_left and w > self._width_left[y]):
+            return False
+
+        # for each column
+        if (y not in self._current_width):
+            self._current_width[y] = 0
+
+        i = max(self._min_x, self._current_width[y], start)
+        while i < self._max_x:
+            try:
+                # if the place is free,
+                # we keep the position, if not already found
+                if (self.is_free(i, y, w)):
+                    return i
+                else:
+                    start += 1
+                i = max(self._min_x, self._current_width[y], start)
+            except LineSizeExceededError:
+                return False
+        return False
+
+
+class SpriteRectangle (object):
+    """Sprite Reclangle definition
+    """
+    id = 0
+    height = 1
+    width = 1
+
+    def __init__(self, id, width=1, height=1):
+        """SpriteRectangle constructor.
+
+        :param id: id.
+        :param width: rectangle width.
+        :param height: rectangle height.
+        """
+        self.id = id
+        self.width = width
+        self.height = height
+
+    @property
+    def area(self):
+        return self.w * self.h
+
+    @property
+    def perimeter(self):
+        return 2 * self.w + 2 * self.h
+
+
+class SpriteRectanglePosition (SpriteRectangle):
+    """Positionned Sprite Rectangle definition
+    """
+    x = 0
+    y = 0
+
+    def __init__(self, id, width=1, height=1, x=0, y=0):
+        """SpriteRectanglePosition constructor.
+
+        :param id: id.
+        :param width: rectangle width.
+        :param height: rectangle height.
+        :param x: position on x axis.
+        :param y: position on y axis.
+        """
+        super(SpriteRectanglePosition, self).__init__(id, width, height)
+        self.x = x
+        self.y = y
+
+
 ALGORITHMS = {'square': SquareAlgorithm,
               'vertical': VerticalAlgorithm,
               'vertical-right': VerticalRightAlgorithm,
               'horizontal': HorizontalAlgorithm,
               'horizontal-bottom': HorizontalBottomAlgorithm,
               'diagonal': DiagonalAlgorithm,
-              'optimized-square': optimizedSquare.OptimizedSquareAlgorithm}
+              'optimized-square': OptimizedSquareAlgorithm}
 
 
 class Image(object):
