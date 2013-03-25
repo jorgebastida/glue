@@ -384,34 +384,33 @@ class OptimizedSquareAlgorithm (object):
     MAX_WIDTH = 1200
     MIN_WIDTH = 0
 
-    # optimized_area min optimized area = total area of the image list
-    _optimized_area = 0
-
-    # real area of the list
-    _real_area = 0
-
-    # optimizedwidth
-    _optimized_width = 0
-    _real_width = 0
-    _min_width = 0
-
-    # optimized height
-    _optimized_height = 0
-    _real_height = 0
-    _min_height = 0
-
-    # placement matrix
-    _matrix = None
-
-    # sprite
-    _sprite = None
-
     def __init__(self):
         """OptimizedSquareAlgorithm constructor.
 
         :param sprite: sprite.
         """
         self._min_width = self.MIN_WIDTH
+        # optimized_area min optimized area = total area of the image list
+        self._optimized_area = 0
+
+        # real area of the list
+        self._real_area = 0
+
+        # optimizedwidth
+        self._optimized_width = 0
+        self._real_width = 0
+        self._min_width = 0
+
+        # optimized height
+        self._optimized_height = 0
+        self._real_height = 0
+        self._min_height = 0
+
+        # placement matrix
+        self._matrix = None
+
+        # sprite
+        self._sprite = None
 
     def generate_optimize_datas(self):
         """Generate the optimized datas """
@@ -454,20 +453,16 @@ class OptimizedSquareAlgorithm (object):
 
 
 class OptimizedSquareSpriteMatrix(object):
-    _min_x = 0
-    _max_x = 0
-    _min_y = 0
-    _max_y = 0
 
-    # _width_left remaining width left on a line
-    _width_left = {}
-    # _current_width position of the last pixel on the line
-    _current_width = {}
+    def __init__(self, x=0, y=0, min_x=0, min_y=0):
+        # _width_left remaining width left on a line
+        self._width_left = {}
+        # _current_width position of the last pixel on the line
+        self._current_width = {}
 
-    # _rectangle_position_list Rectangle positionned list
-    _rectangle_position_list = []
+        # _rectangle_position_list Rectangle positionned list
+        self._rectangle_position_list = []
 
-    def __init__(self, x, y, min_x=0, min_y=0):
         self._max_x = int(x)
         self._max_y = int(y)
         self._min_x = int(min_x)
@@ -636,9 +631,6 @@ class OptimizedSquareSpriteMatrix(object):
 class SpriteRectangle (object):
     """Sprite Reclangle definition
     """
-    id = 0
-    height = 1
-    width = 1
 
     def __init__(self, id, width=1, height=1):
         """SpriteRectangle constructor.
@@ -663,8 +655,6 @@ class SpriteRectangle (object):
 class SpriteRectanglePosition (SpriteRectangle):
     """Positionned Sprite Rectangle definition
     """
-    x = 0
-    y = 0
 
     def __init__(self, id, width=1, height=1, x=0, y=0):
         """SpriteRectanglePosition constructor.

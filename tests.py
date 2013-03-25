@@ -18,6 +18,8 @@ BLUE = (0, 0, 255, 255)
 GREEN = (0, 255, 0, 255)
 YELLOW = (255, 255, 0, 255)
 TRANSPARENT = (0, 0, 0, 0)
+PURPLE = (127, 0, 255, 255)
+ORANGE = (255, 127, 0, 255)
 
 
 EXPECTED_SIMPLE_CSS = """.sprite-simple-yellow,
@@ -46,6 +48,23 @@ EXPECTED_OPTIMIZED_SQUARE_CSS = """.sprite-simple-yellow,
 .sprite-simple-green{background-position:-25px -25px;width:25px;height:25px;}
 .sprite-simple-cyan{background-position:0px -50px;width:25px;height:25px;}
 .sprite-simple-blue{background-position:-25px -50px;width:25px;height:25px;}
+"""
+
+EXPECTED_COMPLEXE_OPTIMIZED_SQUARE_CSS = """.sprite-complexe-green,
+.sprite-complexe-purple,
+.sprite-complexe-cyan,
+.sprite-complexe-pink,
+.sprite-complexe-blue,
+.sprite-complexe-red,
+.sprite-complexe-orange{background-image:url('complexe.png');background-repeat:no-repeat}
+.sprite-complexe-green{background-position:0px 0px;width:125px;height:125px;}
+.sprite-complexe-purple{background-position:-125px 0px;width:100px;height:100px;}
+.sprite-complexe-cyan{background-position:0px -125px;width:125px;height:100px;}
+.sprite-complexe-pink{background-position:-125px -100px;width:50px;height:75px;}
+.sprite-complexe-blue{background-position:0px -225px;width:200px;height:75px;}
+.sprite-complexe-red{background-position:-225px 0px;width:25px;height:50px;}
+.sprite-complexe-orange{background-position:-125px -175px;width:125px;height:50px;}
+
 """
 
 EXPECTED_PROJECT_MIX_CSS = """.sprite-mix-yellow,
@@ -337,7 +356,32 @@ class TestGlue(unittest.TestCase):
 
         self.assertEqualCSS(css.read(), EXPECTED_OPTIMIZED_SQUARE_CSS)
         css.close()
-        return;
+
+        # Test optimized square algorith
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                        'complexe',
+                                        {'ordering': 'height',
+                                        'algorithm': 'optimized-square'})
+        manager.process()
+
+        img_path = os.path.join(self.output_path, 'complexe.png')
+        css_path = os.path.join(self.output_path, 'complexe.css')
+        self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(css_path))
+
+        image = Image.open(img_path)
+        css = open(css_path)
+
+        self.assertEqual(image.getpixel((0, 0)), GREEN)
+        self.assertEqual(image.getpixel((125, 0)), PURPLE)
+        self.assertEqual(image.getpixel((225, 0)), RED)
+        self.assertEqual(image.getpixel((0, 125)), CYAN)
+        self.assertEqual(image.getpixel((125, 100)), PINK)
+        self.assertEqual(image.getpixel((125, 175)), ORANGE)
+        self.assertEqual(image.getpixel((0, 225)), BLUE)
+
+        self.assertEqualCSS(css.read(), EXPECTED_COMPLEXE_OPTIMIZED_SQUARE_CSS)
+        css.close()
 
         # Test vertical algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
