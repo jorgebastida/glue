@@ -616,6 +616,15 @@ class TestGlue(unittest.TestCase):
         less_path = os.path.join(self.output_path, 'verysimple.less')
         self.assertTrue(os.path.isfile(less_path))
 
+    def test_scss(self):
+        manager = self.generate_manager(glue.SimpleSpriteManager,
+                                       'verysimple',
+                                       {'scss': True})
+        manager.process()
+
+        scss_path = os.path.join(self.output_path, 'verysimple.scss')
+        self.assertTrue(os.path.isfile(scss_path))
+
     def test_url(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'verysimple',
@@ -1105,6 +1114,7 @@ class TestConfigManager(unittest.TestCase):
                     'html': True,
                     'ignore_filename_paddings': True,
                     'less': True,
+                    'scss': True,
                     'margin': '2',
                     'namespace': 'test',
                     'optipng': True,
