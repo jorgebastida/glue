@@ -3,7 +3,9 @@ Changelog
 
 0.3.1
 ^^^^^
-* Glue now uses utf-8 as default encoding for css files.
+* Glue now uses utf-8 as default encoding for css files #65.
+* New algoritms ``optimized-square`` thanks to Julien Deniau #84.
+* New project layout. Algorithms now have their own module.
 
 0.3
 ^^^
