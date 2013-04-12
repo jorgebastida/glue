@@ -16,7 +16,7 @@ from optparse import OptionParser, OptionGroup
 from PIL import Image as PImage
 from PIL import PngImagePlugin
 
-__version__ = '0.3'
+__version__ = '0.3.1'
 
 
 UTF8 = 'utf-8-sig'
