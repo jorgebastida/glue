@@ -42,6 +42,7 @@ DEFAULT_SETTINGS = {
     'crop': False,
     'url': '',
     'less': False,
+    'scss': False,
     'force': False,
     'optipng': False,
     'html': False,
@@ -599,8 +600,12 @@ class Sprite(object):
 
         if self.config.no_css:
             return
-
-        format = 'less' if self.config.less else 'css'
+        if self.config.less:
+            format = 'less'
+        elif self.config.scss:
+            format = 'scss'
+        else:
+            format = 'css'
         output_path = self.manager.output_path('css')
         filename = '%s.%s' % (self.filename, format)
         css_filename = os.path.join(output_path, filename)
@@ -688,7 +693,12 @@ class Sprite(object):
         html_filename = os.path.join(output_path, filename)
 
         # CSS output format
-        format = 'less' if self.config.less else 'css'
+        if self.config.less:
+            format = 'less'
+        elif self.config.scss:
+            format = 'scss'
+        else:
+            format = 'css'
 
         html_file = open(html_filename, 'w')
 
@@ -1128,6 +1138,8 @@ def main():
             help="crop images removing unnecessary transparent margins")
     parser.add_option("-l", "--less", dest="less", action='store_true',
             help="generate output stylesheets as .less instead of .css")
+    parser.add_option("-s", "--scss", dest="scss", action='store_true',
+            help="generate output stylesheets as .scss instead of .css")
     parser.add_option("-u", "--url", dest="url",
             help="prepend this url to the sprites filename")
     parser.add_option("-q", "--quiet", dest="quiet", action='store_true',
