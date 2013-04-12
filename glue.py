@@ -9,7 +9,6 @@ import signal
 import StringIO
 import hashlib
 import subprocess
-import traceback
 import codecs
 import ConfigParser
 from optparse import OptionParser, OptionGroup
@@ -20,8 +19,8 @@ from PIL import PngImagePlugin
 __version__ = '0.3'
 
 
+UTF8 = 'utf-8-sig'
 PADDING_REGEXP = re.compile("^(\d+-?){,3}\d+$")
-
 TRANSPARENT = (255, 255, 255, 0)
 CAMELCASE_SEPARATOR = 'camelcase'
 CONFIG_FILENAME = 'sprite.conf'
@@ -856,7 +855,7 @@ class Sprite(object):
         # Check if the CSS file already exists and has the same hash
         try:
             assert not self.config.force
-            with open(css_filename, 'r') as existing_css:
+            with codecs.open(css_filename, 'r', UTF8) as existing_css:
                 first_line = existing_css.readline()
                 assert first_line == hash_line
                 self.manager.log("Already exists '%s' %s file..." % (self.name, format))
@@ -869,8 +868,8 @@ class Sprite(object):
         # Process the sprite if necessary.
         self.process()
 
-        # write css in UTF8-encoded file
-        css_file = codecs.open(css_filename, 'w', 'utf-8-sig')
+        # write css into an utf8 encoded file
+        css_file = codecs.open(css_filename, 'w', UTF8)
 
         # Write the hash line to the file.
         css_file.write(hash_line)
@@ -1559,7 +1558,6 @@ def main():
     except Exception:
         if config.debug:
             import platform
-            sys.stderr.write("Exception:\n%s\n" % traceback.format_exc())
             sys.stderr.write("Glue version: %s\n" % __version__)
             sys.stderr.write("PIL version: %s\n" % PImage.VERSION)
             sys.stderr.write("Platform: %s\n" % platform.platform())
