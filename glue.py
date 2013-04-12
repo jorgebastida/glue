@@ -9,6 +9,8 @@ import signal
 import StringIO
 import hashlib
 import subprocess
+import traceback
+import codecs
 import ConfigParser
 from optparse import OptionParser, OptionGroup
 
@@ -867,7 +869,8 @@ class Sprite(object):
         # Process the sprite if necessary.
         self.process()
 
-        css_file = open(css_filename, 'w')
+        # write css in UTF8-encoded file
+        css_file = codecs.open(css_filename, 'w', 'utf-8-sig')
 
         # Write the hash line to the file.
         css_file.write(hash_line)
@@ -882,7 +885,7 @@ class Sprite(object):
         class_names = ',\n'.join(class_names)
 
         # add the global style for all the sprites for less bloat
-        template = self.config.global_template.decode('unicode-escape')
+        template = self.config.global_template.decode(sys.getfilesystemencoding())
         css_file.write(template % {'all_classes': class_names,
                                    'sprite_url': self.image_url()})
 
@@ -1556,6 +1559,7 @@ def main():
     except Exception:
         if config.debug:
             import platform
+            sys.stderr.write("Exception:\n%s\n" % traceback.format_exc())
             sys.stderr.write("Glue version: %s\n" % __version__)
             sys.stderr.write("PIL version: %s\n" % PImage.VERSION)
             sys.stderr.write("Platform: %s\n" % platform.platform())
