@@ -1,4 +1,5 @@
 import math
+import copy
 
 
 class LineSizeExceededError(Exception):
@@ -7,16 +8,15 @@ class LineSizeExceededError(Exception):
 
 
 class OptimizedSquareAlgorithm(object):
-    """Optimized Square Algorithm class """
+
     MAX_WIDTH = 1200
     MIN_WIDTH = 0
 
-    def __init__(self):
-        """OptimizedSquareAlgorithm constructor.
+    def __init__(self, max_width=None, min_with=None):
 
-        :param sprite: sprite.
-        """
-        self._min_width = self.MIN_WIDTH
+        self._min_width = min_with or self.MIN_WIDTH
+        self._max_width = max_width or self.MAX_WIDTH
+
         # optimized_area min optimized area = total area of the image list
         self._optimized_area = 0
 
@@ -40,7 +40,6 @@ class OptimizedSquareAlgorithm(object):
         self._sprite = None
 
     def generate_optimize_datas(self):
-        """Generate the optimized datas """
 
         for image in self._sprite.images:
             # getting the optimized area
@@ -48,16 +47,16 @@ class OptimizedSquareAlgorithm(object):
             self._optimized_area += img_area
 
             # getting the min width of the sprite
-            if (self._min_width < image.absolute_width):
+            if self._min_width < image.absolute_width:
                 self._min_width = image.absolute_width
 
             # getting the min height
-            if (self._min_height < image.absolute_height):
+            if self._min_height < image.absolute_height:
                 self._min_height = image.absolute_height
 
         # getting the optimized width / height
         sqrt = math.sqrt(self._optimized_area)
-        tmp = min(self.MAX_WIDTH, math.floor(sqrt))
+        tmp = min(self._max_width, math.floor(sqrt))
         self._optimized_width = max(self._min_width, tmp)
         ceil = math.ceil(self._optimized_area / self._optimized_width)
         self._optimized_height = max(self._min_height, ceil)
@@ -82,8 +81,10 @@ class OptimizedSquareAlgorithm(object):
 class OptimizedSquareSpriteMatrix(object):
 
     def __init__(self, x=0, y=0, min_x=0, min_y=0):
+
         # _width_left remaining width left on a line
         self._width_left = {}
+
         # _current_width position of the last pixel on the line
         self._current_width = {}
 
@@ -121,11 +122,11 @@ class OptimizedSquareSpriteMatrix(object):
 
         # update cursors
         yh = rp.y + rp.height
-        for j in range(rp.y, yh):
-            if (self._current_width[j] < (rp.x + rp.width)):
+        for j in xrange(rp.y, yh):
+            if self._current_width[j] < (rp.x + rp.width):
                 self._current_width[j] = rp.x + rp.width
 
-            if (j not in self._width_left or self._width_left[j] == 0):
+            if j not in self._width_left or self._width_left[j] == 0:
                 self._width_left[j] = self._max_x - rp.width
             else:
                 self._width_left[j] -= rp.width
@@ -139,7 +140,7 @@ class OptimizedSquareSpriteMatrix(object):
             """
 
         # if the size is superior than the max, it is not free
-        if ((x + nb) > self._max_x):
+        if (x + nb) > self._max_x:
             raise LineSizeExceededError
 
         for rp in self._rectangle_position_list:
@@ -152,10 +153,10 @@ class OptimizedSquareSpriteMatrix(object):
         return True
 
     def _is_rectangle_free(self, rp):
-        """isRectangeFree Check is a zone is free
-                :param rp SpriteRectanglePosition to test
-                :return boolean True if free
         """
+        isRectangeFree Check is a zone is free
+            :param rp SpriteRectanglePosition to test
+            :return boolean True if free"""
         wx = rp.width + rp.x
         hy = rp.height + rp.y
 
@@ -169,29 +170,31 @@ class OptimizedSquareSpriteMatrix(object):
         return True
 
     def optimize_position(self, rp):
-        """Optimize the position to avoid white space
-                :param rp: positionned rectangle
-                :return rectangle with new position
         """
+        Optimize the position to avoid white space
+            :param rp: positionned rectangle
+            :return rectangle with new position"""
+
         # We check the all image height,
         # if we can not put the image a little lower to put it on the right
         for j in range(rp.y, rp.y + rp.height):
             if ((rp.x > 0) and
                     (self._current_width[j] < (rp.x - (rp.width / 2)))):
                 # There is a lot of space behind, we put down the image
-                tmpRp = copy.deepcopy(rp)
-                tmpRp.x = self._current_width[j]
-                tmpRp.y = j
-                if (self._is_rectangle_free(tmpRp) is True):
-                    return self.optimize_position(tmpRp)
+                tmp_rp = copy.deepcopy(rp)
+                tmp_rp.x = self._current_width[j]
+                tmp_rp.y = j
+                if (self._is_rectangle_free(tmp_rp) is True):
+                    return self.optimize_position(tmp_rp)
         return rp
 
     def find_a_place(self, r, put_it_in=True):
-        """find a place for a rectange
-             :param r: Rectangle
-             :param put_it_in: put in if a place is found
-             :return RectanglePosition if found
         """
+        find a place for a rectange
+            :param r: Rectangle
+            :param put_it_in: put in if a place is found
+            :return RectanglePosition if found"""
+
         # for each line of the matrix
         j = self._min_y
         while j < self._max_y:
@@ -199,6 +202,7 @@ class OptimizedSquareSpriteMatrix(object):
 
             # let's find a place on the width
             x = self._find_width_in_line(j, r.absolute_width, start)
+
             while x is not False:
                 # if a place is found
                 # we make a rectanglePosition
@@ -207,10 +211,10 @@ class OptimizedSquareSpriteMatrix(object):
 
                 # room is free
                 blocking_pos = self._is_rectangle_free(rp)
-                if (blocking_pos is True):
+                if blocking_pos:
                     # let's optimize position
                     rp = self.optimize_position(rp)
-                    if (put_it_in is True):
+                    if put_it_in:
                         self._push_rectangle(rp)
                     return rp
                 else:
@@ -219,25 +223,25 @@ class OptimizedSquareSpriteMatrix(object):
 
                 x = self._find_width_in_line(j, r.absolute_width, start)
 
-            if (self._max_y == j + 1):
+            if self._max_y == j + 1:
                 self._max_y += 1
             j += 1
 
         return False
 
     def _find_width_in_line(self, y, w, start=0):
-        """_find_width_in_line find a white space in a line
+        """
+        _find_width_in_line find a white space in a line
             :param y: line
             :param w: width
-            :param start: start of the line
-            :return void
-        """
+            :param start: start of the line"""
+
         # let's check if there is available space on the line
-        if (y in self._width_left and w > self._width_left[y]):
+        if y in self._width_left and w > self._width_left[y]:
             return False
 
         # for each column
-        if (y not in self._current_width):
+        if y not in self._current_width:
             self._current_width[y] = 0
 
         i = max(self._min_x, self._current_width[y], start)
@@ -256,16 +260,9 @@ class OptimizedSquareSpriteMatrix(object):
 
 
 class SpriteRectangle (object):
-    """Sprite Reclangle definition
-    """
 
     def __init__(self, id, width=1, height=1):
-        """SpriteRectangle constructor.
 
-        :param id: id.
-        :param width: rectangle width.
-        :param height: rectangle height.
-        """
         self.id = id
         self.width = width
         self.height = height
@@ -280,18 +277,8 @@ class SpriteRectangle (object):
 
 
 class SpriteRectanglePosition (SpriteRectangle):
-    """Positionned Sprite Rectangle definition
-    """
 
     def __init__(self, id, width=1, height=1, x=0, y=0):
-        """SpriteRectanglePosition constructor.
-
-        :param id: id.
-        :param width: rectangle width.
-        :param height: rectangle height.
-        :param x: position on x axis.
-        :param y: position on y axis.
-        """
         super(SpriteRectanglePosition, self).__init__(id, width, height)
         self.x = x
         self.y = y

@@ -17,6 +17,7 @@ from PIL import PngImagePlugin
 
 import algorithms
 from helpers import cached_property, round_up, nearest_fration
+
 __version__ = '0.3.1'
 
 
