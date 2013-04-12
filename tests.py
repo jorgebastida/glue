@@ -1,5 +1,6 @@
 import os
 import re
+import codecs
 import time
 import shutil
 import unittest
@@ -281,10 +282,17 @@ class SimpleCssCompiler(object):
 
 class TestGlue(unittest.TestCase):
 
-    def assertEqualCSS(self, css_text1, css_text2):
-        css1 = SimpleCssCompiler(css_text1)
-        css2 = SimpleCssCompiler(css_text2)
-        assert css1 == css2
+    def assertEqualCSSFileContent(self, path, content):
+
+        with codecs.open(path, 'r', glue.UTF8) as css:
+            filecss = SimpleCssCompiler(css.read())
+            contentcss = SimpleCssCompiler(content)
+            assert filecss == contentcss
+
+    def assertCSSFileContains(self, path, content):
+
+        with codecs.open(path, 'r', glue.UTF8) as css:
+            assert content in css.read()
 
     def assertAreaColor(self, area, color):
         colors = area.getcolors(area.size[0] * area.size[1])
@@ -320,7 +328,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((25, 0)), RED)
@@ -329,8 +336,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((25, 25)), GREEN)
         self.assertEqual(image.getpixel((50, 25)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_CSS)
 
         # Test optimized square algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -395,7 +401,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((0, 25)), RED)
@@ -404,8 +409,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((0, 100)), CYAN)
         self.assertEqual(image.getpixel((0, 125)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_CSS)
 
         # Test horizontal algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -419,7 +423,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((25, 0)), RED)
@@ -428,8 +431,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((100, 0)), CYAN)
         self.assertEqual(image.getpixel((125, 0)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_CSS)
 
         # Test diagonal algorithm
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -443,7 +445,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((25, 25)), RED)
@@ -452,8 +453,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((100, 100)), CYAN)
         self.assertEqual(image.getpixel((125, 125)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_CSS)
 
         # Test horizontal-bottom algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -467,14 +467,12 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 8)), GREEN)
         self.assertEqual(image.getpixel((25, 0)), BLUE)
         self.assertEqual(image.getpixel((44, 23)), RED)
 
-        self.assertEqualCSS(css.read(), EXPECTED_ORDERING_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_ORDERING_CSS)
 
         # Test vertical-right algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -488,14 +486,12 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), GREEN)
         self.assertEqual(image.getpixel((6, 17)), BLUE)
         self.assertEqual(image.getpixel((16, 42)), RED)
 
-        self.assertEqualCSS(css.read(), EXPECTED_ORDERING_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_ORDERING_CSS)
 
     def test_project_manager(self):
         manager = self.generate_manager(glue.ProjectSpriteManager, 'multiple')
@@ -511,26 +507,22 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(mix_css_path))
 
         image = Image.open(rgb_img_path)
-        css = open(rgb_css_path)
 
         self.assertEqual(image.getpixel((0, 0)), RED)
         self.assertEqual(image.getpixel((25, 0)), GREEN)
         self.assertEqual(image.getpixel((0, 25)), BLUE)
         self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
 
-        self.assertEqualCSS(css.read(), EXPECTED_PROJECT_RGB_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(rgb_css_path, EXPECTED_PROJECT_RGB_CSS)
 
         image = Image.open(mix_img_path)
-        css = open(mix_css_path)
 
         self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((25, 0)), PINK)
         self.assertEqual(image.getpixel((0, 25)), CYAN)
         self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
 
-        self.assertEqualCSS(css.read(), EXPECTED_PROJECT_MIX_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(mix_css_path, EXPECTED_PROJECT_MIX_CSS)
 
     def test_crop(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -544,14 +536,12 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), RED)
         self.assertEqual(image.getpixel((25, 0)), GREEN)
         self.assertEqual(image.getpixel((0, 25)), BLUE)
         self.assertEqual(image.getpixel((25, 25)), TRANSPARENT)
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CROP)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_CROP)
 
     def test_padding(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -564,7 +554,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), TRANSPARENT)
         self.assertEqual(image.getpixel((10, 10)), RED)
@@ -577,8 +566,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((54, 69)), YELLOW)
         self.assertEqual(image.getpixel((89, 73)), TRANSPARENT)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_PADDING)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_PADDING)
 
     def test_margin(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -592,7 +580,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), TRANSPARENT)
         self.assertEqual(image.getpixel((10, 10)), YELLOW)
@@ -609,8 +596,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((100, 55)), BLUE)
         self.assertEqual(image.getpixel((124, 79)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_SIMPLE_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_CSS)
 
     def test_pseudoclass(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -623,7 +609,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((4, 1)), RED)
         self.assertEqual(image.getpixel((28, 25)), RED)
@@ -638,8 +623,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((62, 25)), GREEN)
         self.assertEqual(image.getpixel((86, 49)), GREEN)
 
-        self.assertEqualCSS(css.read(), EXPECTED_PSEUDOCLASS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_PSEUDOCLASS)
 
     def test_pseudoclassonly(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -651,9 +635,7 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(img_path))
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_PSEUDOCLASSONLY)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_PSEUDOCLASSONLY)
 
     def test_pseudoclassnames(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -665,9 +647,7 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(img_path))
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_PSEUDOCLASSNAMES)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_PSEUDOCLASSNAMES)
 
     def test_ignore_filename_padding(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -681,20 +661,18 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), RED)
         self.assertEqual(image.getpixel((25, 0)), GREEN)
         self.assertEqual(image.getpixel((0, 25)), BLUE)
         self.assertEqual(image.getpixel((25, 25)), YELLOW)
 
-        self.assertEqualCSS(css.read(), EXPECTED_PADDING_NOPADDING)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_PADDING_NOPADDING)
 
     def test_less(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
-                                       'verysimple',
-                                       {'less': True})
+                                        'verysimple',
+                                        {'less': True})
         manager.process()
 
         less_path = os.path.join(self.output_path, 'verysimple.less')
@@ -709,9 +687,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_URL)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_URL)
 
     def test_ordering(self):
         # Test maxside ordering
@@ -779,9 +755,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NAMESPACE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_NAMESPACE)
 
         # Empty namespace
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -792,9 +766,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_EMPTYNAMESPACE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_EMPTYNAMESPACE)
 
     def test_sprite_namespace(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -805,9 +777,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE)
 
         # Empty namespace
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -818,9 +788,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE_EMPTY)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_SPRITE_NAMESPACE_EMPTY)
 
     def test_remove_all_namespaces(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -832,9 +800,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NO_NAMESPACE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_NO_NAMESPACE)
 
     def test_separator(self):
         # Custom separator
@@ -846,9 +812,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SEP_)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_SEP_)
 
         # separator and namespace
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -860,9 +824,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_SEP_NAMESPACE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_SEP_NAMESPACE)
 
         # camelcase separator
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -873,9 +835,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_CAMELCASE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_CAMELCASE)
 
     def test_camelcase(self):
         # camelcase separator
@@ -887,9 +847,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'camelcase.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_CAMELCASE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_CAMELCASE)
 
     def test_cachebuster(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -900,12 +858,8 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-
         img_hash = manager.sprites[0].hash[:6]
-        self.assertTrue('verysimple.png?%s' % img_hash in css.read())
-
-        css.close()
+        self.assertCSSFileContains(css_path, 'verysimple.png?%s' % img_hash)
 
     def test_cachebuster_filename(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -921,9 +875,6 @@ class TestGlue(unittest.TestCase):
         # Discover the css file
         css_filename = [f for f in os.listdir(self.output_path) if f.endswith('.css')][0]
         css_path = os.path.join(self.output_path, css_filename)
-
-        css = open(css_path)
-        css.close()
 
         img_hash = manager.sprites[0].hash[:6]
         img_path = os.path.join(self.output_path, 'verysimple_%s.png' % img_hash)
@@ -957,9 +908,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), '')
-        css.close()
+        self.assertEqualCSSFileContent(css_path, '')
 
         # Test no-size template
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -970,9 +919,7 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'verysimple.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_NOSIZE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_NOSIZE)
 
     def test_ratios(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -1011,9 +958,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(img_2x.getpixel((10, 55)), BLUE)
         self.assertEqual(img_2x.getpixel((34, 79)), BLUE)
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_VERYSIMPLE_RATIOS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_VERYSIMPLE_RATIOS)
 
     def test_recursive(self):
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -1024,21 +969,17 @@ class TestGlue(unittest.TestCase):
         css_path = os.path.join(self.output_path, 'recursive.css')
         self.assertTrue(os.path.isfile(css_path))
 
-        css = open(css_path)
-        self.assertEqualCSS(css.read(), EXPECTED_RECURSIVE)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_RECURSIVE)
 
     def test_metadata(self):
-        manager = self.generate_manager(glue.SimpleSpriteManager,
-                                       'verysimple')
+        manager = self.generate_manager(glue.SimpleSpriteManager, 'verysimple')
         manager.process()
 
         css_path = os.path.join(self.output_path, 'verysimple.css')
 
         # Comment format: /* glue: 0.2.8 hash: 2973af2c6c */
-        with open(css_path) as css_file:
-            css_data = css_file.read()
-            _, version, _, css_sprite_hash = css_data.split('\n', 1)[0][3:-3].split()
+        with codecs.open(css_path, 'r', glue.UTF8) as css:
+            _, version, _, css_sprite_hash = css.read().split('\n', 1)[0][3:-3].split()
             self.assertEqual(version, glue.__version__)
             self.assertTrue(css_sprite_hash.isalnum())
             self.assertEqual(len(css_sprite_hash), 10)
@@ -1055,8 +996,7 @@ class TestGlue(unittest.TestCase):
         # We need to stop 1s in order to get a different mtime
         time.sleep(1)
 
-        manager = self.generate_manager(glue.SimpleSpriteManager,
-                                       'verysimple')
+        manager = self.generate_manager(glue.SimpleSpriteManager, 'verysimple')
         manager.process()
 
         run_2_css_mtime = os.path.getmtime(css_path)

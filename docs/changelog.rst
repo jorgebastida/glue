@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.3.1
+^^^^^
+* Glue now uses utf-8 as default encoding for css files.
+
 0.3
 ^^^
 * New ``--imagemagick`` option. If present, glue will use ImageMagick to scale down retina sprites instead of Pillow #72.

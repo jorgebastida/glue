@@ -10,17 +10,18 @@ import signal
 import StringIO
 import hashlib
 import subprocess
+import codecs
 import ConfigParser
 from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 from PIL import PngImagePlugin
 
-__version__ = '0.3'
+__version__ = '0.3.1'
 
 
+UTF8 = 'utf-8-sig'
 PADDING_REGEXP = re.compile("^(\d+-?){,3}\d+$")
-
 TRANSPARENT = (255, 255, 255, 0)
 CAMELCASE_SEPARATOR = 'camelcase'
 CONFIG_FILENAME = 'sprite.conf'
@@ -1153,7 +1154,7 @@ class Sprite(object):
         # Check if the CSS file already exists and has the same hash
         try:
             assert not self.config.force
-            with open(css_filename, 'r') as existing_css:
+            with codecs.open(css_filename, 'r', UTF8) as existing_css:
                 first_line = existing_css.readline()
                 assert first_line == hash_line
                 self.manager.log("Already exists '%s' %s file..." % (self.name, format))
@@ -1166,7 +1167,8 @@ class Sprite(object):
         # Process the sprite if necessary.
         self.process()
 
-        css_file = open(css_filename, 'w')
+        # write css into an utf8 encoded file
+        css_file = codecs.open(css_filename, 'w', UTF8)
 
         # Write the hash line to the file.
         css_file.write(hash_line)
@@ -1181,7 +1183,7 @@ class Sprite(object):
         class_names = ',\n'.join(class_names)
 
         # add the global style for all the sprites for less bloat
-        template = self.config.global_template.decode('unicode-escape')
+        template = self.config.global_template.decode(sys.getfilesystemencoding())
         css_file.write(template % {'all_classes': class_names,
                                    'sprite_url': self.image_url()})
 
