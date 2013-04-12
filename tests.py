@@ -351,7 +351,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), YELLOW)
         self.assertEqual(image.getpixel((25, 0)), RED)
@@ -360,8 +359,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((0, 50)), CYAN)
         self.assertEqual(image.getpixel((25, 50)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_OPTIMIZED_SQUARE_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_OPTIMIZED_SQUARE_CSS)
 
         # Test optimized square algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
@@ -376,7 +374,6 @@ class TestGlue(unittest.TestCase):
         self.assertTrue(os.path.isfile(css_path))
 
         image = Image.open(img_path)
-        css = open(css_path)
 
         self.assertEqual(image.getpixel((0, 0)), GREEN)
         self.assertEqual(image.getpixel((125, 0)), PURPLE)
@@ -386,8 +383,7 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(image.getpixel((125, 175)), ORANGE)
         self.assertEqual(image.getpixel((0, 225)), BLUE)
 
-        self.assertEqualCSS(css.read(), EXPECTED_COMPLEXE_OPTIMIZED_SQUARE_CSS)
-        css.close()
+        self.assertEqualCSSFileContent(css_path, EXPECTED_COMPLEXE_OPTIMIZED_SQUARE_CSS)
 
         # Test vertical algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
