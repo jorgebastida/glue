@@ -23,7 +23,7 @@ PADDING_REGEXP = re.compile("^(\d+-?){,3}\d+$")
 TRANSPARENT = (255, 255, 255, 0)
 CAMELCASE_SEPARATOR = 'camelcase'
 CONFIG_FILENAME = 'sprite.conf'
-ORDERINGS = ['maxside', 'width', 'height', 'area']
+ORDERINGS = ['maxside', 'width', 'height', 'area', 'filename']
 VALID_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 PSEUDO_CLASSES = set(['link', 'visited', 'active', 'hover', 'focus',
                       'first-letter', 'first-line', 'first-child',
@@ -595,7 +595,7 @@ class Image(object):
         return self.padding[0] + self.padding[2]
 
     def __lt__(self, img):
-        """Use maxside, width, height or area as ordering algorithm.
+        """Use filename, maxside, width, height or area as ordering algorithm.
 
         :param img: Another :class:`~Image`."""
         ordering = self.sprite.config.ordering
@@ -611,6 +611,8 @@ class Image(object):
         elif ordering == 'area':
             return self.absolute_width * self.absolute_height <= \
                    img.absolute_width * img.absolute_height
+	elif ordering == 'filename':
+	    return self.filename >= img.filename
         else:
             return max(self.absolute_width, self.absolute_height) <= \
                    max(img.absolute_width, img.absolute_height)
