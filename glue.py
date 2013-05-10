@@ -75,7 +75,19 @@ DEFAULT_SETTINGS = {
          '-webkit-background-size: %(width)s %(height)s;'
          '-moz-background-size: %(width)s %(height)s;'
          'background-size: %(width)s %(height)s;'
-         '}}\n')
+         '}}\n'),
+    'ratio_template_less':
+        ('@ratioselector%(ratio_index)d: ~"'
+         'only screen and (-webkit-min-device-pixel-ratio: %(ratio)s), '
+         'only screen and (min--moz-device-pixel-ratio: %(ratio)s), '
+         'only screen and (-o-min-device-pixel-ratio: %(ratio_fraction)s), '
+         'only screen and (min-device-pixel-ratio: %(ratio)s)";\n'
+         '@media @ratioselector%(ratio_index)d {'
+         '%(all_classes)s{background-image:url(\'%(sprite_url)s\');'
+         '-webkit-background-size: %(width)s %(height)s;'
+         '-moz-background-size: %(width)s %(height)s;'
+         'background-size: %(width)s %(height)s;'
+         '}}\n'),
     }
 
 TEST_HTML_TEMPLATE = """
@@ -913,14 +925,17 @@ class Sprite(object):
                               map(lambda s: '%spx' % int(s / self.max_ratio),
                                   self.canvas_size))
 
-            for ratio in self.ratios:
+            ratio_template = self.config.ratio_template_less if self.config.less else self.config.ratio_template
+
+            for index, ratio in enumerate(self.ratios):
                 if ratio != 1:
                     data = dict(ratio=ratio,
+                                ratio_index=index,
                                 ratio_fraction=nearest_fration(ratio),
                                 sprite_url=self.image_url(ratio),
                                 all_classes=class_names,
                                 **dict(canvas_size))
-                    css_file.write(self.config.ratio_template % data)
+                    css_file.write(ratio_template % data)
         css_file.close()
 
     def save_html(self):
