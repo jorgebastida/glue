@@ -53,6 +53,7 @@ DEFAULT_SETTINGS = {
     'optipng': False,
     'project': False,
     'recursive': False,
+    'hierarchical': False,
     'follow_links': False,
     'quiet': False,
     'no_css': False,
@@ -542,6 +543,14 @@ class Image(object):
 
         # Create the minimal namespace
         namespace = [name]
+
+        # Add sub directory
+        if self.sprite.manager.config.hierarchical:
+            dirPath = os.path.split(os.path.relpath(self.path, self.sprite.path))[0]
+            while dirPath != '':
+                (dirPath, dirName) = os.path.split(dirPath)
+                dirName = re.sub(r'[^\w\-_]', '', dirName)
+                namespace.insert(0, dirName)
 
         # Add sprite namespace if required
         if self.sprite.manager.config.sprite_namespace:
@@ -1366,6 +1375,8 @@ def main():
     parser.add_option("-r", "--recursive", dest="recursive", action='store_true',
             help=("Read directories recursively and add all the "
                   "images to the same sprite."))
+    parser.add_option("--hierarchical", dest="hierarchical", action='store_true',
+            help=("This will add the directory path in class name."))
     parser.add_option("--follow-links", dest="follow_links", action='store_true',
             help="Follow symbolic links.")
     parser.add_option("-c", "--crop", dest="crop", action='store_true',
