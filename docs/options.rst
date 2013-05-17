@@ -179,7 +179,6 @@ Using the ``--html`` option, ``Glue`` will also generate a test html per sprite 
 The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `square`, but in some situations using another ordering like `vertical` or `horizontal` could be useful depending on the kind of images you are spriting.
 
 * The `square` algorithm was inspired by the `Binary Tree Bin Packing Algorithm Article <http://codeincomplete.com/posts/2011/5/7/bin_packing/>`_ by Jake Gordon.
-* The `optimized-square` algorithm is a space efficient version of ``square`` writen by `Julien Deniau <https://github.com/jdeniau>`_.
 * The `vertical` one allocates the images vertically aligning them to the left of the sprite.
 * The `vertical-right` one allocates the images vertically aligning them to the right of the sprite.
 * The `horizontal` one allocates the images aligning them to the top of the sprite.
@@ -188,7 +187,7 @@ The criteria that ``glue`` uses to order the images before adding them to the ca
 
 .. code-block:: bash
 
-    $ glue source output --algorithm=[square|optimized-square|vertical|hortizontal|diagonal|vertical-right|horizontal-bottom]
+    $ glue source output --algorithm=[square|vertical|hortizontal|diagonal|vertical-right|horizontal-bottom]
 
 
 --ordering

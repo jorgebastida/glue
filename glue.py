@@ -131,8 +131,7 @@ ALGORITHMS = {'square': algorithms.SquareAlgorithm,
               'vertical-right': algorithms.VerticalRightAlgorithm,
               'horizontal': algorithms.HorizontalAlgorithm,
               'horizontal-bottom': algorithms.HorizontalBottomAlgorithm,
-              'diagonal': algorithms.DiagonalAlgorithm,
-              'optimized-square': algorithms.OptimizedSquareAlgorithm}
+              'diagonal': algorithms.DiagonalAlgorithm}
 
 
 class Image(object):

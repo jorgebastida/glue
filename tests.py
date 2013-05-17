@@ -338,53 +338,6 @@ class TestGlue(unittest.TestCase):
 
         self.assertEqualCSSFileContent(css_path, EXPECTED_SIMPLE_CSS)
 
-        # Test optimized square algorith
-        manager = self.generate_manager(glue.SimpleSpriteManager,
-                                        'simple',
-                                        {'ordering': 'height',
-                                        'algorithm': 'optimized-square'})
-        manager.process()
-
-        img_path = os.path.join(self.output_path, 'simple.png')
-        css_path = os.path.join(self.output_path, 'simple.css')
-        self.assertTrue(os.path.isfile(img_path))
-        self.assertTrue(os.path.isfile(css_path))
-
-        image = Image.open(img_path)
-
-        self.assertEqual(image.getpixel((0, 0)), YELLOW)
-        self.assertEqual(image.getpixel((25, 0)), RED)
-        self.assertEqual(image.getpixel((0, 25)), PINK)
-        self.assertEqual(image.getpixel((25, 25)), GREEN)
-        self.assertEqual(image.getpixel((0, 50)), CYAN)
-        self.assertEqual(image.getpixel((25, 50)), BLUE)
-
-        self.assertEqualCSSFileContent(css_path, EXPECTED_OPTIMIZED_SQUARE_CSS)
-
-        # Test optimized square algorith
-        manager = self.generate_manager(glue.SimpleSpriteManager,
-                                        'complexe',
-                                        {'ordering': 'height',
-                                        'algorithm': 'optimized-square'})
-        manager.process()
-
-        img_path = os.path.join(self.output_path, 'complexe.png')
-        css_path = os.path.join(self.output_path, 'complexe.css')
-        self.assertTrue(os.path.isfile(img_path))
-        self.assertTrue(os.path.isfile(css_path))
-
-        image = Image.open(img_path)
-
-        self.assertEqual(image.getpixel((0, 0)), GREEN)
-        self.assertEqual(image.getpixel((125, 0)), PURPLE)
-        self.assertEqual(image.getpixel((225, 0)), RED)
-        self.assertEqual(image.getpixel((0, 125)), CYAN)
-        self.assertEqual(image.getpixel((125, 100)), PINK)
-        self.assertEqual(image.getpixel((125, 175)), ORANGE)
-        self.assertEqual(image.getpixel((0, 225)), BLUE)
-
-        self.assertEqualCSSFileContent(css_path, EXPECTED_COMPLEXE_OPTIMIZED_SQUARE_CSS)
-
         # Test vertical algorith
         manager = self.generate_manager(glue.SimpleSpriteManager,
                                         'simple',
