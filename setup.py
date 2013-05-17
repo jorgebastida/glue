@@ -1,11 +1,11 @@
 try:
     from setuptools import setup
     kw = {'entry_points':
-          """[console_scripts]\nglue = glue:main\n""",
+          """[console_scripts]\nglue = glue.bin:main\n""",
           'zip_safe': False}
 except ImportError:
     from distutils.core import setup
-    kw = {'scripts': ['glue.py']}
+    kw = {'scripts': ['glue/bin.py']}
 
 setup(
     name='glue',
