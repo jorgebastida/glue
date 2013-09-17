@@ -565,7 +565,7 @@ class Sprite(object):
                         data = {'path': sprite_image_path,
                                 'imagemagickpath': self.config.imagemagickpath,
                                 'ratio': (100.0 / self.max_ratio) * ratio}
-                        command = ["%(imagemagickpath)s %(path)s -resize %(ratio)s%% %(path)s" % data]
+                        command = ["%(imagemagickpath)s %(path)s -adaptive-resize %(ratio)s%% %(path)s" % data]
                         error = subprocess.call(command,
                                                 shell=True,
                                                 stdin=subprocess.PIPE,
