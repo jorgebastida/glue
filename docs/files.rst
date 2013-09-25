@@ -63,7 +63,6 @@ namespace                'sprite'
 crop                     False
 url                      ''
 less                     False
-optipng                  False
 html                     False
 ignore_filename_paddings False
 size                     True
