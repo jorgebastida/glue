@@ -116,7 +116,7 @@ class JinjaTextFormat(BaseTextFormat):
         context.update(kwargs)
         template = self.template
         custom_template_config = '{0}_template'.format(self.format_label)
-        if custom_template_config in self.sprite.config:
+        if self.sprite.config.get(custom_template_config):
             with open(self.sprite.config[custom_template_config]) as f:
                 template = f.read()
         return Template(textwrap.dedent(template).strip()).render(**context)
