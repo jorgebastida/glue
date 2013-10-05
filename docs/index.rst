@@ -6,7 +6,7 @@
 Glue
 ================================
 
-Glue is a simple command line tool to generate CSS sprites::
+Glue is a simple command line tool to generate sprites::
 
     $ glue source output
 

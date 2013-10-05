@@ -1,7 +1,7 @@
 Glue
 ====
 
-Glue is a simple command line tool to generate CSS sprites::
+Glue is a simple command line tool to generate sprites::
 
     $ glue source output
 
@@ -10,7 +10,13 @@ Glue is a simple command line tool to generate CSS sprites::
 
 Features
 --------
-* Automatic Sprite (PNG+CSS) creation.
+* Automatic Sprite (Image + Metadata) creation including:
+  * CSS
+    * Optional .less/.scss output format.
+    * Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
+    * Customizable `CSS class names <http://glue.readthedocs.org/en/latest/options.html#separator>`_.
+  * cocos2d
+  * json
 * Automatic multi-dpi `retina <http://glue.readthedocs.org/en/latest/ratios.html>`_ sprite creation.
 * Support for multi-sprite projects.
 * Create sprites from multiple folders.
@@ -18,12 +24,8 @@ Features
 * Automatic `crop of unnecessary transparent borders <http://glue.readthedocs.org/en/latest/quickstart.html#crop-unnecessary-transparent-spaces>`_ around source images.
 * Configurable `paddings per image, sprite or project <http://glue.readthedocs.org/en/latest/paddings.html>`_.
 * Watch option to keep glue running watching for file changes.
-* Optional .less output format.
-* Automatic sprite images post-processing using `OptiPNG <http://optipng.sourceforge.net/>`_.
-* Sprite- and Project-level configuration via static config files.
-* Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
-* Customizable `output css templates <http://glue.readthedocs.org/en/latest/options.html#global-template>`_.
-* Customizable `CSS class names <http://glue.readthedocs.org/en/latest/options.html#separator>`_.
+* Project-, Sprite- and Image-level configuration via static config files.
+* Customizable `output <http://glue.readthedocs.org/en/latest/options.html#global-template>`_ using jinja templates.
 
 Example
 -------
