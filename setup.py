@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='glue',
@@ -13,10 +13,12 @@ setup(
                       'PNG, JPEG or GIF. Glue will generate a unique PNG '
                       'file containing every source image and a map file '
                       'including the necessary information to use it.'),
-    py_modules=['glue'],
+    keywords = "glue sprites css cocos2d",
+    packages = find_packages(),
     platforms='any',
     install_requires=[
-        'Pillow>=2.2,<2.3'
+        'Pillow>=2.2,<2.3',
+        'Jinja2>=2.7,<2.8'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -27,6 +29,10 @@ setup(
         'Programming Language :: Python',
         'Topic :: Utilities'
     ],
-    entry_points = "[console_scripts]\nglue = glue.bin:main\n",
+    entry_points = {
+        'console_scripts': [
+            'glue = glue.bin:main',
+        ]
+    },
     zip_safe = False
 )
