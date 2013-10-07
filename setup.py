@@ -20,6 +20,10 @@ setup(
         'Pillow>=2.2,<2.3',
         'Jinja2>=2.7,<2.8'
     ],
+    tests_require=[
+        'cssutils>=0.9,<1.0'
+    ],
+    test_suite='tests',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
