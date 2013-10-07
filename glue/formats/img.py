@@ -134,8 +134,7 @@ class ImageFormat(BaseFormat):
 
                 reduced_canvas = canvas.resize(
                                     (round_up((width / self.sprite.max_ratio) * ratio),
-                                     round_up((height / self.sprite.max_ratio) * ratio)),
-                                    PILImage.ANTIALIAS)
+                                     round_up((height / self.sprite.max_ratio) * ratio)))
                 reduced_canvas.save(image_path, **kwargs)
                 # TODO: Use Imagemagick if it's available
             else:
