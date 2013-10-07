@@ -11,7 +11,9 @@ from glue import managers
 from glue import __version__
 
 
-def main():
+def main(argv=None):
+
+    argv = (argv or sys.argv)[1:]
 
     parser = argparse.ArgumentParser(usage=("usage: %(prog)s [source | --source -o] [output | --output]"))
 
@@ -122,7 +124,7 @@ def main():
     add_deprecated_argument("--imagemagickpath", dest="imagemagickpath")
 
     # Parse input
-    options, args = parser.parse_known_args()
+    options, args = parser.parse_known_args(argv)
 
     # Get the list of enabled formats
     options.enabled_formats = [f for f in formats if getattr(options, '{0}_dir'.format(f), False)]
@@ -201,19 +203,19 @@ def main():
         manager.process()
     except exceptions.ValidationError, e:
         sys.stderr.write(e.args[0])
-        sys.exit(e.error_code)
+        return e.error_code
     except exceptions.SourceImagesNotFoundError, e:
         sys.stderr.write("Error: No images found in %s.\n" % e.args[0])
-        sys.exit(e.error_code)
+        return e.error_code
     except exceptions.NoSpritesFoldersFoundError, e:
         sys.stderr.write("Error: No sprites folders found in %s.\n" % e.args[0])
-        sys.exit(e.error_code)
+        return e.error_code
     except exceptions.PILUnavailableError, e:
         sys.stderr.write(("Error: PIL {0} decoder is unavailable"
                           "Please read the documentation and "
                           "install it before spriting this kind of "
                           "images.\n").format(e.args[0]))
-        sys.exit(e.error_code)
+        return e.error_code
     except Exception:
         import platform
         import traceback
@@ -232,7 +234,9 @@ def main():
         sys.stderr.write(traceback.format_exc())
         sys.stderr.write("=" * 80)
         sys.stderr.write("\n")
-        sys.exit(1)
+        return 1
+
+    return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
