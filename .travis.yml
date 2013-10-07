@@ -7,4 +7,4 @@ install:
   - sudo ln -s /usr/lib/i386-linux-gnu/libz.so /usr/lib
   - python setup.py install
 script:
-  - python setup.py tests.py
+  - python setup.py tests
