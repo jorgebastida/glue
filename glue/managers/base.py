@@ -11,6 +11,7 @@ class BaseManager(object):
         self.sprites = []
 
     def process(self):
+        self.find_sprites()
         self.validate()
         self.save()
 
@@ -23,6 +24,9 @@ class BaseManager(object):
         """
         sprite = Sprite(path=path, config=self.config)
         self.sprites.append(sprite)
+
+    def find_sprites(self):
+        raise NotImplementedError
 
     def validate(self):
         """Validate all sprites inside this manager."""

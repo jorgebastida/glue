@@ -8,6 +8,6 @@ class SimpleManager(BaseManager):
     This is the default manager.
     """
 
-    def __init__(self, *args, **kwargs):
-        super(SimpleManager, self).__init__(*args, **kwargs)
+    def find_sprites(self):
         self.add_sprite(path=self.config['source'])
+

@@ -5,16 +5,12 @@ from .base import BaseManager
 
 
 class ProjectManager(BaseManager):
+    """Process a path searching for folders that contain images.
+       Every folder will be a new sprite with all the images inside.
+       This is not the default manager. It is only used if you use
+       the ``--project`` argument."""
 
-    def __init__(self, *args, **kwargs):
-        """Process a path searching for folders that contain images.
-        Every folder will be a new sprite with all the images inside.
-
-        This is not the default manager. It is only used if you use
-        the ``--project`` argument.
-        """
-
-        super(ProjectManager, self).__init__(*args, **kwargs)
+    def find_sprites(self):
 
         for filename in sorted(os.listdir(self.config['source'])):
 
