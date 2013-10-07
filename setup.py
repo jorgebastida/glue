@@ -18,7 +18,8 @@ setup(
     platforms='any',
     install_requires=[
         'Pillow>=2.2,<2.3',
-        'Jinja2>=2.7,<2.8'
+        'Jinja2>=2.7,<2.8',
+        'argparse>=1.2'
     ],
     tests_require=[
         'cssutils>=0.9,<1.0'
