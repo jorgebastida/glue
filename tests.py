@@ -57,11 +57,17 @@ class TestGlue(unittest.TestCase):
     def assertExists(self, path):
         assert os.path.exists(path), "{0} doesn't exists".format(path)
 
-    def assertColor(self, path, color, points):
+    def assertColor(self, path, color, points, tolerance=0):
         image = PILImage.open(path)
         for point in points:
             image_color = image.getpixel(point)
-            if image_color != color:
+            if tolerance:
+                diffs = [abs(x - y) for x, y in zip(color, image_color)]
+                match = max(diffs) < 255 / tolerance
+            else:
+                match = image_color == color
+
+            if not match:
                 assert False, "{0} {1} should be {2} but is {3}".format(path, point, COLORS.get(color, color), COLORS.get(image_color, image_color))
 
     def assertCSS(self, path, class_name, properties, ratio=None):
@@ -82,7 +88,7 @@ class TestGlue(unittest.TestCase):
 
         self.assertEqual(file_properties, properties)
 
-    def create_image(self, path, color=RED, size=(50, 50)):
+    def create_image(self, path, color=RED, size=(64, 64)):
         dirname = os.path.dirname(path)
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
@@ -100,15 +106,15 @@ class TestGlue(unittest.TestCase):
 
         self.assertExists("output/simple.png")
         self.assertExists("output/simple.css")
-        self.assertColor("output/simple.png", RED, ((0, 0), (49, 49)))
-        self.assertColor("output/simple.png", BLUE, ((50, 0), (99, 49)))
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
 
         self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
                        {u'background-image': u"url(simple.png)",
                         u'background-repeat': u'no-repeat',
                         u'background-position': u'0 0',
-                        u'width': u'50px',
-                        u'height': u'50px'})
+                        u'width': u'64px',
+                        u'height': u'64px'})
 
     def test_simple_css_retina(self):
         self.create_image("simple/red.png", RED)
@@ -120,44 +126,44 @@ class TestGlue(unittest.TestCase):
         self.assertExists("output/simple@2x.png")
         self.assertExists("output/simple.css")
 
-        self.assertColor("output/simple.png", RED, ((0, 0), (24, 24)))
-        self.assertColor("output/simple.png", BLUE, ((25, 0), (49, 24)))
-        self.assertColor("output/simple@2x.png", RED, ((0, 0), (49, 49)))
-        self.assertColor("output/simple@2x.png", BLUE, ((50, 0), (99, 49)))
+        self.assertColor("output/simple.png", RED, ((0, 0), (31, 31)), .1)
+        self.assertColor("output/simple.png", BLUE, ((31, 0), (63, 31)), .1)
+        self.assertColor("output/simple@2x.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple@2x.png", BLUE, ((64, 0), (127, 63)))
 
         self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
                        {u'background-image': u"url(simple.png)",
                         u'background-repeat': u'no-repeat',
                         u'background-position': u'0 0',
-                        u'width': u'25px',
-                        u'height': u'25px'})
+                        u'width': u'32px',
+                        u'height': u'32px'})
 
         self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
                        {u'background-image': u"url(simple.png)",
                         u'background-repeat': u'no-repeat',
-                        u'background-position': u'-25px 0',
-                        u'width': u'25px',
-                        u'height': u'25px'})
+                        u'background-position': u'-32px 0',
+                        u'width': u'32px',
+                        u'height': u'32px'})
 
         self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
                        {u'background-image': u"url(simple@2x.png)",
                         u'background-repeat': u'no-repeat',
                         u'background-position': u'0 0',
-                        u'background-size': u'50px 25px',
-                        u'-webkit-background-size': u'50px 25px',
-                        u'-moz-background-size': u'50px 25px',
-                        u'width': u'25px',
-                        u'height': u'25px'}, ratio=2)
+                        u'background-size': u'64px 32px',
+                        u'-webkit-background-size': u'64px 32px',
+                        u'-moz-background-size': u'64px 32px',
+                        u'width': u'32px',
+                        u'height': u'32px'}, ratio=2)
 
         self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
                        {u'background-image': u"url(simple@2x.png)",
                         u'background-repeat': u'no-repeat',
-                        u'background-position': u'-25px 0',
-                        u'background-size': u'50px 25px',
-                        u'-webkit-background-size': u'50px 25px',
-                        u'-moz-background-size': u'50px 25px',
-                        u'width': u'25px',
-                        u'height': u'25px'}, ratio=2)
+                        u'background-position': u'-32px 0',
+                        u'background-size': u'64px 32px',
+                        u'-webkit-background-size': u'64px 32px',
+                        u'-moz-background-size': u'64px 32px',
+                        u'width': u'32px',
+                        u'height': u'32px'}, ratio=2)
 
 if __name__ == '__main__':
     unittest.main()

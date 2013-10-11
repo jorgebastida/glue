@@ -77,13 +77,12 @@ class BaseTextFormat(BaseFormat):
                    'ratios': []}
 
         for i, img in enumerate(self.sprite.images):
-
             image = dict(filename=img.filename,
                          last=i == len(self.sprite.images) - 1,
                          x=round_up((img.x * -1 - img.margin[3] * self.sprite.max_ratio) / self.sprite.max_ratio),
                          y=round_up((img.y * -1 - img.margin[3] * self.sprite.max_ratio) / self.sprite.max_ratio),
-                         height=round_up((img.height / self.sprite.max_ratio) + img.vertical_spacing),
-                         width=round_up((img.width / self.sprite.max_ratio) + img.horizontal_spacing))
+                         height=round_up((img.height / self.sprite.max_ratio) + img.padding[0]),
+                         width=round_up((img.width / self.sprite.max_ratio) + img.padding[3]))
 
             context['images'].append(image)
 

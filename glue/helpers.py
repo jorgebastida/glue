@@ -1,6 +1,6 @@
 def round_up(value):
     int_value = int(value)
-    diff = 1 if int_value > 0 else -1
+    diff = 1 if value > 0 else -1
     return int_value + diff if value != int_value else int_value
 
 
