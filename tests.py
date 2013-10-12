@@ -1,4 +1,5 @@
 import os
+import sys
 import codecs
 import shutil
 import unittest
@@ -10,7 +11,6 @@ from PIL import Image as PILImage
 import cssutils
 from mock import patch, Mock
 
-from glue import __version__
 from glue.bin import main
 from glue.core import Image
 from glue.helpers import redirect_stdout
@@ -45,10 +45,14 @@ class TestGlue(unittest.TestCase):
         os.makedirs(self.output_path)
         self.pwd = os.getcwd()
         os.chdir(self.output_path)
+        sys.stdout = StringIO()
+        sys.stderr = StringIO()
 
     def tearDown(self):
         os.chdir(self.pwd)
         shutil.rmtree(self.output_path, True)
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
 
     def _exists(self, path):
         return os.path.exists(path)
