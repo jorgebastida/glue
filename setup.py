@@ -22,7 +22,8 @@ setup(
         'argparse>=1.2'
     ],
     tests_require=[
-        'cssutils>=0.9,<1.0'
+        'cssutils>=0.9,<1.0',
+        'mock>=1.0'
     ],
     test_suite='tests',
     classifiers=[

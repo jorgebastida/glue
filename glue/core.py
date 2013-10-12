@@ -73,27 +73,8 @@ class Image(ConfigurableFromFile):
         # Crop the image searching for the smallest possible bounding box
         # without losing any non-transparent pixel.
         # This crop is only used if the crop flag is set in the config.
-
         if self.config['crop']:
-            width, height = img.size
-            maxx = maxy = 0
-            minx = miny = sys.maxint
-
-            for x in xrange(width):
-                for y in xrange(height):
-                    if y > miny and y < maxy and maxx == x:
-                        continue
-                    if img.getpixel((x, y)) != (255, 255, 255, 0):
-                        if x < minx:
-                            minx = x
-                        if x > maxx:
-                            maxx = x
-                        if y < miny:
-                            miny = y
-                        if y > maxy:
-                            maxy = y
-            img = img.crop((minx, miny, maxx + 1, maxy + 1))
-
+            img = img.crop(img.getbbox())
         return img
 
     @property
@@ -118,7 +99,7 @@ class Image(ConfigurableFromFile):
 
     def _generate_spacing_info(self, data):
 
-        data = data.split()
+        data = data.split(',' if ',' in data else ' ')
 
         if len(data) == 4:
             data = data
@@ -251,12 +232,6 @@ class Sprite(ConfigurableFromFile):
 
     def sprite_path(self, ratio=1.0):
         return self.config['ratio_{0}_output'.format(ratio)]
-
-    def _ratio_suffix(self, ratio):
-        ratio_suffix = '@%.1fx' % ratio if int(ratio) != ratio else '@%ix' % ratio
-        if ratio_suffix == '@1x':
-            return ''
-        return ratio_suffix
 
     def _locate_images(self):
         """Return all valid images within a folder.

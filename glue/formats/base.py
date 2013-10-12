@@ -30,10 +30,8 @@ class BaseFormat(object):
         return self.sprite.name
 
     def output_path(self, *args, **kwargs):
-        try:
-            return os.path.join(self.output_dir(*args, **kwargs), '{0}.{1}'.format(self.output_filename(*args, **kwargs), self.extension))
-        except:
-            import ipdb; ipdb.set_trace()
+        return os.path.join(self.output_dir(*args, **kwargs), '{0}.{1}'.format(self.output_filename(*args, **kwargs), self.extension))
+
     def build(self):
         if self.build_per_ratio:
             for ratio in self.sprite.config['ratios']:
@@ -82,9 +80,9 @@ class BaseTextFormat(BaseFormat):
             image = dict(filename=img.filename,
                          last=i == len(self.sprite.images) - 1,
                          x=round_up((img.x * -1 - img.margin[3] * self.sprite.max_ratio) / self.sprite.max_ratio),
-                         y=round_up((img.y * -1 - img.margin[3] * self.sprite.max_ratio) / self.sprite.max_ratio),
-                         height=round_up((img.height / self.sprite.max_ratio) + img.padding[0]),
-                         width=round_up((img.width / self.sprite.max_ratio) + img.padding[3]))
+                         y=round_up((img.y * -1 - img.margin[0] * self.sprite.max_ratio) / self.sprite.max_ratio),
+                         height=round_up((img.height / self.sprite.max_ratio) + img.padding[0] + img.padding[2]),
+                         width=round_up((img.width / self.sprite.max_ratio) + img.padding[1] + img.padding[3]))
 
             context['images'].append(image)
 

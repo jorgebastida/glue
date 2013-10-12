@@ -43,6 +43,7 @@ class BaseManager(object):
             format_cls = formats[format_name]
             for sprite in self.sprites:
                 format = format_cls(sprite=sprite)
+                format.validate()
                 if format.needs_rebuild():
                     print "Format {0} for sprite {1} needs rebuild".format(format_name, sprite.name)
                     format.build()

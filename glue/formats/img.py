@@ -68,6 +68,12 @@ class ImageFormat(BaseFormat):
                            const='2,1',
                            help="Shortcut for --ratios=2,1")
 
+    def output_filename(self, *args, **kwargs):
+        filename = super(ImageFormat, self).output_filename(*args, **kwargs)
+        if self.sprite.config['css_cachebuster_filename']:
+            return '{0}_{1}'.format(filename, self.sprite.hash)
+        return filename
+
     def needs_rebuild(self):
         for ratio in self.sprite.config['ratios']:
             image_path = self.output_path(ratio)
