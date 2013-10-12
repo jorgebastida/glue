@@ -1,13 +1,14 @@
 import os
 import shutil
-import contextlib
 import unittest
 import logging
+from StringIO import StringIO
 
 from PIL import Image as PILImage
 import cssutils
 
 from glue.bin import main
+from glue.helpers import redirect_stdout
 
 
 RED = (255, 0, 0, 255)
@@ -95,8 +96,15 @@ class TestGlue(unittest.TestCase):
         image = PILImage.new('RGB', size, color)
         image.save(path)
 
-    def call(self, options):
-        return main(options.split())
+    def call(self, options, capture=False):
+        out = StringIO()
+        with redirect_stdout(out):
+            code = main(options.split())
+        output = out.getvalue()
+        out.close()
+        if capture:
+            return code, output
+        return code
 
     def test_simple_css(self):
         self.create_image("simple/red.png", RED)

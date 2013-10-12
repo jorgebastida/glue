@@ -1,3 +1,9 @@
+import os
+import sys
+import contextlib
+from StringIO import StringIO
+
+
 def round_up(value):
     int_value = int(value)
     diff = 1 if value > 0 else -1
@@ -52,3 +58,11 @@ class cached_property(object):
             value = self.func(obj)
             obj.__dict__[self.__name__] = value
         return value
+
+
+@contextlib.contextmanager
+def redirect_stdout(stream=None):
+    stream = stream or StringIO()
+    sys.stdout = stream
+    yield
+    sys.stdout = sys.__stdout__

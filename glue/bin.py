@@ -6,6 +6,7 @@ import argparse
 from PIL import Image as PImage
 
 from glue.formats import formats
+from glue.helpers import redirect_stdout
 from glue import exceptions
 from glue import managers
 from glue import __version__
@@ -200,7 +201,11 @@ def main(argv=None):
         manager = manager_cls(**vars(options))
 
     try:
-        manager.process()
+        if options.quiet:
+            with redirect_stdout():
+                manager.process()
+        else:
+            manager.process()
     except exceptions.ValidationError, e:
         sys.stderr.write(e.args[0])
         return e.error_code
