@@ -232,9 +232,9 @@ class Sprite(ConfigurableFromFile):
 
         for key, value in self.config.iteritems():
             hash_list.append(key)
-            hash_list.append(str(value))
+            hash_list.append(value)
 
-        return hashlib.sha1(''.join(hash_list)).hexdigest()[:10]
+        return hashlib.sha1(''.join(map(str, hash_list))).hexdigest()[:10]
 
     @cached_property
     def canvas_size(self):
