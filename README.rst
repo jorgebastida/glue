@@ -8,6 +8,8 @@ Glue is a simple command line tool to generate sprites::
 * The latest documentation is available at: http://glue.readthedocs.org
 * Installation instructions: http://glue.readthedocs.org/en/latest/installation.html
 
+.. image:: https://travis-ci.org/jorgebastida/glue.png?branch=0.9   :target: https://travis-ci.org/jorgebastida/glue
+
 Features
 --------
 * Automatic Sprite (Image + Metadata) creation including:
