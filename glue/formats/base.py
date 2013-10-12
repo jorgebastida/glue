@@ -30,8 +30,10 @@ class BaseFormat(object):
         return self.sprite.name
 
     def output_path(self, *args, **kwargs):
-        return os.path.join(self.output_dir(*args, **kwargs), '{0}.{1}'.format(self.output_filename(*args, **kwargs), self.extension))
-
+        try:
+            return os.path.join(self.output_dir(*args, **kwargs), '{0}.{1}'.format(self.output_filename(*args, **kwargs), self.extension))
+        except:
+            import ipdb; ipdb.set_trace()
     def build(self):
         if self.build_per_ratio:
             for ratio in self.sprite.config['ratios']:
@@ -102,6 +104,10 @@ class BaseTextFormat(BaseFormat):
         raise NotImplementedError
 
     def save(self, *args, **kwargs):
+        # Create the destination directory if required
+        if not os.path.exists(self.output_dir(*args, **kwargs)):
+            os.makedirs(self.output_dir(*args, **kwargs))
+
         with codecs.open(self.output_path(*args, **kwargs), 'w', 'utf-8-sig') as f:
             f.write(self.render(*args, **kwargs))
 

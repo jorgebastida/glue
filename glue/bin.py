@@ -187,6 +187,13 @@ def main(argv=None):
             else:
                 setattr(options, format_option, os.path.abspath(path))
 
+    # If the img format is not enabled, we still need to know where the sprites
+    # were generated. As img is not an enabled format img_dir would be empty
+    # if --img was not userd. If this is the case we need to use whatever is
+    # the output value.
+    if not options.generate_image and isinstance(options.img_dir, bool):
+        options.img_dir = options.output
+
     # Apply formats constraints
     for format in options.enabled_formats:
         formats[format].apply_parser_contraints(parser, options)

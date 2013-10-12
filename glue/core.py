@@ -200,7 +200,7 @@ class Sprite(ConfigurableFromFile):
 
         img_format = ImageFormat(sprite=self)
         for ratio in ratios:
-            ratio_output_key = 'ratio_{0}_output'.format(self._ratio_suffix(ratio))
+            ratio_output_key = 'ratio_{0}_output'.format(ratio)
             if ratio_output_key not in self.config:
                 self.config[ratio_output_key] = img_format.output_path(ratio)
 
@@ -249,8 +249,8 @@ class Sprite(ConfigurableFromFile):
                 height = y
         return round_up(width), round_up(height)
 
-    def sprite_path(self, ratio=1):
-        return self.config['ratio_{0}_output'.format(self._ratio_suffix(ratio))]
+    def sprite_path(self, ratio=1.0):
+        return self.config['ratio_{0}_output'.format(ratio)]
 
     def _ratio_suffix(self, ratio):
         ratio_suffix = '@%.1fx' % ratio if int(ratio) != ratio else '@%ix' % ratio

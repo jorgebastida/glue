@@ -7,6 +7,7 @@ from StringIO import StringIO
 from PIL import Image as PILImage
 import cssutils
 
+from glue import __version__
 from glue.bin import main
 from glue.helpers import redirect_stdout
 
@@ -45,8 +46,14 @@ class TestGlue(unittest.TestCase):
         os.chdir(self.pwd)
         shutil.rmtree(self.output_path, True)
 
+    def _exists(self, path):
+        return os.path.exists(path)
+
     def assertExists(self, path):
-        assert os.path.exists(path), "{0} doesn't exists".format(path)
+        assert self._exists(path), "{0} doesn't exists".format(path)
+
+    def assertDoesNotExists(self, path):
+        assert not self._exists(path), "{0} exists".format(path)
 
     def assertColor(self, path, color, points, tolerance=0):
         image = PILImage.open(path)
@@ -121,7 +128,7 @@ class TestGlue(unittest.TestCase):
                         u'width': u'64px',
                         u'height': u'64px'})
 
-    def test_simple_css_with_source(self):
+    def test_source(self):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)
         code = self.call("glue --source=simple output")
@@ -146,7 +153,7 @@ class TestGlue(unittest.TestCase):
                         u'width': u'64px',
                         u'height': u'64px'})
 
-    def test_simple_css_with_output(self):
+    def test_output(self):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)
         code = self.call("glue simple --output=output")
@@ -171,14 +178,14 @@ class TestGlue(unittest.TestCase):
                         u'width': u'64px',
                         u'height': u'64px'})
 
-    def test_simple_quiet(self):
+    def test_quiet(self):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)
         code, out = self.call("glue simple output --quiet", capture=True)
         self.assertEqual(code, 0)
         self.assertEqual(out, "")
 
-    def test_simple_recursive(self):
+    def test_recursive(self):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)
         self.create_image("simple/sub/green.png", GREEN)
@@ -209,6 +216,245 @@ class TestGlue(unittest.TestCase):
                        {u'background-image': u"url(simple.png)",
                         u'background-repeat': u'no-repeat',
                         u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_project(self):
+        self.create_image("sprites/icons/red.png", RED)
+        self.create_image("sprites/icons/blue.png", BLUE)
+        self.create_image("sprites/menu/green.png", GREEN)
+        self.create_image("sprites/menu/yellow.png", YELLOW)
+        code = self.call("glue sprites output --project")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/icons.png")
+        self.assertExists("output/icons.css")
+        self.assertExists("output/menu.png")
+        self.assertExists("output/menu.css")
+
+        self.assertColor("output/icons.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/icons.png", BLUE, ((64, 0), (127, 63)))
+        self.assertColor("output/menu.png", YELLOW, ((0, 0), (63, 63)))
+        self.assertColor("output/menu.png", GREEN, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"output/icons.css", u'.sprite_icons_red',
+                       {u'background-image': u"url(icons.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/icons.css", u'.sprite_icons_blue',
+                       {u'background-image': u"url(icons.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/menu.css", u'.sprite_menu_yellow',
+                       {u'background-image': u"url(menu.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/menu.css", u'.sprite_menu_green',
+                       {u'background-image': u"url(menu.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_algorithm_diagonal(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        self.create_image("simple/yellow.png", YELLOW)
+        code = self.call("glue simple output --algorithm=diagonal")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", YELLOW, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", RED, ((64, 64), (127, 127)))
+        self.assertColor("output/simple.png", BLUE, ((128, 128), (191, 191)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_yellow',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px -64px',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-128px -128px',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_algorithm_horizontal(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        self.create_image("simple/yellow.png", YELLOW)
+        code = self.call("glue simple output --algorithm=horizontal")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", YELLOW, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", RED, ((64, 0), (127, 63)))
+        self.assertColor("output/simple.png", BLUE, ((128, 0), (129, 63)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_yellow',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-128px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_algorithm_horizontal_bottom(self):
+        self.create_image("simple/red.png", RED, (64, 64))
+        self.create_image("simple/blue.png", BLUE, (32, 32))
+        self.create_image("simple/yellow.png", YELLOW, (16, 16))
+        code = self.call("glue simple output --algorithm=horizontal-bottom")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 32), (95, 63)))
+        self.assertColor("output/simple.png", YELLOW, ((96, 48), (111, 63)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px -32px',
+                        u'width': u'32px',
+                        u'height': u'32px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_yellow',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-96px -48px',
+                        u'width': u'16px',
+                        u'height': u'16px'})
+
+    def test_algorithm_vertical(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        self.create_image("simple/yellow.png", YELLOW)
+        code = self.call("glue simple output --algorithm=vertical")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", YELLOW, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", RED, ((0, 64), (63, 127)))
+        self.assertColor("output/simple.png", BLUE, ((0, 128), (63, 188)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_yellow',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 -64px',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 -128px',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_algorithm_vertical_right(self):
+        self.create_image("simple/red.png", RED, (64, 64))
+        self.create_image("simple/blue.png", BLUE, (32, 32))
+        self.create_image("simple/yellow.png", YELLOW, (16, 16))
+        code = self.call("glue simple output --algorithm=vertical-right")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((32, 64), (63, 95)))
+        self.assertColor("output/simple.png", YELLOW, ((48, 96), (63, 111)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-32px -64px',
+                        u'width': u'32px',
+                        u'height': u'32px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_yellow',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-48px -96px',
+                        u'width': u'16px',
+                        u'height': u'16px'})
+
+    def test_no_img(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --no-img")
+        self.assertEqual(code, 0)
+
+        self.assertDoesNotExists("output/simple.png")
+        self.assertExists("output/simple.css")
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
                         u'width': u'64px',
                         u'height': u'64px'})
 
