@@ -27,16 +27,6 @@ COLORS = {RED: 'RED',
           YELLOW: 'YELLOW',
           TRANSPARENT: 'TRANSPARENT'}
 
-@contextlib.contextmanager
-def chdir(dirname=None):
-    pwd = os.getcwd()
-    try:
-        if dirname is not None:
-            os.chdir(dirname)
-        yield
-    finally:
-        os.chdir(pwd)
-
 
 class TestGlue(unittest.TestCase):
 
@@ -118,6 +108,104 @@ class TestGlue(unittest.TestCase):
         self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
 
         self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_simple_css_with_source(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue --source=simple output")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_simple_css_with_output(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple --output=output")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_simple_quiet(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code, out = self.call("glue simple output --quiet", capture=True)
+        self.assertEqual(code, 0)
+        self.assertEqual(out, "")
+
+    def test_simple_recursive(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        self.create_image("simple/sub/green.png", GREEN)
+        code = self.call("glue simple output --recursive")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", GREEN, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", RED, ((64, 0), (127, 63)))
+        self.assertColor("output/simple.png", BLUE, ((0, 64), (63, 127)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 -64px',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite_simple_green',
                        {u'background-image': u"url(simple.png)",
                         u'background-repeat': u'no-repeat',
                         u'background-position': u'0 0',
