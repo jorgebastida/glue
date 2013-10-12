@@ -24,7 +24,7 @@ class ConfigurableFromFile(object):
             return {'true': True, 'false': False}.get(value.lower(), value)
 
         config = ConfigParser.RawConfigParser()
-        config.read(os.path.join(self.path, filename))
+        config.read(os.path.join(self.config_path, filename))
 
         try:
             keys = config.options(section)
@@ -38,7 +38,7 @@ class Image(ConfigurableFromFile):
     def __init__(self, path, config):
         self.path = path
         self.filename = os.path.basename(path)
-        self.dirname = os.path.dirname(path)
+        self.dirname = self.config_path = os.path.dirname(path)
 
         self.config = copy.deepcopy(config)
         self.config.update(self._get_config_from_file('sprite.conf', self.filename))
@@ -162,7 +162,7 @@ class Sprite(ConfigurableFromFile):
     valid_extensions = ['png', 'jpg', 'jpeg', 'gif']
 
     def __init__(self, path, config, name=None):
-        self.path = path
+        self.path = self.config_path = path
         self.config = copy.deepcopy(config)
         self.config.update(self._get_config_from_file('sprite.conf', 'sprite'))
         self.name = name or self.config.get('name', os.path.basename(path))
