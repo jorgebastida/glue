@@ -138,13 +138,15 @@ def main(argv=None):
             parser.error(("{0} argument is deprectated "
                           "since v0.3").format(deprecated_arguments[argument]))
 
+    extra = 0
     # Get the source from the source option or the first positional argument
     if not options.source and args:
         options.source = args[0]
+        extra += 1
 
     # Get the output from the output option or the second positional argument
-    if not options.output and args[1:]:
-        options.output = args[1]
+    if not options.output and args[extra:]:
+        options.output = args[extra]
 
     # Make absolute both source and output if present
     if not os.path.isdir(options.source):
