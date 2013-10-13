@@ -129,7 +129,6 @@ And now?
 -----------------------------------
 ``glue`` have some more magical powers inside!
 
-* :doc:`Paddings <paddings>`: You can add paddings to your images only changing the filename! Read the :doc:`paddings documentation <paddings>`.
 * :doc:`Retina sprites <ratios>`: Do you want to make your sprites look good on any device? Read the :doc:`ratios documentation <ratios>`.
 * Glue can also read the configuration from :doc:`static config files <files>`.
 * We support `less <http://lesscss.org/>`_! It's easy, add ``--less`` and ``glue`` will generate the CSS file with the ``.less`` extension.
