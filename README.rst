@@ -1,6 +1,16 @@
 Glue
 ====
 
+.. image:: https://badge.fury.io/py/glue.png
+    :target: http://badge.fury.io/py/glue
+
+.. image:: https://travis-ci.org/kennethreitz/glue.png?branch=master
+        :target: https://travis-ci.org/kennethreitz/glue
+
+.. image:: https://pypip.in/d/glue/badge.png
+        :target: https://crate.io/packages/glue/
+
+
 Glue is a simple command line tool to generate sprites::
 
     $ glue source output
@@ -30,6 +40,25 @@ Features
 * CSS: Optional .less/.scss output format.
 * CSS: Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
 * CSS: Customizable `class names <http://glue.readthedocs.org/en/latest/options.html#separator>`_.
+
+Example
+-------
+Using the gorgeous `famfamfam icons <http://www.famfamfam.com/lab/icons/silk/>`_ (4.2Mb) you will get
+the following ``icons.png`` (401Kb).
+
+.. image:: https://github.com/jorgebastida/glue/raw/master/docs/img/famfamfam1.png
+
+
+And also an ``icons.css`` with all the necessary CSS classes for this sprite::
+
+    .sprite-icons-zoom_out{ background:url('icons.png'); top:0; left:0; no-repeat;}
+    .sprite-icons-zoom_in{ background:url('icons.png'); top:0; left:-16; no-repeat;}
+    .sprite-icons-zoom{ background:url('icons.png'); top:-16; left:0; no-repeat;}
+    .sprite-icons-xhtml_valid{ background:url('icons.png'); top:-16; left:-16; no-repeat;}
+    ...
+
+
+Do you want to know more? Visit the quickstart guide: http://glue.readthedocs.org/en/latest/quickstart.html
 
 Example
 -------
