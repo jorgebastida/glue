@@ -4,8 +4,8 @@ Glue
 .. image:: https://badge.fury.io/py/glue.png
     :target: http://badge.fury.io/py/glue
 
-.. image:: https://travis-ci.org/kennethreitz/glue.png?branch=master
-        :target: https://travis-ci.org/kennethreitz/glue
+.. image:: https://travis-ci.org/jorgebastida/glue.png?branch=master
+        :target: https://travis-ci.org/jorgebastida/glue
 
 .. image:: https://pypip.in/d/glue/badge.png
         :target: https://crate.io/packages/glue/
