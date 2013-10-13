@@ -59,21 +59,12 @@ And also an ``icons.css`` with all the necessary CSS classes for this sprite::
 
 Do you want to know more? Visit the quickstart guide: http://glue.readthedocs.org/en/latest/quickstart.html
 
-Example
--------
-Using the gorgeous `famfamfam icons <http://www.famfamfam.com/lab/icons/silk/>`_ (4.2Mb) you will get
-the following ``icons.png`` (401Kb).
+Contribute
+-----------
 
-.. image:: https://github.com/jorgebastida/glue/raw/master/docs/img/famfamfam1.png
+* Fork the repository on GitHub to start making your changes to the master branch (or branch off of it).
+* Write a test which shows that the bug was fixed or that the feature works as expected.
 
+  - Use ``python setup.py test``
 
-And also an ``icons.css`` with all the necessary CSS classes for this sprite::
-
-    .sprite-icons-zoom_out{ background:url('icons.png'); top:0; left:0; no-repeat;}
-    .sprite-icons-zoom_in{ background:url('icons.png'); top:0; left:-16; no-repeat;}
-    .sprite-icons-zoom{ background:url('icons.png'); top:-16; left:0; no-repeat;}
-    .sprite-icons-xhtml_valid{ background:url('icons.png'); top:-16; left:-16; no-repeat;}
-    ...
-
-
-Do you want to know more? Visit the quickstart guide: http://glue.readthedocs.org/en/latest/quickstart.html
+* Send a pull request and bug the maintainer until it gets merged and published. :) Make sure to add yourself to AUTHORS.
