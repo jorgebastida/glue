@@ -64,7 +64,7 @@ class CssFormat(JinjaTextFormat):
                            dest="css_format",
                            action='store_const',
                            const='scss',
-                           default=os.environ.get('GLUE_LESS', 'css'),
+                           default=os.environ.get('GLUE_SCSS', 'css'),
                            help="Use .scss instead of .css as CSS file format")
 
         group.add_argument("--namespace",

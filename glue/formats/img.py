@@ -45,7 +45,7 @@ class ImageFormat(BaseFormat):
         group.add_argument("--margin",
                            dest="margin",
                            type=unicode,
-                           default=os.environ.get('GLUE_MARGING', '0'),
+                           default=os.environ.get('GLUE_MARGIN', '0'),
                            help="Force this margin in all images")
 
         group.add_argument("--png8",
