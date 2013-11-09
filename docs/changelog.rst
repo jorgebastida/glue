@@ -9,7 +9,7 @@ Changelog
 * New project layout, algorithms formats and manager now have their own packages.
 * This version includes **several** backward incompatible changes - **read this document carefully before upgrading**.
 
-  - ``--imagemagick`` and ``--imagemagickpath`` are now deprecated. This options were introduced as a workaround in order to solver some scaling glitches caused by ``PIL``. Pillow ``2.3.0`` solves these issues.
+  - ``--imagemagick`` and ``--imagemagickpath`` are now deprecated. This options were introduced as a workaround in order to solver some scaling glitches caused by ``PIL``. Pillow ``2.2.0`` solves these issues.
   - ``--each-template``, ``--global-template`` and ``--ratio-template`` are now deprecated. CSS output customization could be easily done now using ``--css-template=template.jinja``.
   - ``--ignore-filename-paddings`` is now deprecated. Per-file customization could be easily (and more scalable) done no using configuration files.
   - ``--optipng`` and ``--optipngpath`` are now deprecated. There are lot's of png optimization libraries and it would be silly to support all of them. Feel free to optimize your png files using your favourite one.
@@ -17,11 +17,17 @@ Changelog
 
 * Glue now uses utf-8 as default encoding for css files #65.
 * ``--margin`` now support more than only one margin, you can now use it with (i.e) ``--margin=10 20 10 20``.
+* New options ``--source`` and ``--output`` will now complement the first and second positional argument.
+* New option ``--css-template`` will allow you to choose your own css output `jinja template <http://glue.readthedocs.org/en/latest/templates.html>`_.
+* New option ``--scss`` will use ``scss`` as file extension instead of ``css``.
+* New feature: Every settting is now configurable using `environment variables <http://glue.readthedocs.org/en/latest/settings.html>`_ and `configuration files <http://glue.readthedocs.org/en/latest/files.html>`_.
+
 
 0.4
 ^^^
 * This version is a transition between glue ``0.3`` and glue ``0.9``.
 * The following arguments will now show a deprecation warning:
+
   - ``--imagemagick``
   - ``--imagemagickpath``
   - ``--global-template``

@@ -25,16 +25,3 @@ Available pseudo classes
 ------------------------
 
 Glue will only detect the following pseudo-classes: ``link``, ``visited``, ``active``, ``hover``, ``focus``, ``first-letter``, ``first-line``, ``first-child``, ``before`` and ``after``.
-
-
-Can I also use the filename to customize the padding?
------------------------------------------------------
-
-Yes! of course you can! For example the following sprite will be completely valid::
-
-    buttons
-    ├── pay_10-30.png
-    └── pay_10-30_hover.png
-
-
-You can add the padding or pseudo-class preferences **in any order**.

@@ -124,26 +124,6 @@ The option ``--retina`` is only a shortcut for ``--ratios=2,1``.
 
     $ glue source output --retina
 
-
---imagemagick
--------------
-The option ``--imagemagick`` will make ``glue`` scale down your bigger sprite to the appropriate ratio size using ``ImageMagick`` instead of ``Pillow``. In some situations ``Pillow`` scaling algorithm perform really bad and it generates some horrible shades / gray borders.
-
-In order to avoid them you should use the ``--imagemagick`` option.
-
-.. code-block:: bash
-
-    $ glue source output --imagemagick
-
-
---imagemagickpath
------------------
-If ``convert`` (ImageMagick) is not in your computer ``PATH``, you can choose the imagemagick path using this option.
-
-.. code-block:: bash
-
-    $ glue source output --imagemagick --imagemagickpath=<dir>
-
 --watch
 ------------
 While you are developing a site it could be quite frustrating running ``Glue`` once and another every time you change a source image or a filename. ``--watch`` will allow you to keep ``Glue`` running in the background and it'll rebuild the sprite every time it detects changes on the source directory.
@@ -210,10 +190,13 @@ If you want to spread the images around the sprite but you don't want to count t
 
 .. code-block:: bash
 
-    $ glue source output --margin=20
+    $ glue source output --margin=10
+    $ glue source output --margin=10 20
+    $ glue source output --margin=10 20 30 40
+
 
 .. note::
-    New in version 0.2.5
+    New in version 0.9
 
 --namespace
 -----------
@@ -263,23 +246,6 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 .. note::
     This feature is unstable in OSX > 10.7 because a bug in PIL.
 
---ignore-filename-paddings
---------------------------
-``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior (e.g. legacy purposes), you can use the ``--ignore-filename-paddings`` option to disable it.
-
-.. code-block:: bash
-
-    $ glue source output --ignore-filename-paddings
-
-
---debug
---------------------------
-By default ``glue`` catch all unexpected errors and fails gracefully. If you want to look under the hood use ``--debug`` and ``glue`` will raise some debugging information about the error. If you want to report a bug, please provide a reproducable example as well as the output of the command failing using ``--debug``.
-
-.. code-block:: bash
-
-    $ glue source output --debug
-
 --separator
 --------------------------
 ``glue`` by default uses ``-`` as separator for the CSS class names. If you want to customize this behaviour you can use ``--separator`` to specify your own
@@ -295,63 +261,6 @@ If you want to use `camelCase <http://en.wikipedia.org/wiki/CamelCase>`_ instead
 
     $ glue source output --separator=camelcase
 
---global-template
-------------------
-If you want to customize the output CSS you can use this option to tune the global section of the output CSS. This template is going to be only added **once per sprite**. Usually you'll not need to change this template.
-
-.. code-block:: bash
-
-    $ glue source output --global-template=<template>
-
-
-For example if you want to add quotes around the sprite image:
-
-.. code-block:: bash
-
-    $ glue source output --global-template="%(all_classes)s{background-image:url('%(sprite_url)s');background-repeat:no-repeat}"
-
-.. note::
-    New in version 0.2.1
-
---each-template
-------------------
-If you want to customize the output CSS, you can use this option to tune the output CSS generated for each image. This template is going to be added **once per image** present in the sprite. Usually you'll change this template if you want to remove the block size from the output CSS or make any other fine tune.
-
-.. code-block:: bash
-
-    $ glue source output --each-template=<template>
-
-
-For example if you want to remove the block size from the output CSS (old ``--no-size`` option):
-
-.. code-block:: bash
-
-    $ glue source output --each-template="%(class_name)s{background-position:%(x)s %(y)s;}"
-
-.. note::
-    New in version 0.2.1
-
---optipng
----------
-
-OptiPNG is a PNG optimizer that recompresses image files to a smaller size, without losing any information.
-
-OptiPNG is not a glue requirement but is hardly recommended to optimize the output PNG files to make them as small as possible.
-
-If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. If you don't know how to install it, read the :doc:`optipng page <optipng>`.
-
-.. code-block:: bash
-
-    $ glue source output --optipng
-
-
---optipngpath
--------------
-If ``optipng`` is not in your computer ``PATH``, you can choose the optipng path using this option.
-
-.. code-block:: bash
-
-    $ glue source output --optipng --optipngpath=<dir>
 
 --cachebuster
 -------------
