@@ -847,7 +847,7 @@ class Sprite(object):
 
         format = 'less' if self.config.less else 'css'
         output_path = self.manager.output_path('css')
-        filename = '%s.%s' % (self.filename, format)
+        filename = '%s.%s' % (self.css_filename, format)
         css_filename = os.path.join(output_path, filename)
         hash_line = '/* glue: %s hash: %s */\n' % (__version__, self.hash)
 
@@ -955,6 +955,11 @@ class Sprite(object):
         if self.config.cachebuster_filename:
             return '%s_%s' % (self.name, self.hash[:6])
         return self.name
+    @cached_property
+    def css_filename(self):
+        if self.config.nocachebuster_cssfilename:
+            return self.name
+        return self.filename
 
     def image_path(self, ratio=1, full=True):
         reference = self.__get_reference(ratio)
@@ -1474,6 +1479,9 @@ def main():
             action='store_true',
             help=("append the sprite's sha first 6 characters "
                   "to the otput filename"))
+    group.add_option("--nocachebuster_cssfilename",dest="nocachebuster_cssfilename",
+            action='store_true',
+            help=("do not append the sprite's sha to the css filename"))
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
