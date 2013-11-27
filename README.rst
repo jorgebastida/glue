@@ -68,3 +68,13 @@ Contribute
   - Use ``python setup.py test``
 
 * Send a pull request and bug the maintainer until it gets merged and published. :) Make sure to add yourself to AUTHORS.
+
+We need your help
+------------------
+
+There are several features that ``glue`` users would love to have... but they require a substancial amount of work and dedication, so we are looking for feature-sponsors! If you want to lead the development/testing of any of the following features, please contact `Jorge Bastida <mailto:me@jorgebastida.com>`_ Here you have some examples:
+
+* Windows support (I'm not a Windows user, ``glue`` needs somebody who care about how ``glue`` works on Windows and write down some installation instructions).
+* Cocos2d Format (Already exists, but we need somebody to give it some love).
+* New Formats (After 0.9, ``glue`` is ready to accept new output formats - If you want to create a new format, contact me).
+* Binary packaging for OSX and Windows (For some users it would be really cool if they were able to download an already packaged binary version).
