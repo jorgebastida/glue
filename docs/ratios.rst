@@ -138,34 +138,3 @@ iPad 2                    1024 × 768          132ppi          1
 Kidle Fire                1024 × 600          169ppi          1
 Galaxy Y (S5360)          240 × 320           133ppi          0.75
 ========================= =================== =============== ================
-
-Avoiding undesired shades with small images
--------------------------------------------
-
-After creating your bigger sprite, ``glue`` scale down the image to the appropriate ratio size using ``Pillow``. In some situations ``Pillow`` scaling algorithm perform really bad and it generates some horrible shades / gray borders.
-
-In order to avoid them you should use the ``--imagemagick`` option. This option will make ``glue`` use ``ImageMagick`` to scale down images instead of ``Pillow``.
-
-As you can see in the next example not using ``--imagemagick`` will make your scaled sprite look quite bad.
-
-.. figure:: img/retina_borders.png
-
-
-Installing ImageMagick
-----------------------
-
-OS X
-++++
-You can install ``ImageMagick`` using ``brew``
-
-.. code-block:: bash
-
-    $ brew install imagemagick
-
-Debian / Ubuntu
-+++++++++++++++
-``ImageMagick`` is available in ``apt``.
-
-.. code-block:: bash
-
-    $ apt-get install imagemagick

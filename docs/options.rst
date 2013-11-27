@@ -23,8 +23,16 @@ The suggested setup is to create a new folder for every sprite, and add inside a
 
     $ glue source output --project
 
-.. note::
-    This was the default behaviour prior to the version ``0.2``, after ``2.0`` is not.
+
+-s --source -o --output
+------------------------
+There are two ways to choose which are the ``source`` and the ``output`` directories. Using the first and the second positional arguments is the traditional way of using ``glue`` but in order to standardize how configuration is handled ``glue 0.9`` intruduced these two new options.
+
+.. code-block:: bash
+
+    $ glue output --source=DIR --output=DIR
+
+
 
 -r --recursive
 --------------
@@ -132,8 +140,6 @@ While you are developing a site it could be quite frustrating running ``Glue`` o
 
     $ glue source output --watch
 
-.. note::
-    New in version 0.2.5
 
 --css --img
 -----------
@@ -149,10 +155,23 @@ Using the ``--html`` option, ``Glue`` will also generate a test html per sprite 
 
 .. code-block:: bash
 
-    $ glue source --html
+    $ glue source output --html
+
+--cocos2d
+-----------
+Using the ``--cocos2d`` option, ``Glue`` will generate both a sprite image and a xml metadata file compatible with cocos2d.
+
+.. code-block:: bash
+
+    $ glue source output --cocos2d
+
 
 .. note::
-    New in version 0.2.5
+    New in version 0.9
+
+.. note::
+    The output of this format has not been deeply tested and we are looking for a cocos2d-champion who can sponsor this feature.
+
 
 -a --algorithm
 --------------
@@ -240,8 +259,6 @@ By using the flag ``png8`` the output image format will be png8 instead of png32
 
     $ glue source output --png8
 
-.. note::
-    New in version 0.1.9
 
 .. note::
     This feature is unstable in OSX > 10.7 because a bug in PIL.

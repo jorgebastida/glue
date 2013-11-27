@@ -72,7 +72,9 @@ Contribute
 We need your help
 ------------------
 
-There are several features that ``glue`` users would love to have... but they require a substancial amount of work and dedication, so we are looking for feature-sponsors! If you want to lead the development/testing of any of the following features, please contact `Jorge Bastida <mailto:me@jorgebastida.com>`_ Here you have some examples:
+There are several features that ``glue`` users would love to have... but they require a substancial amount of work and dedication, so we are looking for feature-sponsors! If you want to lead the development/testing of any of the following features, please contact `Jorge Bastida <mailto:me@jorgebastida.com>`_.
+
+Here you have some examples:
 
 * Windows support (I'm not a Windows user, ``glue`` needs somebody who care about how ``glue`` works on Windows and write down some installation instructions).
 * Cocos2d Format (Already exists, but we need somebody to give it some love).
