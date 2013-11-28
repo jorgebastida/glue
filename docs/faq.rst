@@ -45,3 +45,4 @@ Python compiles C extensions with the same compiler flags that Python itself was
 The solution? Install ``glue`` using this line::
 
     $ sudo env ARCHFLAGS='-arch i386 -arch x86_64' pip install glue
+

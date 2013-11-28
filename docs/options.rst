@@ -89,6 +89,20 @@ This files contain exactly the same CSS code. This option only changes the file 
 
     $ glue source output --less
 
+--scss
+---------
+`scss/sass <http://sass-lang.com/>`_  is another dynamic stylesheet language that extends CSS with dynamic behaviors.
+``glue`` can also create ``.scss`` files adding the ``--scss`` option.
+This files contain exactly the same CSS code. This option only changes the file format.
+
+.. code-block:: bash
+
+    $ glue source output --scss
+
+.. note::
+    New in version 0.9
+
+
 -u --url
 ---------
 By default ``glue`` adds to the PNG file name the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace its suggested one with your url.
@@ -376,3 +390,11 @@ Don't create any CSS file.
 
     $ glue source output --no-css
 
+--css-template
+--------------
+While using ``--css`` you can use your own css template using ``--css-template=<FILE>``. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+
+
+.. code-block:: bash
+
+    $ glue source output --css-template=my_template.jinja
