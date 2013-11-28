@@ -9,13 +9,14 @@ import signal
 import StringIO
 import hashlib
 import subprocess
+
 import ConfigParser
 from optparse import OptionParser, OptionGroup
 
 from PIL import Image as PImage
 from PIL import PngImagePlugin
 
-__version__ = '0.3'
+__version__ = '0.4'
 
 
 PADDING_REGEXP = re.compile("^(\d+-?){,3}\d+$")
@@ -1477,6 +1478,17 @@ def main():
     parser.add_option_group(group)
 
     (options, args) = parser.parse_args()
+
+    # Show glue-0.9 future deprecation warnings
+    for deprecated_option in ('imagemagick', 'imagemagickpath', 'global_template',
+                              'each_template', 'ratio_template', 'optipng',
+                              'ignore_filename_paddings', 'optipngpath', 'debug'):
+
+        if getattr(options, deprecated_option, None) is not None:
+            print ("\nWARNING: %s option will be deprecated by the end of 2013 as "
+                   "part of glue 0.9. If you are reading this message and "
+                   "you want to upgrade to glue 0.9, read the changelog "
+                   "before doing so.\n" % deprecated_option)
 
     if options.version:
         sys.stdout.write("%s\n" % __version__)

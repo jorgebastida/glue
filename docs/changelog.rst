@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.4
+^^^
+* This version is a transition between glue ``0.3`` and glue ``0.9``.
+* The following arguments will now show a deprecation warning:
+
+  - ``--imagemagick``
+  - ``--imagemagickpath``
+  - ``--global-template``
+  - ``--each-template``
+  - ``--ratio-template``
+  - ``--ignore-filename-paddings``
+  - ``--optipng``
+  - ``--optipngpath``
+  - ``--debug``
+
 0.3
 ^^^
 * New ``--imagemagick`` option. If present, glue will use ImageMagick to scale down retina sprites instead of Pillow #72.
