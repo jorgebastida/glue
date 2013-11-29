@@ -10,8 +10,8 @@ Glue
 .. image:: https://pypip.in/d/glue/badge.png
     :target: https://crate.io/packages/glue/
 
-.. image:: https://coveralls.io/repos/jorgebastida/glue/badge.png
-    :target: https://coveralls.io/r/jorgebastida/glue
+.. image:: https://coveralls.io/repos/jorgebastida/glue/badge.png?branch=0.9
+    :target: https://coveralls.io/r/jorgebastida/glue?branch=0.9
 
 
 Glue is a simple command line tool to generate sprites::
