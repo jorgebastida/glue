@@ -16,7 +16,7 @@ def main(argv=None):
 
     argv = (argv or sys.argv)[1:]
 
-    parser = argparse.ArgumentParser(usage=("usage: %(prog)s [source | --source -o] [output | --output]"))
+    parser = argparse.ArgumentParser(usage=("usage: %(prog)s [source | --source | -s] [output | --output | -o]"))
 
     parser.add_argument("--source", "-s",
                         dest="source",
@@ -147,6 +147,11 @@ def main(argv=None):
     # Get the output from the output option or the second positional argument
     if not options.output and args[extra:]:
         options.output = args[extra]
+
+    # Check if source is available
+    if options.source is None:
+        parser.error(("You must provide the folder containing the sprites "
+                      "using the first positional argument or --source."))
 
     # Make absolute both source and output if present
     if not os.path.isdir(options.source):

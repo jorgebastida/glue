@@ -48,7 +48,7 @@ class Image(ConfigurableFromFile):
         with open(self.path, "rb") as img:
             self._image_data = img.read()
 
-        print "Image {0} added to sprite".format(self.path)
+        print "\t{0} added to sprite".format(self.filename)
 
     @cached_property
     def image(self):
@@ -185,6 +185,8 @@ class Sprite(ConfigurableFromFile):
             if ratio_output_key not in self.config:
                 self.config[ratio_output_key] = img_format.output_path(ratio)
 
+        print "Processing '{0}':".format(self.name)
+
         # Discover images inside this sprite
         self.images = self._locate_images()
 
@@ -192,7 +194,6 @@ class Sprite(ConfigurableFromFile):
         self.process()
 
     def process(self):
-
         algorithm_cls = algorithms[self.config['algorithm']]
         algorithm = algorithm_cls()
         algorithm.process(self)

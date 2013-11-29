@@ -37,15 +37,13 @@ class BaseManager(object):
     def save(self):
         """Save all sprites inside this manager."""
 
-        print self.config['enabled_formats']
-
         for format_name in self.config['enabled_formats']:
             format_cls = formats[format_name]
             for sprite in self.sprites:
                 format = format_cls(sprite=sprite)
                 format.validate()
                 if format.needs_rebuild():
-                    print "Format {0} for sprite {1} needs rebuild".format(format_name, sprite.name)
+                    print "Format '{0}' for sprite '{1}' needs rebuild...".format(format_name, sprite.name)
                     format.build()
                 else:
-                    print "Format {0} for sprite {1} already exists".format(format_name, sprite.name)
+                    print "Format '{0}'' for sprite '{1}' already exists...".format(format_name, sprite.name)

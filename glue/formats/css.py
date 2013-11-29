@@ -104,7 +104,7 @@ class CssFormat(JinjaTextFormat):
         group.add_argument("--separator",
                            dest="css_separator",
                            type=unicode,
-                           default=os.environ.get('GLUE_CSS_SEPARATOR', '_'),
+                           default=os.environ.get('GLUE_CSS_SEPARATOR', '-'),
                            metavar='SEPARATOR',
                            help=("Customize the separator used to join CSS class "
                                  "names. If you want to use camelCase use "
