@@ -7,6 +7,6 @@ install:
   - sudo ln -s /usr/lib/i386-linux-gnu/libz.so /usr/lib
   - pip install coveralls
 script:
-  - coverage run setup.py test
+  - coverage run --source=glue setup.py test
 after_success:
   coveralls
