@@ -180,7 +180,11 @@ class CssFormat(JinjaTextFormat):
         # Add sprite namespace if required
         if self.sprite.config['css_sprite_namespace']:
             sprite_name = re.sub(r'[^\w\-_]', '', self.sprite.name)
-            namespace.insert(0, self.sprite.config['css_sprite_namespace'].format(sprite_name=sprite_name))
+            sprite_namespace = self.sprite.config['css_sprite_namespace']
+
+            # Support legacy 0.4 format
+            sprite_namespace = sprite_namespace.replace("%(sprite)s", "{sprite_name}")
+            namespace.insert(0, sprite_namespace.format(sprite_name=sprite_name))
 
         # Add global namespace if required
         if self.sprite.config['css_namespace']:
