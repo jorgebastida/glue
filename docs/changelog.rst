@@ -22,6 +22,7 @@ Changelog
 
 * This version includes **several** backward incompatible changes - **read this document carefully before upgrading**.
 
+  - Glue will **not** extract padding information from filenames. If you want to customize paddings individualy (per image), you should use `configuration files <http://glue.readthedocs.org/en/latest/files.html>`_.
   - ``--imagemagick`` and ``--imagemagickpath`` are now deprecated. These options were introduced as a workaround in order to solve some scaling glitches caused by ``PIL``. Pillow ``2.2.0`` solves these issues.
   - ``--each-template``, ``--global-template`` and ``--ratio-template`` are now deprecated. CSS output customization can be easily done now using ``--css-template=template.jinja``.
   - ``--ignore-filename-paddings`` is now deprecated. Per-file customization can be easily (and more scalably) done now using configuration files.
