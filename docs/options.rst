@@ -151,6 +151,14 @@ Using the ``--html`` option, ``Glue`` will also generate a test html per sprite 
 
     $ glue source output --html
 
+--json
+-----------
+Using the ``--json`` option, ``Glue`` will generate both a sprite image and a json metadata file.
+
+.. code-block:: bash
+
+    $ glue source output --json
+
 
 -l --less
 ---------

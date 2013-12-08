@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import codecs
 import shutil
 import unittest
@@ -926,6 +927,17 @@ class TestGlue(unittest.TestCase):
         self.assertExists("output/simple.png")
         self.assertExists("output/simple.css")
         self.assertExists("output/simple.html")
+
+    def test_json(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --json")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.json")
+        with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
+            json.loads(f.read())
 
     def test_img(self):
         self.create_image("simple/red.png", RED)
