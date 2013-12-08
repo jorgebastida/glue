@@ -127,8 +127,19 @@ def main(argv=None):
     # Parse input
     options, args = parser.parse_known_args(argv)
 
+
     # Get the list of enabled formats
     options.enabled_formats = [f for f in formats if getattr(options, '{0}_dir'.format(f), False)]
+
+    # If there is only one enabled format (img) or if there are two (img, html)
+    # this means glue is been executed without any specific main format.
+    # In order to keep the legacy API we need to enable css.
+    # As consequence there is no way to make glue only generate the sprite
+    # image and the html file without generating the css file too.
+    if set(options.enabled_formats) in (set(['img']), set(['img', 'html'])):
+        options.enabled_formats.append('css')
+        setattr(options, "css_dir", True)
+
     if not options.generate_image:
         options.enabled_formats.remove('img')
 

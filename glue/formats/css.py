@@ -49,7 +49,7 @@ class CssFormat(JinjaTextFormat):
                            dest="css_dir",
                            nargs='?',
                            const=True,
-                           default=os.environ.get('GLUE_CSS', True),
+                           default=os.environ.get('GLUE_CSS', False),
                            metavar='DIR',
                            help="Generate CSS files and optionally where")
 
