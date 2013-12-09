@@ -1,59 +1,34 @@
 import os
+import plistlib
 
-from base import JinjaTextFormat
-from plistlib import readPlist
+from base import BaseTextFormat
 
 
-class Cocos2dFormat(JinjaTextFormat):
+class Cocos2dFormat(BaseTextFormat):
 
     extension = 'plist'
-    template = u"""
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
 
-        <key>frames</key>
-        <dict>
-            {% for image in images %}
-            <key>{{ image.filename }}</key>
-            <dict>
-                <key>aliases</key>
-                <array></array>
-                <key>spriteColorRect</key>
-                <string>{{ '{{' }}0, 0{{ '}' }}, {{ '{' }}{{ image.width }}, {{ image.height }}{{ '}}' }}</string>
-                <key>spriteOffset</key>
-                <string>{0, -0}</string>
-                <key>spriteSize</key>
-                <string>{{ '{' }}{{ image.width }}, {{ image.height }}{{ '}' }}</string>
-                <key>spriteSourceSize</key>
-                <string>{{ '{' }}{{ image.width }}, {{ image.height }}{{ '}' }}</string>
-                <key>spriteTrimmed</key>
-                <true/>
-                <key>textureRect</key>
-                <string>{{ '{{' }}{{ image.x }}, {{ image.y }}{{ '}' }}, {{ '{' }}{{ image.width }}, {{ image.height }}{{ '}}' }}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            {% endfor %}
-        </dict>
-        <key>metadata</key>
-        <dict>
-            <key>version</key>
-            <string>{{ version }}</string>
-            <key>hash</key>
-            <string>{{ hash }}</string>
-            <key>size</key>
-            <string>{{ '{' }}{{ width }}, {{ height }}{{ '}' }}</string>
-            <key>name</key>
-            <string>{{ name }}</string>
-            <key>textureFileName</key>
-            <string>{{ sprite_filename }}</string>
-            <key>premultipliedAlpha</key>
-            <false/>
-        </dict>
-        </dict>
-        </plist>"""
+    def render(self, *args, **kwargs):
+        context = self.get_context()
+        data = {'frames': {},
+                'metadata': {'version': context['version'],
+                             'hash': context['hash'],
+                             'size':'{{{width}, {height}}}'.format(**context),
+                             'name': context['name'],
+                             'format': 2,
+                             'realTextureFileName': context['sprite_filename'],
+                             'textureFileName': context['sprite_filename']
+                }
+        }
+        for i in context['images']:
+            rect = '{{{{{abs_x}, {abs_y}}}, {{{width}, {height}}}}}'.format(**i)
+            data['frames'][i['filename']] = {'frame': rect,
+                                             'offset': '{0,0}',
+                                             'rotated': False,
+                                             'sourceColorRect': rect,
+                                             'sourceSize': '{{{width}, {height}}}'.format(**i)}
+
+        return plistlib.writePlistToString(data)
 
     @classmethod
     def populate_argument_parser(cls, parser):
@@ -70,7 +45,7 @@ class Cocos2dFormat(JinjaTextFormat):
     def needs_rebuild(self):
         if os.path.exists(self.output_path()):
             try:
-                data = readPlist(self.output_path())
+                data = plistlib.readPlist(self.output_path())
                 assert data['metadata']['hash'] == self.sprite.hash
                 return False
             except Exception:
