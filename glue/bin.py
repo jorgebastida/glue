@@ -53,8 +53,9 @@ def main(argv=None):
                         dest="force",
                         action='store_true',
                         default=os.environ.get('GLUE_FORCE', False),
-                        help=("Force glue to create every sprite and CSS file even if "
-                              "they already exists in the output directory."))
+                        help=("Force glue to create every sprite image and "
+                              "metadata file even if they already exists in "
+                              "the output directory."))
 
     parser.add_argument("-w", "--watch",
                         dest="watch",
@@ -136,7 +137,7 @@ def main(argv=None):
     # In order to keep the legacy API we need to enable css.
     # As consequence there is no way to make glue only generate the sprite
     # image and the html file without generating the css file too.
-    if set(options.enabled_formats) in (set(['img']), set(['img', 'html'])):
+    if set(options.enabled_formats) in (set(['img']), set(['img', 'html'])) and options.generate_css:
         options.enabled_formats.append('css')
         setattr(options, "css_dir", True)
 

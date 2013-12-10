@@ -125,6 +125,12 @@ class CssFormat(JinjaTextFormat):
                            metavar='DIR',
                            help="Template to use to generate the CSS output.")
 
+        group.add_argument("--no-css",
+                           dest="generate_css",
+                           action="store_false",
+                           default=os.environ.get('GLUE_GENERATE_CSS', True),
+                           help="Don't genereate CSS files.")
+
     @classmethod
     def apply_parser_contraints(cls, parser, options):
         if options.css_cachebuster and options.css_cachebuster_filename:

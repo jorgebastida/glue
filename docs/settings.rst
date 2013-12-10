@@ -48,7 +48,8 @@ Command-line arg             Environment Variable             Configuration File
 --css-template               GLUE_CSS_TEMPLATE                css_template
 --pseudo-class-separator     GLUE_CSS_PSEUDO_CLASS_SEPARATOR  css_pseudo_class_separator
 --img                        GLUE_IMG                         img_dir
---no-img                     GLUE_NO_IMG                      generate_image
+--no-img                     GLUE_GENERATE_IMG                generate_image
+--no-css                     GLUE_GENERATE_CSS                generate_css
 -c --crop                    GLUE_CROP                        crop
 -p --padding                 GLUE_PADDING                     padding
 --margin                     GLUE_MARGIN                      margin

@@ -27,7 +27,7 @@ class ImageFormat(BaseFormat):
         group.add_argument("--no-img",
                            dest="generate_image",
                            action="store_false",
-                           default=os.environ.get('GLUE_NO_IMG', True),
+                           default=os.environ.get('GLUE_GENERATE_IMG', True),
                            help="Don't genereate IMG files.")
 
         group.add_argument("-c", "--crop",

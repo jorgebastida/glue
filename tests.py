@@ -1573,5 +1573,33 @@ class TestGlue(unittest.TestCase):
                         u'width': u'64px',
                         u'height': u'64px'})
 
+    def test_no_css(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --no-css")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertDoesNotExists("output/simple.css")
+
+    def test_no_css_with_css(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --no-css --css=folder")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertDoesNotExists("output/folder/simple.css")
+
+    def test_no_css_validation(self):
+        """Test that CSS validations does not run if --no-css is present."""
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/red|.png", RED)
+        code = self.call("glue simple output --no-css")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertDoesNotExists("output/simple.css")
+
 if __name__ == '__main__':
     unittest.main()
