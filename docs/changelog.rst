@@ -21,6 +21,7 @@ Changelog
 * New option ``--pseudo-class-separator=_``.
 * Glue now support multiple css pseudo-classes applied to the same image #87.
 * Glue css pseudo-class separator is now ``__`` instead of ``_``. If you want to make ``glue`` work in legacy mode use the new option ``--pseudo-class-separator=_``.
+* Glue will not validate css output if ``--no-css`` is present #78.
 * Several bugs fixed like #70 #93 #94 #108 #109 #110 #115
 
 * This version includes **several** backward incompatible changes - **read this document carefully before upgrading**.
