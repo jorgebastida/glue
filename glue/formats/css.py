@@ -11,6 +11,7 @@ from ..exceptions import ValidationError
 class CssFormat(JinjaTextFormat):
 
     camelcase_separator = 'camelcase'
+    css_pseudo_classes_separator = '_'
     css_pseudo_classes = set(['link', 'visited', 'active', 'hover', 'focus',
                               'first-letter', 'first-line', 'first-child',
                               'before', 'after'])
@@ -198,13 +199,13 @@ class CssFormat(JinjaTextFormat):
         label = separator.join(namespace)
         pseudo = ''
 
-        if '__' in filename:
-            pseudo = set(filename.split('__')).intersection(self.css_pseudo_classes)
+        if self.css_pseudo_classes_separator in filename:
+            pseudo_classes = [p for p in filename.split(self.css_pseudo_classes_separator) if p in self.css_pseudo_classes]
+
             # If present add this pseudo class as pseudo an remove it from the label
-            if pseudo:
-                pseudo = list(pseudo)[-1]
-                pseudo = ':{0}'.format(pseudo)
-                label = label.replace('__{0}'.format(pseudo[1:]), '')
-            else:
-                pseudo = ''
+            if pseudo_classes:
+                for p in pseudo_classes:
+                    label = label.replace('{0}{1}'.format(self.css_pseudo_classes_separator, p), "")
+                pseudo = ''.join(map(lambda x: ':{0}'.format(x), pseudo_classes))
+
         return label, pseudo

@@ -1500,7 +1500,7 @@ class TestGlue(unittest.TestCase):
 
     def test_pseudo_class(self):
         self.create_image("simple/button.png", RED)
-        self.create_image("simple/button__hover.png", BLUE)
+        self.create_image("simple/button_hover.png", BLUE)
         code = self.call("glue simple output")
         self.assertEqual(code, 0)
 
@@ -1522,6 +1522,32 @@ class TestGlue(unittest.TestCase):
                         u'background-position': u'0 0',
                         u'width': u'64px',
                         u'height': u'64px'})
+
+    def test_multiple_pseudo_class(self):
+        self.create_image("simple/button.png", RED)
+        self.create_image("simple/button_hover_before.png", BLUE)
+        code = self.call("glue simple output")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", BLUE, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", RED, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-button',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-button:hover:before',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
 
 if __name__ == '__main__':
     unittest.main()
