@@ -21,6 +21,10 @@ And generate automatically the following css:
     .sprite-buttons-pay:hover{background-position:0px 0px;width:174px;height:62px;}
     .sprite-buttons-pay{background-position:0px -62px;width:174px;height:62px;}
 
+.. note::
+    You can use multiple pseudo-classes at the same time ``_hover_before.png``
+
+
 Available pseudo classes
 ------------------------
 
