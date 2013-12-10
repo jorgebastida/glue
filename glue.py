@@ -41,7 +41,6 @@ DEFAULT_SETTINGS = {
     'url': '',
     'less': False,
     'force': False,
-    'optipng': False,
     'html': False,
     'ignore_filename_paddings': False,
     'png8': False,
