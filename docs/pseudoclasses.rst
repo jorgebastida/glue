@@ -3,11 +3,11 @@ Pseudo Classes
 
 Using the filename
 ------------------
-Using the filename of the source images you can customize the pseudo class related to the images, so if you simply append ``_hover`` to the filename ``glue`` will add ``:hover`` to the CSS class name::
+Using the filename of the source images you can customize the pseudo class related to the images, so if you simply append ``__hover`` to the filename ``glue`` will add ``:hover`` to the CSS class name::
 
     buttons
     ├── pay.png
-    └── pay_hover.png
+    └── pay__hover.png
 
 Using this simple convention you can create for example create button sprites like:
 
@@ -22,7 +22,10 @@ And generate automatically the following css:
     .sprite-buttons-pay{background-position:0px -62px;width:174px;height:62px;}
 
 .. note::
-    You can use multiple pseudo-classes at the same time ``_hover_before.png``
+    You can use multiple pseudo-classes at the same time ``__hover__before.png``
+
+.. note::
+    pseudo-class separator use to be ``_``. Since ``glue 0.9`` it is ``__``. If you don't want / you can'e rename all your files, you can use ``--pseudo-class-separator=_`` in order to make ``glue`` work in legacy mode.
 
 
 Available pseudo classes

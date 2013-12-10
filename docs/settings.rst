@@ -23,37 +23,38 @@ Every command-line option available in glue is configurable using environment va
 Settings Map
 ------------
 
-============================ ========================== ============================
-Command-line arg             Environment Variable       Configuration File setting
-============================ ========================== ============================
---source                     GLUE_SOURCE                source
---output                     GLUE_OUTPUT                output
--q --quiet                   GLUE_QUIET                 quiet
--r --recursive               GLUE_RECURSIVE             recursive
---follow-links               GLUE_FOLLOW_LINKS          follow_links
--f --force                   GLUE_FORCE                 force
--w --watch                   GLUE_WATCH                 watch
---project                    GLUE_PROJECT               project
--a --algorithm               GLUE_ALGORITHM             algorithm
---ordering                   GLUE_ORDERING              algorithm_ordering
---css                        GLUE_CSS                   css_dir
---less                       GLUE_LESS                  css_format
---scss                       GLUE_SCSS                  css_format
---namespace                  GLUE_CSS_NAMESPACE         css_namespace
---sprite-namespace           GLUE_CSS_SPRITE_NAMESPACE  css_sprite_namespace
--u --url                     GLUE_CSS_URL               css_url
---cachebuster                GLUE_CSS_CACHEBUSTER       css_cachebuster
---cachebuster-filename       GLUE_CSS_CACHEBUSTER       css_cachebuster_filename
---separator                  GLUE_CSS_SEPARATOR         css_separator
---css-template               GLUE_CSS_TEMPLATE          css_template
---img                        GLUE_IMG                   img_dir
---no-img                     GLUE_NO_IMG                generate_image
--c --crop                    GLUE_CROP                  crop
--p --padding                 GLUE_PADDING               padding
---margin                     GLUE_MARGIN                margin
---png8                       GLUE_PNG8                  png8
---ratios                     GLUE_RATIOS                ratios
---retina                     GLUE_RETINA                ratios
---html                       GLUE_HTML                  html_dir
---cocos2d                    GLUE_COCOS2D               cocos2d_dir
-============================ ========================== ============================
+============================ ===============================  ===============================
+Command-line arg             Environment Variable             Configuration File setting
+============================ ===============================  ===============================
+--source                     GLUE_SOURCE                      source
+--output                     GLUE_OUTPUT                      output
+-q --quiet                   GLUE_QUIET                       quiet
+-r --recursive               GLUE_RECURSIVE                   recursive
+--follow-links               GLUE_FOLLOW_LINKS                follow_links
+-f --force                   GLUE_FORCE                       force
+-w --watch                   GLUE_WATCH                       watch
+--project                    GLUE_PROJECT                     project
+-a --algorithm               GLUE_ALGORITHM                   algorithm
+--ordering                   GLUE_ORDERING                    algorithm_ordering
+--css                        GLUE_CSS                         css_dir
+--less                       GLUE_LESS                        css_format
+--scss                       GLUE_SCSS                        css_format
+--namespace                  GLUE_CSS_NAMESPACE               css_namespace
+--sprite-namespace           GLUE_CSS_SPRITE_NAMESPACE        css_sprite_namespace
+-u --url                     GLUE_CSS_URL                     css_url
+--cachebuster                GLUE_CSS_CACHEBUSTER             css_cachebuster
+--cachebuster-filename       GLUE_CSS_CACHEBUSTER             css_cachebuster_filename
+--separator                  GLUE_CSS_SEPARATOR               css_separator
+--css-template               GLUE_CSS_TEMPLATE                css_template
+--pseudo-class-separator     GLUE_CSS_PSEUDO_CLASS_SEPARATOR  css_pseudo_class_separator
+--img                        GLUE_IMG                         img_dir
+--no-img                     GLUE_NO_IMG                      generate_image
+-c --crop                    GLUE_CROP                        crop
+-p --padding                 GLUE_PADDING                     padding
+--margin                     GLUE_MARGIN                      margin
+--png8                       GLUE_PNG8                        png8
+--ratios                     GLUE_RATIOS                      ratios
+--retina                     GLUE_RETINA                      ratios
+--html                       GLUE_HTML                        html_dir
+--cocos2d                    GLUE_COCOS2D                     cocos2d_dir
+============================ ================================ ===============================

@@ -283,6 +283,17 @@ The suggested setup is to create a new folder for every sprite, and add inside a
     $ glue source output --project
 
 
+--pseudo-class-separator
+-------------------------
+As it's explained at the :doc:`pseudo-classes page <pseudoclasses>` using the filename of the source images you can customize the pseudo class related to the images, so if you simply append ``__hover`` to the filename ``glue`` will add ``:hover`` to the CSS class name.
+
+Since ``glue 0.9`` this separator is ``__`` but for previous version it use to be only ``_``. In order to not make ``glue < 0.9`` users rename their images, ``glue 0.9`` introduces this new option so you can customize the separator.
+
+.. code-block:: bash
+
+    $ glue source output --pseudo-class-separator=_
+
+
 -q --quiet
 ----------
 This flag will make ``glue`` suppress all console output.

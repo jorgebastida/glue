@@ -11,7 +11,6 @@ from ..exceptions import ValidationError
 class CssFormat(JinjaTextFormat):
 
     camelcase_separator = 'camelcase'
-    css_pseudo_classes_separator = '_'
     css_pseudo_classes = set(['link', 'visited', 'active', 'hover', 'focus',
                               'first-letter', 'first-line', 'first-child',
                               'before', 'after'])
@@ -111,6 +110,15 @@ class CssFormat(JinjaTextFormat):
                                  "names. If you want to use camelCase use "
                                  "'camelcase' as separator."))
 
+        group.add_argument("--pseudo-class-separator",
+                           dest="css_pseudo_class_separator",
+                           type=unicode,
+                           default=os.environ.get('GLUE_CSS_PSEUDO_CLASS_SEPARATOR', '__'),
+                           metavar='SEPARATOR',
+                           help=("Customize the separator glue will use in order "
+                                 "to determine the pseudo classes included into "
+                                 "filenames."))
+
         group.add_argument("--css-template",
                            dest="css_template",
                            default=os.environ.get('GLUE_CSS_TEMPLATE', None),
@@ -199,13 +207,14 @@ class CssFormat(JinjaTextFormat):
         label = separator.join(namespace)
         pseudo = ''
 
-        if self.css_pseudo_classes_separator in filename:
-            pseudo_classes = [p for p in filename.split(self.css_pseudo_classes_separator) if p in self.css_pseudo_classes]
+        css_pseudo_class_separator = self.sprite.config['css_pseudo_class_separator']
+        if css_pseudo_class_separator in filename:
+            pseudo_classes = [p for p in filename.split(css_pseudo_class_separator) if p in self.css_pseudo_classes]
 
             # If present add this pseudo class as pseudo an remove it from the label
             if pseudo_classes:
                 for p in pseudo_classes:
-                    label = label.replace('{0}{1}'.format(self.css_pseudo_classes_separator, p), "")
+                    label = label.replace('{0}{1}'.format(css_pseudo_class_separator, p), "")
                 pseudo = ''.join(map(lambda x: ':{0}'.format(x), pseudo_classes))
 
         return label, pseudo

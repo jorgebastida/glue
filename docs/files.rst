@@ -67,6 +67,7 @@ css_cachebuster              X              X
 css_cachebuster_filename     X              X
 css_separator                X              X
 css_template                 X              X
+css_pseudo_class_separator   X              X
 img_dir                      X              X
 generate_image               X              X
 png8                         X              X

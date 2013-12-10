@@ -18,6 +18,9 @@ Changelog
 * New option ``--css-template`` will allow you to choose your own css output `jinja template <http://glue.readthedocs.org/en/latest/templates.html>`_.
 * New option ``--scss`` will use ``scss`` as file extension instead of ``css``. Fixing #86
 * New feature: Every settting is now configurable using `environment variables <http://glue.readthedocs.org/en/latest/settings.html>`_ and `configuration files <http://glue.readthedocs.org/en/latest/files.html>`_.
+* New option ``--pseudo-class-separator=_``.
+* Glue now support multiple css pseudo-classes applied to the same image #87.
+* Glue css pseudo-class separator is now ``__`` instead of ``_``. If you want to make ``glue`` work in legacy mode use the new option ``--pseudo-class-separator=_``.
 * Several bugs fixed like #70 #93 #94 #108 #109 #110 #115
 
 * This version includes **several** backward incompatible changes - **read this document carefully before upgrading**.
