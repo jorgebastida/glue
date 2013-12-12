@@ -169,10 +169,10 @@ class CssFormat(JinjaTextFormat):
             image['label'], image['pseudo'] = self.generate_css_name(image['filename'])
 
         if self.sprite.config['css_url']:
-            context['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], context['sprite_path'])
+            context['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], context['sprite_filename'])
 
             for ratio in context['ratios']:
-                ratio['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], ratio['sprite_path'])
+                ratio['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], ratio['sprite_filename'])
 
         # Add cachebuster if required
         if self.sprite.config['css_cachebuster']:

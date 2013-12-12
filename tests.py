@@ -793,6 +793,28 @@ class TestGlue(unittest.TestCase):
                         u'width': u'64px',
                         u'height': u'64px'})
 
+        code = self.call("glue simple --url=/custom/ --css=a/b/c --img=d/e/f")
+        self.assertEqual(code, 0)
+
+        self.assertExists("d/e/f/simple.png")
+        self.assertExists("a/b/c/simple.css")
+        self.assertColor("d/e/f/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("d/e/f/simple.png", BLUE, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"a/b/c/simple.css", u'.sprite-simple-red',
+                       {u'background-image': u"url(/custom/simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"a/b/c/simple.css", u'.sprite-simple-blue',
+                       {u'background-image': u"url(/custom/simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
     @patch('glue.core.Sprite.hash')
     def test_cachebuster(self, mocked_hash):
         mocked_hash.__get__ = Mock(return_value="12345")

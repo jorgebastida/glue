@@ -93,9 +93,11 @@ class BaseTextFormat(BaseFormat):
 
             for r in self.sprite.ratios:
                 if r != 1:
+                    ratio_sprite_path = os.path.relpath(self.sprite.sprite_path(ratio=r), self.output_dir())
                     ratio = dict(ratio=r,
                                  fraction=nearest_fration(r),
-                                 sprite_path=os.path.relpath(self.sprite.sprite_path(ratio=r), self.output_dir()))
+                                 sprite_path=ratio_sprite_path,
+                                 sprite_filename=os.path.basename(ratio_sprite_path))
                     context['ratios'].append(ratio)
 
         return context
