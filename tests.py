@@ -87,12 +87,11 @@ class TestGlue(unittest.TestCase):
                     for declaration in rule.style.getProperties():
                         file_properties[declaration.name] = declaration.value
             elif isinstance(rule, cssutils.css.CSSMediaRule) and ratio:
-                if 'min-device-pixel-ratio: {0}'.format(ratio) in rule.media.mediaText:
+                if 'min-resolution: {0}'.format(ratio) in rule.media.mediaText:
                     for media_rule in rule.cssRules:
                         if class_name in [c.selectorText for c in media_rule.selectorList]:
                             for declaration in media_rule.style.getProperties():
                                 file_properties[declaration.name] = declaration.value
-
         self.assertEqual(file_properties, properties)
 
     def create_image(self, path, color=RED, size=(64, 64), margin=0):
