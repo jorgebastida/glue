@@ -45,7 +45,19 @@ class JSONFormat(BaseTextFormat):
     def get_context(self):
         context = super(JSONFormat, self).get_context()
 
-        frames = {i['filename']: i for i in context['images']}
+        frames = {i['filename']: {'filename': i['filename'],
+                                  'frame': {'x': i['x'],
+                                            'y': i['y'],
+                                            'w': i['width'],
+                                            'h': i['height']},
+                                  'rotated': False,
+                                  'trimmed': False,
+                                  'spriteSourceSize': {'x': i['x'],
+                                                       'y': i['y'],
+                                                       'w': i['width'],
+                                                       'h': i['height']},
+                                  'sourceSize': {'w': i['original_width'],
+                                                 'h': i['original_height']}} for i in context['images']}
         del context['images']
         data = {'meta': context}
 

@@ -44,6 +44,7 @@ class Image(ConfigurableFromFile):
         self.config.update(self._get_config_from_file('sprite.conf', self.filename))
 
         self.x = self.y = None
+        self.original_width = self.original_height = 0
 
         with open(self.path, "rb") as img:
             self._image_data = img.read()
@@ -69,6 +70,8 @@ class Image(ConfigurableFromFile):
             raise PILUnavailableError(e.args[0].split()[1])
         finally:
             io.close()
+
+        self.original_width, self.original_height = img.size
 
         # Crop the image searching for the smallest possible bounding box
         # without losing any non-transparent pixel.

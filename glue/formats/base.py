@@ -87,6 +87,8 @@ class BaseTextFormat(BaseFormat):
                          abs_y=round_up((img.y + img.margin[0] * self.sprite.max_ratio) / self.sprite.max_ratio),
                          height=round_up((img.height / self.sprite.max_ratio) + img.padding[0] + img.padding[2]),
                          width=round_up((img.width / self.sprite.max_ratio) + img.padding[1] + img.padding[3]),
+                         original_width=img.original_width,
+                         original_height=img.original_height,
                          ratios={})
 
             for r in self.sprite.ratios:
