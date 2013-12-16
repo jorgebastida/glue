@@ -159,6 +159,28 @@ Using the ``--json`` option, ``Glue`` will generate both a sprite image and a js
 
     $ glue source output --json
 
+--json-format
+--------------
+Using the ``--json-format`` option you can customize how the generated ``JSON`` will look. You can choose between ``array`` and ``hash``.
+
+
+.. code-block:: bash
+
+    $ glue source output --json --json-format=hash
+
+
+Example ``array`` output:
+
+.. code-block:: json
+
+     {"frames": [{"filename": "apple.png", width": 128, "height": 128, ...}, {...}], "meta": {...}}
+
+
+Example ``hash`` output:
+
+.. code-block:: json
+
+     {"frames": {"apple.png": {"width": 128, "height": 128, ...}, "orange.png": {...}, "meta": {...}}
 
 -l --less
 ---------

@@ -26,9 +26,9 @@ Features
 --------
 * Automatic Sprite (Image + Metadata) creation including:
 
-  - css
+  - css (less, scss)
   - cocos2d
-  - json
+  - json (array, hash)
 
 * Automatic multi-dpi `retina <http://glue.readthedocs.org/en/latest/ratios.html>`_ sprite creation.
 * Support for multi-sprite projects.

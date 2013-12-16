@@ -61,6 +61,8 @@ class BaseFormat(object):
     def apply_parser_contraints(cls, parser, options):
         pass
 
+    def scale_down(self, value, ratio):
+        return round_up(value / ratio)
 
 class BaseTextFormat(BaseFormat):
 
@@ -74,7 +76,7 @@ class BaseTextFormat(BaseFormat):
                    'width': int(self.sprite.canvas_size[0] / self.sprite.max_ratio),
                    'height': int(self.sprite.canvas_size[1] / self.sprite.max_ratio),
                    'images': [],
-                   'ratios': []}
+                   'ratios': {}}
 
         for i, img in enumerate(self.sprite.images):
             image = dict(filename=img.filename,
@@ -84,21 +86,30 @@ class BaseTextFormat(BaseFormat):
                          abs_x=round_up((img.x + img.margin[3] * self.sprite.max_ratio) / self.sprite.max_ratio),
                          abs_y=round_up((img.y + img.margin[0] * self.sprite.max_ratio) / self.sprite.max_ratio),
                          height=round_up((img.height / self.sprite.max_ratio) + img.padding[0] + img.padding[2]),
-                         width=round_up((img.width / self.sprite.max_ratio) + img.padding[1] + img.padding[3]))
+                         width=round_up((img.width / self.sprite.max_ratio) + img.padding[1] + img.padding[3]),
+                         ratios={})
+
+            for r in self.sprite.ratios:
+                image['ratios'][r] = dict(filename=img.filename,
+                                          last=i == len(self.sprite.images) - 1,
+                                          x=round_up((image['x'] / self.sprite.max_ratio) * r),
+                                          y=round_up((image['y'] / self.sprite.max_ratio) * r),
+                                          abs_x=round_up((image['abs_x'] / self.sprite.max_ratio) * r),
+                                          abs_y=round_up((image['abs_y'] / self.sprite.max_ratio) * r),
+                                          height=round_up((image['height'] / self.sprite.max_ratio) * r),
+                                          width=round_up((image['width'] / self.sprite.max_ratio) * r))
 
             context['images'].append(image)
 
         # Ratios
-        if len(self.sprite.ratios) > 1:
-
-            for r in self.sprite.ratios:
-                if r != 1:
-                    ratio_sprite_path = os.path.relpath(self.sprite.sprite_path(ratio=r), self.output_dir())
-                    ratio = dict(ratio=r,
-                                 fraction=nearest_fration(r),
-                                 sprite_path=ratio_sprite_path,
-                                 sprite_filename=os.path.basename(ratio_sprite_path))
-                    context['ratios'].append(ratio)
+        for r in self.sprite.ratios:
+            ratio_sprite_path = os.path.relpath(self.sprite.sprite_path(ratio=r), self.output_dir())
+            context['ratios'][r] = dict(ratio=r,
+                                        fraction=nearest_fration(r),
+                                        sprite_path=ratio_sprite_path,
+                                        sprite_filename=os.path.basename(ratio_sprite_path),
+                                        width=int(self.sprite.canvas_size[0] / r),
+                                        height=int(self.sprite.canvas_size[1] / r))
 
         return context
 

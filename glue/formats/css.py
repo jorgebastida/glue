@@ -28,7 +28,7 @@ class CssFormat(JinjaTextFormat):
             height:{{ image.height }}px;
         }
         {% endfor %}
-        {% for ratio in ratios %}
+        {% for r, ratio in ratios.iteritems() %}
         @media screen and (-webkit-min-device-pixel-ratio: {{ ratio.ratio }}), screen and (min--moz-device-pixel-ratio: {{ ratio.ratio }}),screen and (-o-min-device-pixel-ratio: {{ ratio.fraction }}),screen and (min-device-pixel-ratio: {{ ratio.ratio }}),screen and (min-resolution: {{ ratio.ratio }}dppx){
             {% for image in images %}.{{ image.label }}{{ image.pseudo }}{% if not image.last %}, {% endif %}
             {% endfor %}{
@@ -144,7 +144,6 @@ class CssFormat(JinjaTextFormat):
     def needs_rebuild(self):
         hash_line = '/* glue: %s hash: %s */\n' % (__version__, self.sprite.hash)
         try:
-            assert not self.sprite.config['force']
             with codecs.open(self.output_path(), 'r', 'utf-8-sig') as existing_css:
                 first_line = existing_css.readline()
                 assert first_line == hash_line
@@ -171,7 +170,7 @@ class CssFormat(JinjaTextFormat):
         if self.sprite.config['css_url']:
             context['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], context['sprite_filename'])
 
-            for ratio in context['ratios']:
+            for r, ratio in context['ratios'].iteritems():
                 ratio['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], ratio['sprite_filename'])
 
         # Add cachebuster if required
@@ -182,7 +181,7 @@ class CssFormat(JinjaTextFormat):
 
             context['sprite_path'] = apply_cachebuster(context['sprite_path'])
 
-            for ratio in context['ratios']:
+            for r, ratio in context['ratios'].iteritems():
                 ratio['sprite_path'] = apply_cachebuster(ratio['sprite_path'])
 
         return context

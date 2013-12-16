@@ -78,7 +78,6 @@ class ImageFormat(BaseFormat):
         for ratio in self.sprite.config['ratios']:
             image_path = self.output_path(ratio)
             try:
-                assert not self.sprite.config['force']
                 existing = PILImage.open(image_path)
                 assert existing.info['Software'] == 'glue-%s' % __version__
                 assert existing.info['Comment'] == self.sprite.hash
