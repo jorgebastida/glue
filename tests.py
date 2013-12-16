@@ -958,7 +958,20 @@ class TestGlue(unittest.TestCase):
         self.assertExists("output/simple.png")
         self.assertExists("output/simple.json")
         with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
-            json.loads(f.read())
+            data = json.loads(f.read())
+            assert isinstance(data['frames'], list)
+
+    def test_json_hash(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --json --json-format=hash")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.json")
+        with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+            assert isinstance(data['frames'], dict)
 
     def test_img(self):
         self.create_image("simple/red.png", RED)
