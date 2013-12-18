@@ -1,11 +1,9 @@
 import os
-import json
-import codecs
 
-from base import BaseTextFormat
+from base import BaseJSONFormat
 
 
-class CAATFormat(BaseTextFormat):
+class CAATFormat(BaseJSONFormat):
 
     extension = 'json'
     build_per_ratio = True
@@ -22,19 +20,6 @@ class CAATFormat(BaseTextFormat):
                            metavar='DIR',
                            help="Generate CAAT files and optionally where")
 
-    def needs_rebuild(self):
-        for ratio in self.sprite.config['ratios']:
-            json_path = self.output_path(ratio)
-            if os.path.exists(json_path):
-                with codecs.open(json_path, 'r', 'utf-8-sig') as f:
-                    try:
-                        data = json.loads(f.read())
-                        assert data['meta']['hash'] == self.sprite.hash
-                    except Exception:
-                        continue
-            return True
-        return False
-
     def get_context(self, *args, **kwargs):
         context = super(CAATFormat, self).get_context(*args, **kwargs)
 
@@ -49,6 +34,3 @@ class CAATFormat(BaseTextFormat):
                                               "width" : i['width'],
                                               "height" : i['height']}
         return data
-
-    def render(self, *args, **kwargs):
-        return json.dumps(self.get_context(*args, **kwargs))

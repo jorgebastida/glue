@@ -1,10 +1,9 @@
 import os
-import plistlib
 
-from base import BaseTextFormat
+from base import BasePlistFormat
 
 
-class Cocos2dFormat(BaseTextFormat):
+class Cocos2dFormat(BasePlistFormat):
 
     extension = 'plist'
     build_per_ratio = True
@@ -44,19 +43,3 @@ class Cocos2dFormat(BaseTextFormat):
                                              'sourceColorRect': rect,
                                              'sourceSize': '{{{width}, {height}}}'.format(**image_context)}
         return data
-
-    def render(self, ratio, *args, **kwargs):
-        context = self.get_context(ratio, *args, **kwargs)
-        return plistlib.writePlistToString(context)
-
-    def needs_rebuild(self):
-        for ratio in self.sprite.config['ratios']:
-            cocos2d_path = self.output_path(ratio)
-            if os.path.exists(cocos2d_path):
-                try:
-                    data = plistlib.readPlist(cocos2d_path)
-                    assert data['metadata']['hash'] == self.sprite.hash
-                except Exception:
-                    continue
-            return True
-        return False

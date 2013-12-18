@@ -1,5 +1,7 @@
 import os
+import json
 import codecs
+import plistlib
 import textwrap
 
 from jinja2 import Template
@@ -126,6 +128,48 @@ class BaseTextFormat(BaseFormat):
 
         with codecs.open(self.output_path(*args, **kwargs), 'w', 'utf-8-sig') as f:
             f.write(self.render(*args, **kwargs))
+
+
+class BaseJSONFormat(BaseTextFormat):
+
+    meta_key = 'meta'
+
+    def needs_rebuild(self):
+        for ratio in self.sprite.config['ratios']:
+            json_path = self.output_path(ratio)
+            if os.path.exists(json_path):
+                with codecs.open(json_path, 'r', 'utf-8-sig') as f:
+                    try:
+                        data = json.loads(f.read())
+                        assert data[self.meta_key]['hash'] == self.sprite.hash
+                    except Exception:
+                        continue
+            return True
+        return False
+
+    def render(self, *args, **kwargs):
+        return json.dumps(self.get_context(*args, **kwargs))
+
+
+class BasePlistFormat(BaseTextFormat):
+
+    meta_key = 'metadata'
+
+    def render(self, *args, **kwargs):
+        context = self.get_context(*args, **kwargs)
+        return plistlib.writePlistToString(context)
+
+    def needs_rebuild(self):
+        for ratio in self.sprite.config['ratios']:
+            cocos2d_path = self.output_path(ratio)
+            if os.path.exists(cocos2d_path):
+                try:
+                    data = plistlib.readPlist(cocos2d_path)
+                    assert data[self.meta_key]['hash'] == self.sprite.hash
+                except Exception:
+                    continue
+            return True
+        return False
 
 
 class JinjaTextFormat(BaseTextFormat):
