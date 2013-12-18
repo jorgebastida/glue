@@ -60,4 +60,5 @@ Command-line arg             Environment Variable                Configuration F
 --cocos2d                    GLUE_COCOS2D                        cocos2d_dir
 --json                       GLUE_JSON                           json_dir
 --json-format                GLUE_JSON_FORMAT                    json_format
+--caat                       GLUE_CAAT                           caat_dir
 ============================ =================================== ===============================

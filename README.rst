@@ -29,6 +29,7 @@ Features
   - css (less, scss)
   - cocos2d
   - json (array, hash)
+  - CAAT
 
 * Automatic multi-dpi `retina <http://glue.readthedocs.org/en/latest/ratios.html>`_ sprite creation.
 * Support for multi-sprite projects.

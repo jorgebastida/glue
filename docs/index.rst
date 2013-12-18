@@ -7,8 +7,10 @@ Glue is a simple command line tool to generate sprites::
 
 * Automatic Sprite (Image + Metadata) creation including:
 
-  - css
+  - css (less, scss)
   - cocos2d
+  - json (array, hash)
+  - CAAT
 
 * Automatic multi-dpi `retina <http://glue.readthedocs.org/en/latest/ratios.html>`_ sprite creation.
 * Support for multi-sprite projects.

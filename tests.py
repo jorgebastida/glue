@@ -1654,5 +1654,36 @@ class TestGlue(unittest.TestCase):
         self.assertExists("output/simple.png")
         self.assertDoesNotExists("output/simple.css")
 
+    def test_caat(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --caat")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.json")
+        with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+            assert isinstance(data['sprites'], dict)
+
+    def test_caat_ratios(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --caat --retina")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.json")
+        self.assertExists("output/simple@2x.png")
+        self.assertExists("output/simple@2x.json")
+
+        with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+            assert isinstance(data['sprites'], dict)
+
+        with codecs.open('output/simple@2x.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+            assert isinstance(data['sprites'], dict)
+
 if __name__ == '__main__':
     unittest.main()

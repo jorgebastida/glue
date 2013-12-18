@@ -29,6 +29,15 @@ Usually designers add some unnecessary transparent space around the images becau
     $ glue source output --crop
 
 
+--caat
+-----------
+Using the ``--caat`` option, ``Glue`` will generate both a sprite image and a caat metadata file.
+
+.. code-block:: bash
+
+    $ glue source output --caat
+
+
 --cachebuster
 -------------
 If you decide to add an expires header to your static resources (and if you haven't already you really should), you need to worry about cache busting these resources every time you change one of them.

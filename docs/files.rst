@@ -74,6 +74,7 @@ png8                         X              X
 ratios                       X              X
 html_dir                     X              X
 cocos2d_dir                  X              X
+caat_dir                     X              X
 json_dir                     X              X
 json_format                  X              X
 crop                         X              X              X
