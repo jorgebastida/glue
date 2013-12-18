@@ -159,9 +159,9 @@ class CssFormat(JinjaTextFormat):
             raise ValidationError("Error: Some images will have the same class name:\n{0}".format(duptext))
         return True
 
-    def get_context(self):
+    def get_context(self, *args, **kwargs):
 
-        context = super(CssFormat, self).get_context()
+        context = super(CssFormat, self).get_context(*args, **kwargs)
 
         # Generate css labels
         for image in context['images']:

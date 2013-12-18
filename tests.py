@@ -961,6 +961,25 @@ class TestGlue(unittest.TestCase):
             data = json.loads(f.read())
             assert isinstance(data['frames'], list)
 
+    def test_json_ratios(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --json --retina")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.json")
+        self.assertExists("output/simple@2x.png")
+        self.assertExists("output/simple@2x.json")
+
+        with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+            assert isinstance(data['frames'], list)
+
+        with codecs.open('output/simple@2x.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+            assert isinstance(data['frames'], list)
+
     def test_json_hash(self):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)

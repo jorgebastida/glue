@@ -21,9 +21,8 @@ class Cocos2dFormat(BaseTextFormat):
                            metavar='DIR',
                            help="Generate Cocos2d files and optionally where")
 
-
-    def render(self, ratio):
-        context = self.get_context()
+    def get_context(self, ratio, *args, **kwargs):
+        context = super(Cocos2dFormat, self).get_context(ratio, *args, **kwargs)
         ratio_context = context['ratios'][ratio]
 
         data = {'frames': {},
@@ -44,8 +43,11 @@ class Cocos2dFormat(BaseTextFormat):
                                              'rotated': False,
                                              'sourceColorRect': rect,
                                              'sourceSize': '{{{width}, {height}}}'.format(**image_context)}
+        return data
 
-        return plistlib.writePlistToString(data)
+    def render(self, ratio, *args, **kwargs):
+        context = self.get_context(ratio, *args, **kwargs)
+        return plistlib.writePlistToString(context)
 
     def needs_rebuild(self):
         for ratio in self.sprite.config['ratios']:

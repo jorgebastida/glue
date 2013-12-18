@@ -48,8 +48,8 @@ class HtmlFormat(CssFormat):
         if 'html' in options.enabled_formats and 'css' not in options.enabled_formats:
             parser.error("You can't use --html without --css.")
 
-    def get_context(self):
-        context = super(HtmlFormat, self).get_context()
+    def get_context(self, *args, **kwargs):
+        context = super(HtmlFormat, self).get_context(*args, **kwargs)
         context['css_path'] = os.path.relpath(os.path.join(self.sprite.config['css_dir'], '{0}.css'.format(self.sprite.name)), self.output_dir())
         return context
 

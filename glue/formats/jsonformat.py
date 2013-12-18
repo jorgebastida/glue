@@ -8,6 +8,7 @@ from base import BaseTextFormat
 class JSONFormat(BaseTextFormat):
 
     extension = 'json'
+    build_per_ratio = True
 
     @classmethod
     def populate_argument_parser(cls, parser):
@@ -42,8 +43,8 @@ class JSONFormat(BaseTextFormat):
             return True
         return False
 
-    def get_context(self):
-        context = super(JSONFormat, self).get_context()
+    def get_context(self, *args, **kwargs):
+        context = super(JSONFormat, self).get_context(*args, **kwargs)
 
         frames = {i['filename']: {'filename': i['filename'],
                                   'frame': {'x': i['x'],
@@ -58,8 +59,14 @@ class JSONFormat(BaseTextFormat):
                                                        'h': i['height']},
                                   'sourceSize': {'w': i['original_width'],
                                                  'h': i['original_height']}} for i in context['images']}
-        del context['images']
-        data = {'meta': context}
+
+        data = dict(frames=None, meta={'version': context['version'],
+                                       'hash': context['hash'],
+                                       'name': context['name'],
+                                       'sprite_path': context['sprite_path'],
+                                       'sprite_filename': context['sprite_filename'],
+                                       'width': context['width'],
+                                       'height': context['height']})
 
         if self.sprite.config['json_format'] == 'array':
             data['frames'] = frames.values()
@@ -69,4 +76,4 @@ class JSONFormat(BaseTextFormat):
         return data
 
     def render(self, *args, **kwargs):
-        return json.dumps(self.get_context())
+        return json.dumps(self.get_context(*args, **kwargs))

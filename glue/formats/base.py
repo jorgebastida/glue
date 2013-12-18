@@ -64,9 +64,10 @@ class BaseFormat(object):
     def scale_down(self, value, ratio):
         return round_up(value / ratio)
 
+
 class BaseTextFormat(BaseFormat):
 
-    def get_context(self):
+    def get_context(self, *args, **kwargs):
         sprite_path = os.path.relpath(self.sprite.sprite_path(), self.output_dir())
         context = {'version': __version__,
                    'hash': self.sprite.hash,
@@ -132,8 +133,7 @@ class JinjaTextFormat(BaseTextFormat):
     template = ''
 
     def render(self, *args, **kwargs):
-        context = self.get_context()
-        context.update(kwargs)
+        context = self.get_context(*args, **kwargs)
         template = self.template
         custom_template_config = '{0}_template'.format(self.format_label)
         if self.sprite.config.get(custom_template_config):
