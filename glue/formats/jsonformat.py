@@ -33,19 +33,19 @@ class JSONFormat(BaseJSONFormat):
     def get_context(self, *args, **kwargs):
         context = super(JSONFormat, self).get_context(*args, **kwargs)
 
-        frames = {i['filename']: {'filename': i['filename'],
-                                  'frame': {'x': i['x'],
-                                            'y': i['y'],
-                                            'w': i['width'],
-                                            'h': i['height']},
-                                  'rotated': False,
-                                  'trimmed': False,
-                                  'spriteSourceSize': {'x': i['x'],
-                                                       'y': i['y'],
-                                                       'w': i['width'],
-                                                       'h': i['height']},
-                                  'sourceSize': {'w': i['original_width'],
-                                                 'h': i['original_height']}} for i in context['images']}
+        frames = dict([[i['filename'], {'filename': i['filename'],
+                                        'frame': {'x': i['x'],
+                                                  'y': i['y'],
+                                                  'w': i['width'],
+                                                  'h': i['height']},
+                                        'rotated': False,
+                                        'trimmed': False,
+                                        'spriteSourceSize': {'x': i['x'],
+                                                             'y': i['y'],
+                                                             'w': i['width'],
+                                                             'h': i['height']},
+                                        'sourceSize': {'w': i['original_width'],
+                                                       'h': i['original_height']}}] for i in context['images']])
 
         data = dict(frames=None, meta={'version': context['version'],
                                        'hash': context['hash'],
