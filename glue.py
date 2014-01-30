@@ -39,7 +39,7 @@ DEFAULT_SETTINGS = {
     'sprite_namespace': '%(sprite)s',
     'crop': False,
     'url': '',
-    'less': False,
+    'format_file': 'css',
     'force': False,
     'optipng': False,
     'html': False,
@@ -885,7 +885,6 @@ class Sprite(object):
 
         self.manager.log("Creating %s-mixins.styl..." % (self.name))
 
-
         stylus_file = open(stylus_filename, 'w')
 
         # Write the hash line to the file.
@@ -935,7 +934,7 @@ class Sprite(object):
         if self.config.no_css:
             return
 
-        format = 'less' if self.config.less else 'css'
+        format = self.config.format_file
         output_path = self.manager.output_path('css')
         filename = '%s.%s' % (self.filename, format)
         css_filename = os.path.join(output_path, filename)
@@ -1022,7 +1021,7 @@ class Sprite(object):
         html_filename = os.path.join(output_path, filename)
 
         # CSS output format
-        format = 'less' if self.config.less else 'css'
+        format = self.config.format_file
 
         html_file = open(html_filename, 'w')
 
