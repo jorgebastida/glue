@@ -80,7 +80,6 @@ DEFAULT_SETTINGS = {
          '    if r in arg\n'
          '      width: %(width)s importance\n'
          '      height: %(height)s importance\n'
-         '      height: %(height)s importance\n'
          '  else\n'
          '    display: inline-block importance\n'
          '    background: url(%(sprite_url)s) no-repeat %(x)s %(y)s importance\n'
