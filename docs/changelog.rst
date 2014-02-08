@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.4.1
+^^^^^
+* Make glue require Pillow >= 2.2.2 in order to make it work on Mavericks (Thanks wyuenho).
+
 0.4
 ^^^
 * This version is a transition between glue ``0.3`` and glue ``0.9``.
