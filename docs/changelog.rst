@@ -35,6 +35,12 @@ Changelog
   - ``--optipng`` and ``--optipngpath`` are now deprecated. There are lots of png optimization libraries and it would be silly to support all of them. Feel free to optimize your png files using your favourite one.
   - ``--debug`` is now deprecated. If an unhandled Exception is triggered, glue will now automatically show some friendly debug information.
 
+
+0.4.1
+^^^^^
+* Make glue require Pillow >= 2.2.2 in order to make it work on Mavericks (Thanks wyuenho).
+
+
 0.4
 ^^^
 * This version is a transition between glue ``0.3`` and glue ``0.9``.

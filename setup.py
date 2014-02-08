@@ -17,7 +17,7 @@ setup(
     packages = find_packages(),
     platforms='any',
     install_requires=[
-        'Pillow>=2.2,<2.3',
+        'Pillow>=2.2.2,<2.3',
         'Jinja2>=2.7,<2.8',
         'argparse>=1.2'
     ],
