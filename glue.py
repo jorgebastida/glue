@@ -1014,7 +1014,9 @@ class Sprite(object):
         """
         hash_list = []
         for image in sorted(self.images, key=lambda i: i.path):
-            hash_list.append(image.path)
+            # Only use the image.path without self.path in it
+            hash_list.append(image.path[ len(self.path)+1 :])
+
             hash_list.append(image._data)
 
         for key in DEFAULT_SETTINGS:
