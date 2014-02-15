@@ -7,7 +7,7 @@ This libraries require some external codes in order to manipulate ``jpeg`` image
 
 OSX
 ---
-If you are using OSX, the easiest way to install the jpeg decoder is using `Homebrew <http://mxcl.github.com/homebrew/>`_.
+If you are using OSX, the easiest way to install the jpeg decoder is using `Homebrew <http://brew.sh/>`_.
 Before installing ``Homebrew`` you'll need to install Xcode, then you can follow these steps:
 
 .. code-block:: bash
