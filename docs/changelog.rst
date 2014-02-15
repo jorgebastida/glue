@@ -101,7 +101,7 @@ Changelog
 * Fix cachebuster issues with --retina and --url
 
 0.2.6.1
-^^^^^^
+^^^^^^^^
 * Fix bug with images that only contain digits like. Thanks to Russ Ferriday and Paul Hallett.
 * Make possible read optipng related configuration from static configuration files.
 

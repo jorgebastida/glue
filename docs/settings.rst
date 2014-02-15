@@ -23,9 +23,9 @@ Every command-line option available in glue is configurable using environment va
 Settings Map
 ------------
 
-============================ ==================================  ===============================
+============================ =================================== ===============================
 Command-line arg             Environment Variable                Configuration File setting
-============================ ==================================  ===============================
+============================ =================================== ===============================
 --source                     GLUE_SOURCE                         source
 --output                     GLUE_OUTPUT                         output
 -q --quiet                   GLUE_QUIET                          quiet
