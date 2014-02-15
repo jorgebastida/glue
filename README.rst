@@ -73,6 +73,12 @@ Contribute
 
 * Send a pull request and bug the maintainer until it gets merged and published. :) Make sure to add yourself to AUTHORS.
 
+
+Is your company using glue?
+---------------------------
+We are creating a list of companies using glue in production. If your company use ``glue``, please send `me <mailto:me@jorgebastida.com>`_ an email or send me a message to `@jorgebastida <https://twitter.com/jorgebastida>`_ . I would really appreciate it.
+
+
 We need your help
 ------------------
 
