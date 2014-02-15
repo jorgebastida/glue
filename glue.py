@@ -39,7 +39,7 @@ DEFAULT_SETTINGS = {
     'sprite_namespace': '%(sprite)s',
     'crop': False,
     'url': '',
-    'less': False,
+    'format_file': 'css',
     'force': False,
     'optipng': False,
     'html': False,
@@ -56,6 +56,7 @@ DEFAULT_SETTINGS = {
     'recursive': False,
     'follow_links': False,
     'quiet': False,
+    'stylus_mixins': False,
     'no_css': False,
     'no_img': False,
     'cachebuster': False,
@@ -66,6 +67,24 @@ DEFAULT_SETTINGS = {
     'each_template':
         ('%(class_name)s{background-position:%(x)s %(y)s;'
          'width:%(width)s;height:%(height)s;}\n'),
+    'stylus_mixins_template': 
+        ('%(identifier)s(arg = null, arg2 = null)\n'
+         '  importance = unquote("")\n'
+         '  if arg and arg2\n'
+         '    if arg2 == !important or arg2 == important\n'
+         '      importance = !important\n'
+         '  else if arg == !important or arg == important\n'
+         '      importance = !important\n'
+         '  if p in arg or r in arg\n'
+         '    background-position: %(x)s %(y)s importance\n'
+         '    if r in arg\n'
+         '      width: %(width)s importance\n'
+         '      height: %(height)s importance\n'
+         '  else\n'
+         '    display: inline-block importance\n'
+         '    background: url(%(sprite_url)s) no-repeat %(x)s %(y)s importance\n'
+         '    width: %(width)s importance\n'
+         '    height: %(height)s importance\n\n'),
     'ratio_template':
         ('@media '
          'only screen and (-webkit-min-device-pixel-ratio: %(ratio)s), '
@@ -840,13 +859,81 @@ class Sprite(object):
                                      "the original file.")
                     save()
 
+
+    def save_stylus(self):
+        """Create STYLUS file."""
+
+        if not self.config.stylus_mixins:
+            return
+
+        output_path = self.manager.output_path('stylus')
+        filename = '%s-mixins.styl' % (self.filename)
+        stylus_filename = os.path.join(output_path, filename)
+        hash_line = '/* glue: %s hash: %s */\n' % (__version__, self.hash)
+
+        # Check if the STYLUS file already exists and has the same hash
+        try:
+            assert not self.config.force
+            with open(stylus_filename, 'r') as existing_stylus:
+                first_line = existing_stylus.readline()
+                assert first_line == hash_line
+                self.manager.log("Already exists %s-mixins.styl..." % (self.name))
+                return
+        except Exception:
+            pass
+
+        self.manager.log("Creating %s-mixins.styl..." % (self.name))
+
+        stylus_file = open(stylus_filename, 'w')
+
+        # Write the hash line to the file.
+        stylus_file.write(hash_line)
+
+        # compile one template for each file
+        margin = int(self.config.margin)
+
+        for image in self.images:
+
+            x = '%spx' % round_up((image.x * -1 - margin * self.max_ratio) / self.max_ratio)
+            y = '%spx' % round_up((image.y * -1 - margin * self.max_ratio) / self.max_ratio)
+
+            height = '%spx' % round_up((image.height / self.max_ratio) + image.vertical_padding)
+            width = '%spx' % round_up((image.width / self.max_ratio) + image.horizontal_padding)
+
+            template = self.config.stylus_mixins_template.decode('unicode-escape')
+            stylus_file.write(template % {'class_name': '.%s' % image.class_name,
+                                       'identifier': image.class_name,
+                                       'sprite_url': self.image_url(),
+                                       'height': height,
+                                       'width': width,
+                                       'y': y,
+                                       'x': x})
+
+        # If we have some additional ratio, we need to add one media query
+        # for each one.
+        if len(self.ratios) > 1:
+            canvas_size = zip(('width', 'height'),
+                              map(lambda s: '%spx' % int(s / self.max_ratio),
+                                  self.canvas_size))
+
+            for ratio in self.ratios:
+                if ratio != 1:
+                    data = dict(ratio=ratio,
+                                ratio_fraction=nearest_fration(ratio),
+                                sprite_url=self.image_url(ratio),
+                                all_classes=class_names,
+                                **dict(canvas_size))
+                    stylus_file.write(self.config.ratio_template % data)
+        stylus_file.close()
+
+
     def save_css(self):
         """Create the CSS or LESS file for this sprite."""
 
         if self.config.no_css:
             return
 
-        format = 'less' if self.config.less else 'css'
+        format = self.config.format_file
         output_path = self.manager.output_path('css')
         filename = '%s.%s' % (self.filename, format)
         css_filename = os.path.join(output_path, filename)
@@ -933,7 +1020,7 @@ class Sprite(object):
         html_filename = os.path.join(output_path, filename)
 
         # CSS output format
-        format = 'less' if self.config.less else 'css'
+        format = self.config.format_file
 
         html_file = open(html_filename, 'w')
 
@@ -1143,6 +1230,7 @@ class BaseManager(object):
         for sprite in self.sprites:
             sprite.save_image()
             sprite.save_css()
+            sprite.save_stylus()
             if sprite.manager.config.html:
                 sprite.save_html()
 
@@ -1155,6 +1243,8 @@ class BaseManager(object):
             sprite_output_path = self.config.css_dir
         elif format == 'img' and self.config.img_dir:
             sprite_output_path = self.config.img_dir
+        elif format == 'stylus' and self.config.stylus_dir:
+            sprite_output_path = self.config.stylus_dir
         else:
             sprite_output_path = self.output
         if not os.path.exists(sprite_output_path):
@@ -1361,7 +1451,7 @@ PImage.Image.load = patched_load
 
 def main():
     parser = OptionParser(usage=("usage: %prog [options] source_dir [<output> "
-                                 "| --css=<dir> --img=<dir>]"))
+                                 "| --css=<dir> --img=<dir> | --stylus=<dir>]"))
     parser.add_option("--project", action="store_true", dest="project",
             help="generate sprites for multiple folders")
     parser.add_option("-r", "--recursive", dest="recursive", action='store_true',
@@ -1396,6 +1486,8 @@ def main():
     group = OptionGroup(parser, "Output Options")
     group.add_option("--css", dest="css_dir", default='', metavar='DIR',
             help="output directory for css files")
+    group.add_option("--stylus", dest="stylus_dir", default='', metavar='DIR',
+            help="output directory for stylus files")
     group.add_option("--img", dest="img_dir", default='', metavar='DIR',
             help="output directory for img files")
     group.add_option("--html", dest="html", action="store_true",
@@ -1479,6 +1571,8 @@ def main():
 
     (options, args) = parser.parse_args()
 
+    stylus_dir = options.stylus_dir
+
     # Show glue-0.9 future deprecation warnings
     for deprecated_option in ('imagemagick', 'imagemagickpath', 'global_template',
                               'each_template', 'ratio_template', 'optipng',
@@ -1501,6 +1595,8 @@ def main():
     if not len(args):
         parser.error("You must provide the folder containing the sprites.")
 
+
+
     if len(args) == 1 and not (options.css_dir and options.img_dir):
         parser.error(("You must choose the output folder using either the "
                       "output argument or both --img and --css."))
@@ -1508,6 +1604,8 @@ def main():
     if len(args) == 2 and (options.css_dir or options.img_dir):
         parser.error(("You must choose between using an unique output dir, or "
                       "using --css and --img."))
+
+
 
     source = os.path.abspath(args[0])
     output = os.path.abspath(args[1]) if len(args) == 2 else None
@@ -1528,8 +1626,11 @@ def main():
 
     config = ConfigManager(config, priority=options, defaults=DEFAULT_SETTINGS)
 
-    manager = manager_cls(path=source, output=output, config=config)
+    if not stylus_dir and config.stylus_mixins:
+        parser.error(("You must provide the folder for file staylus "
+                      "using --stylus."))
 
+    manager = manager_cls(path=source, output=output, config=config)
     if config.optipng and not command_exists(config.optipngpath):
         parser.error("'optipng' seems to be unavailable. You need to "
                      "install it before using --optipng, or "
