@@ -76,20 +76,25 @@ class BaseTextFormat(BaseFormat):
                    'name': self.sprite.name,
                    'sprite_path': sprite_path,
                    'sprite_filename': os.path.basename(sprite_path),
-                   'width': int(self.sprite.canvas_size[0] / self.sprite.max_ratio),
-                   'height': int(self.sprite.canvas_size[1] / self.sprite.max_ratio),
+                   'width': round_up(self.sprite.canvas_size[0] / self.sprite.max_ratio),
+                   'height': round_up(self.sprite.canvas_size[1] / self.sprite.max_ratio),
                    'images': [],
                    'ratios': {}}
 
         for i, img in enumerate(self.sprite.images):
+            base_x = img.x * -1 - img.margin[3] * self.sprite.max_ratio
+            base_y = img.y * -1 - img.margin[0] * self.sprite.max_ratio
+            base_abs_x = img.x + img.margin[3] * self.sprite.max_ratio
+            base_abs_y = img.y + img.margin[0] * self.sprite.max_ratio
+
             image = dict(filename=img.filename,
                          last=i == len(self.sprite.images) - 1,
-                         x=round_up((img.x * -1 - img.margin[3] * self.sprite.max_ratio) / self.sprite.max_ratio),
-                         y=round_up((img.y * -1 - img.margin[0] * self.sprite.max_ratio) / self.sprite.max_ratio),
-                         abs_x=round_up((img.x + img.margin[3] * self.sprite.max_ratio) / self.sprite.max_ratio),
-                         abs_y=round_up((img.y + img.margin[0] * self.sprite.max_ratio) / self.sprite.max_ratio),
-                         height=round_up((img.height / self.sprite.max_ratio) + img.padding[0] + img.padding[2]),
-                         width=round_up((img.width / self.sprite.max_ratio) + img.padding[1] + img.padding[3]),
+                         x=round_up(base_x / self.sprite.max_ratio),
+                         y=round_up(base_y / self.sprite.max_ratio),
+                         abs_x=round_up(base_abs_x / self.sprite.max_ratio),
+                         abs_y=round_up(base_abs_y / self.sprite.max_ratio),
+                         height=round_up(img.height / self.sprite.max_ratio) + img.padding[0] + img.padding[2],
+                         width=round_up(img.width / self.sprite.max_ratio) + img.padding[1] + img.padding[3],
                          original_width=img.original_width,
                          original_height=img.original_height,
                          ratios={})
@@ -97,12 +102,12 @@ class BaseTextFormat(BaseFormat):
             for r in self.sprite.ratios:
                 image['ratios'][r] = dict(filename=img.filename,
                                           last=i == len(self.sprite.images) - 1,
-                                          x=round_up((image['x'] / self.sprite.max_ratio) * r),
-                                          y=round_up((image['y'] / self.sprite.max_ratio) * r),
-                                          abs_x=round_up((image['abs_x'] / self.sprite.max_ratio) * r),
-                                          abs_y=round_up((image['abs_y'] / self.sprite.max_ratio) * r),
-                                          height=round_up((image['height'] / self.sprite.max_ratio) * r),
-                                          width=round_up((image['width'] / self.sprite.max_ratio) * r))
+                                          x=round_up(base_x / self.sprite.max_ratio * r),
+                                          y=round_up(base_y / self.sprite.max_ratio * r),
+                                          abs_x=round_up(base_abs_x / self.sprite.max_ratio * r),
+                                          abs_y=round_up(base_abs_y / self.sprite.max_ratio * r),
+                                          height=round_up((img.height + img.padding[0] + img.padding[2]) / self.sprite.max_ratio * r),
+                                          width=round_up((img.width + img.padding[1] + img.padding[3]) / self.sprite.max_ratio * r))
 
             context['images'].append(image)
 
@@ -113,8 +118,8 @@ class BaseTextFormat(BaseFormat):
                                         fraction=nearest_fration(r),
                                         sprite_path=ratio_sprite_path,
                                         sprite_filename=os.path.basename(ratio_sprite_path),
-                                        width=int(self.sprite.canvas_size[0] / r),
-                                        height=int(self.sprite.canvas_size[1] / r))
+                                        width=round_up(self.sprite.canvas_size[0] / self.sprite.max_ratio * r),
+                                        height=round_up(self.sprite.canvas_size[1] / self.sprite.max_ratio * r))
 
         return context
 
