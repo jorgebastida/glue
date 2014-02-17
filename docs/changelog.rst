@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.9.1
+^^^^^^
+* Fix issue with cocos2d output format #131 (Thanks lzubiaur).
+
 0.9
 ^^^
 * This version solves lots of design flaws glue had since it was created two years ago. At the very beginning, glue was created as a single-file script to create css sprites. After two years of development, an outstanding support from the community and an incredible support from lots of companies it's time to refurbish glue from its foundations ensuring it lasts over time.
