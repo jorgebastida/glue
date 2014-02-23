@@ -70,7 +70,7 @@ class ImageFormat(BaseFormat):
 
     def output_filename(self, *args, **kwargs):
         filename = super(ImageFormat, self).output_filename(*args, **kwargs)
-        if self.sprite.config['css_cachebuster_filename']:
+        if self.sprite.config['css_cachebuster_filename'] or self.sprite.config['css_cachebuster_only_sprites']:
             return '{0}_{1}'.format(filename, self.sprite.hash)
         return filename
 

@@ -94,6 +94,20 @@ After --cachebuster:
     .sprite-icons-wrench_orange{ background:url('sprites/icons/icons_p3c54d.png'); top:0; left:-16; no-repeat;}
     ...
 
+
+--cachebuster-filename-only-sprites
+------------------------------------
+Unlike ``--cachebuster-filename``, glue will only apply filename cachebusting to the sprite image and not to both the ``CSS`` and the sprite image.
+
+.. code-block:: bash
+
+    $ glue source output --cachebuster-filename-only-sprites
+
+
+.. note::
+    New in version 0.9.2
+
+
 --cocos2d
 -----------
 Using the ``--cocos2d`` option, ``Glue`` will generate both a sprite image and a xml metadata file compatible with cocos2d.

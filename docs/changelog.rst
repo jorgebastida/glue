@@ -8,6 +8,8 @@ Changelog
 * Fix --cachebuster-filename #135 (Thanks monsanto).
 * New image ordering ``filename``.
 * Fix less retina output #122.
+* New option: ``--cachebuster-filename-only-sprites`` #113.
+
 
 0.9.1
 ^^^^^^

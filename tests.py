@@ -838,6 +838,33 @@ class TestGlue(unittest.TestCase):
         self.assertEqual(code, 0)
 
         self.assertExists("output/simple_12345.png")
+        self.assertExists("output/simple_12345.css")
+        self.assertColor("output/simple_12345.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple_12345.png", BLUE, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"output/simple_12345.css", u'.sprite-simple-red',
+                       {u'background-image': u"url(simple_12345.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple_12345.css", u'.sprite-simple-blue',
+                       {u'background-image': u"url(simple_12345.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    @patch('glue.core.Sprite.hash')
+    def test_cachebuster_filename_only_sprites(self, mocked_hash):
+        mocked_hash.__get__ = Mock(return_value="12345")
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        code = self.call("glue simple output --cachebuster-filename-only-sprites")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple_12345.png")
         self.assertExists("output/simple.css")
         self.assertColor("output/simple_12345.png", RED, ((0, 0), (63, 63)))
         self.assertColor("output/simple_12345.png", BLUE, ((64, 0), (127, 63)))

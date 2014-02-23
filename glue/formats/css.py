@@ -86,7 +86,13 @@ class CssFormat(JinjaTextFormat):
                            default=os.environ.get('GLUE_CSS_CACHEBUSTER', False),
                            action='store_true',
                            help=("Append the sprite's sha first 6 characters "
-                                 "to the otput filename"))
+                                 "to the output filename"))
+
+        group.add_argument("--cachebuster-filename-only-sprites",
+                           dest="css_cachebuster_only_sprites",
+                           default=os.environ.get('GLUE_CSS_CACHEBUSTER_ONLY_SPRITES', False),
+                           action='store_true',
+                           help=("Only apply cachebuster to sprite images."))
 
         group.add_argument("--separator",
                            dest="css_separator",
@@ -120,9 +126,9 @@ class CssFormat(JinjaTextFormat):
 
     @classmethod
     def apply_parser_contraints(cls, parser, options):
-        if options.css_cachebuster and options.css_cachebuster_filename:
-            parser.error("You can't use --cachebuster and "
-                         "--cachebuster-filename at the same time.")
+        cachebusters = (options.css_cachebuster, options.css_cachebuster_filename, options.css_cachebuster_only_sprites)
+        if sum(cachebusters) > 1:
+            parser.error("You can't use --cachebuster, --cachebuster-filename or --cachebuster-filename-only-sprites at the same time.")
 
     def needs_rebuild(self):
         hash_line = '/* glue: %s hash: %s */\n' % (__version__, self.sprite.hash)
@@ -141,6 +147,12 @@ class CssFormat(JinjaTextFormat):
             duptext = '\n'.join(['\t{0} => .{1}'.format(os.path.relpath(d.path), ':'.join(self.generate_css_name(d.filename))) for d in dup])
             raise ValidationError("Error: Some images will have the same class name:\n{0}".format(duptext))
         return True
+
+    def output_filename(self, *args, **kwargs):
+        filename = super(CssFormat, self).output_filename(*args, **kwargs)
+        if self.sprite.config['css_cachebuster_filename']:
+            return '{0}_{1}'.format(filename, self.sprite.hash)
+        return filename
 
     def get_context(self, *args, **kwargs):
 
