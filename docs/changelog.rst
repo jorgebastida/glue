@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.9.2
+^^^^^^
+* Fix transparent images cropping #133 (Thanks lzubiaur).
+
 0.9.1
 ^^^^^^
 * Fix issue with cocos2d output format #131 (Thanks lzubiaur).
