@@ -9,7 +9,7 @@ Changelog
 * New image ordering ``filename``.
 * Fix less retina output #122.
 * New option: ``--cachebuster-filename-only-sprites`` #113.
-
+* Fix existing ``--cachebuster-filename`` as it was not cachebusting css files since ``0.9`` #113.
 
 0.9.1
 ^^^^^^
