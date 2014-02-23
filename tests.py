@@ -488,6 +488,7 @@ class TestGlue(unittest.TestCase):
         settings = {'crop': False, 'padding': '0', 'margin': '0', 'ratios': [1]}
         red_path = self.create_image("simple/red.png", RED, (64, 64))
         blue_path = self.create_image("simple/blue.png", BLUE, (32, 32))
+        alpha_path = self.create_image("simple/alpha.png", YELLOW, (32, 32))
 
         # maxside
         settings['algorithm_ordering'] = 'maxside'
@@ -512,6 +513,14 @@ class TestGlue(unittest.TestCase):
         red = Image(red_path, settings)
         blue = Image(blue_path, settings)
         assert red > blue
+
+        # filename
+        settings['algorithm_ordering'] = 'filename'
+        red = Image(red_path, settings)
+        blue = Image(blue_path, settings)
+        alpha_path = Image(alpha_path, settings)
+        assert red < blue
+        assert blue < alpha_path
 
     def test_css(self):
         self.create_image("simple/red.png", RED)

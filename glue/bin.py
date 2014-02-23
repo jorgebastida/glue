@@ -94,9 +94,10 @@ def main(argv=None):
                        metavar='NAME',
                        type=unicode,
                        default=os.environ.get('GLUE_ORDERING', 'maxside'),
-                       choices=['maxside', 'width', 'height', 'area'],
-                       help=("Ordering criteria: maxside, width, height or "
-                             "area (default: maxside)"))
+                       choices=['maxside', 'width', 'height', 'area', 'filename',
+                                '-maxside', '-width', '-height', '-area', '-filename'],
+                       help=("Ordering criteria: maxside, width, height, area or "
+                             "filename (default: maxside)"))
 
     # Populate the parser with options required by other formats
     for format in formats.itervalues():

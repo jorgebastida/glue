@@ -258,13 +258,13 @@ Before processing the images using the `algorithm` glue orders the images. The d
 
 .. code-block:: bash
 
-    $ glue source output --ordering=[maxside|width|height|area]
+    $ glue source output --ordering=[maxside|width|height|area|filename]
 
 You can reverse how any of the available algorithms works prepending a `-`.
 
 .. code-block:: bash
 
-    $ glue source output --ordering=[-maxside|-width|-height|-area]
+    $ glue source output --ordering=[-maxside|-width|-height|-area|-filename]
 
 
 -p --padding

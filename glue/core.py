@@ -141,12 +141,14 @@ class Image(ConfigurableFromFile):
         return round_up(self.height + self.vertical_spacing * max(self.config['ratios']))
 
     def __lt__(self, img):
-        """Use maxside, width, height or area as ordering algorithm.
+        """Use maxside, width, hecight or area as ordering algorithm.
 
         :param img: Another :class:`~Image`."""
         ordering = self.config['algorithm_ordering']
         ordering = ordering[1:] if ordering.startswith('-') else ordering
 
+        if ordering == "filename":
+            return cmp(self.filename, img.filename) > 0
         if ordering == 'width':
             return self.absolute_width <= img.absolute_width
         elif ordering == 'height':
