@@ -94,13 +94,13 @@ class TestGlue(unittest.TestCase):
                                 file_properties[declaration.name] = declaration.value
         self.assertEqual(file_properties, properties)
 
-    def create_image(self, path, color=RED, size=(64, 64), margin=0):
+    def create_image(self, path, color=RED, size=(64, 64), margin=0, margin_color=TRANSPARENT):
         dirname = os.path.dirname(path)
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
         image = PILImage.new('RGB', size, color)
         if margin:
-            background = PILImage.new('RGBA', map(lambda x: x + margin, size))
+            background = PILImage.new('RGBA', map(lambda x: x + margin, size), margin_color)
             background.paste(image, (margin / 2, margin / 2))
             background.save(path)
         else:
@@ -1043,6 +1043,32 @@ class TestGlue(unittest.TestCase):
     def test_crop(self):
         self.create_image("simple/red.png", RED, margin=4)
         self.create_image("simple/blue.png", BLUE, margin=4)
+        code = self.call("glue simple output --crop")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_crop_dirty_transparent_images(self):
+        WHITE_TRANSPARENT = (255, 255, 255, 0)
+        self.create_image("simple/red.png", margin=4, margin_color=WHITE_TRANSPARENT)
+        self.create_image("simple/blue.png", BLUE, margin=4, margin_color=WHITE_TRANSPARENT)
         code = self.call("glue simple output --crop")
         self.assertEqual(code, 0)
 

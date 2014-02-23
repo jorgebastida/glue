@@ -77,7 +77,7 @@ class Image(ConfigurableFromFile):
         # without losing any non-transparent pixel.
         # This crop is only used if the crop flag is set in the config.
         if self.config['crop']:
-            img = img.crop(img.getbbox())
+            img = img.crop(img.split()[-1].getbbox())
         return img
 
     @property
