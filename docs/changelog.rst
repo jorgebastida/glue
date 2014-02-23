@@ -4,6 +4,7 @@ Changelog
 0.9.2
 ^^^^^^
 * Fix transparent images cropping #133 (Thanks lzubiaur).
+* Fix CSS format paths on windows #132 (Thanks Most).
 
 0.9.1
 ^^^^^^

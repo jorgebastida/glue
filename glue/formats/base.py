@@ -66,11 +66,16 @@ class BaseFormat(object):
     def scale_down(self, value, ratio):
         return round_up(value / ratio)
 
+    def fix_windows_path(self, path):
+        if os.name == 'nt':
+            path = path.replace('\\', '/')
+        return path
 
 class BaseTextFormat(BaseFormat):
 
     def get_context(self, *args, **kwargs):
         sprite_path = os.path.relpath(self.sprite.sprite_path(), self.output_dir())
+        sprite_path = self.fix_windows_path(sprite_path)
         context = {'version': __version__,
                    'hash': self.sprite.hash,
                    'name': self.sprite.name,
@@ -114,6 +119,7 @@ class BaseTextFormat(BaseFormat):
         # Ratios
         for r in self.sprite.ratios:
             ratio_sprite_path = os.path.relpath(self.sprite.sprite_path(ratio=r), self.output_dir())
+            ratio_sprite_path = self.fix_windows_path(ratio_sprite_path)
             context['ratios'][r] = dict(ratio=r,
                                         fraction=nearest_fration(r),
                                         sprite_path=ratio_sprite_path,
