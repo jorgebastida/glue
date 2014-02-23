@@ -182,6 +182,9 @@ class Sprite(ConfigurableFromFile):
         self.max_ratio = max(self.ratios)
         self.config['ratios'] = self.ratios
 
+        # Discover images inside this sprite
+        self.images = self._locate_images()
+
         img_format = ImageFormat(sprite=self)
         for ratio in ratios:
             ratio_output_key = 'ratio_{0}_output'.format(ratio)
@@ -189,9 +192,6 @@ class Sprite(ConfigurableFromFile):
                 self.config[ratio_output_key] = img_format.output_path(ratio)
 
         print "Processing '{0}':".format(self.name)
-
-        # Discover images inside this sprite
-        self.images = self._locate_images()
 
         # Generate sprite map
         self.process()

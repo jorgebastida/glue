@@ -5,6 +5,7 @@ Changelog
 ^^^^^^
 * Fix transparent images cropping #133 (Thanks lzubiaur).
 * Fix CSS format paths on windows #132 (Thanks Most).
+* Fix --cachebuster-filename #135 (Thanks monsanto).
 
 0.9.1
 ^^^^^^
