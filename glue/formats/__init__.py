@@ -4,6 +4,8 @@ from .img import ImageFormat
 from .html import HtmlFormat
 from .jsonformat import JSONFormat
 from .caat import CAATFormat
+from .less import LessFormat
+from .scss import ScssFormat
 
 
 formats = {'css': CssFormat,
@@ -11,4 +13,6 @@ formats = {'css': CssFormat,
            'img': ImageFormat,
            'html': HtmlFormat,
            'json': JSONFormat,
-           'caat': CAATFormat}
+           'caat': CAATFormat,
+           'less': LessFormat,
+           'scss': ScssFormat}

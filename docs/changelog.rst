@@ -7,6 +7,7 @@ Changelog
 * Fix CSS format paths on windows #132 (Thanks Most).
 * Fix --cachebuster-filename #135 (Thanks monsanto).
 * New image ordering ``filename``.
+* Fix less retina output #122.
 
 0.9.1
 ^^^^^^

@@ -37,8 +37,8 @@ Command-line arg             Environment Variable                Configuration F
 -a --algorithm               GLUE_ALGORITHM                      algorithm
 --ordering                   GLUE_ORDERING                       algorithm_ordering
 --css                        GLUE_CSS                            css_dir
---less                       GLUE_LESS                           css_format
---scss                       GLUE_SCSS                           css_format
+--less                       GLUE_LESS                           less_dir
+--scss                       GLUE_SCSS                           scss_format
 --namespace                  GLUE_CSS_NAMESPACE                  css_namespace
 --sprite-namespace           GLUE_CSS_SPRITE_NAMESPACE           css_sprite_namespace
 -u --url                     GLUE_CSS_URL                        css_url

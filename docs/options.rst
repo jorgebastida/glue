@@ -201,6 +201,19 @@ This files contain exactly the same CSS code. This option only changes the file 
 
     $ glue source output --less
 
+--less-template
+--------------
+While using ``--less'` you can use your own less template using ``--less-template=<FILE>``. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+
+
+.. code-block:: bash
+
+    $ glue source output --less-template=my_template.jinja
+
+.. note::
+    New in version 0.9.2
+
+
 --margin
 ------------
 If you want to spread the images around the sprite but you don't want to count this space as image width/height (as happens using `--padding``), you can use the ``--margin`` option followed by the margin you want to add:
@@ -409,6 +422,18 @@ This files contain exactly the same CSS code. This option only changes the file 
 .. note::
     New in version 0.9
 
+
+--scss-template
+--------------
+While using ``--scss'` you can use your own less template using ``--scss-template=<FILE>``. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+
+
+.. code-block:: bash
+
+    $ glue source output --scss-template=my_template.jinja
+
+.. note::
+    New in version 0.9.2
 
 --separator
 --------------------------

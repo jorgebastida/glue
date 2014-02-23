@@ -60,6 +60,8 @@ algorithm                    X              X
 algorithm_ordering           X              X
 css_dir                      X              X
 css_format                   X              X
+less_format                  X              X
+scss_format                  X              X
 css_namespace                X              X
 css_sprite_namespace         X              X
 css_url                      X              X

@@ -10,6 +10,7 @@ from ..exceptions import ValidationError
 
 class CssFormat(JinjaTextFormat):
 
+    extension = 'css'
     camelcase_separator = 'camelcase'
     css_pseudo_classes = set(['link', 'visited', 'active', 'hover', 'focus',
                               'first-letter', 'first-line', 'first-child',
@@ -52,20 +53,6 @@ class CssFormat(JinjaTextFormat):
                            default=os.environ.get('GLUE_CSS', False),
                            metavar='DIR',
                            help="Generate CSS files and optionally where")
-
-        group.add_argument("--less",
-                           dest="css_format",
-                           action='store_const',
-                           const='less',
-                           default=os.environ.get('GLUE_LESS', 'css'),
-                           help="Use .less instead of .css as CSS file format")
-
-        group.add_argument("--scss",
-                           dest="css_format",
-                           action='store_const',
-                           const='scss',
-                           default=os.environ.get('GLUE_SCSS', 'css'),
-                           help="Use .scss instead of .css as CSS file format")
 
         group.add_argument("--namespace",
                            dest="css_namespace",
@@ -136,10 +123,6 @@ class CssFormat(JinjaTextFormat):
         if options.css_cachebuster and options.css_cachebuster_filename:
             parser.error("You can't use --cachebuster and "
                          "--cachebuster-filename at the same time.")
-
-    @property
-    def extension(self):
-        return self.sprite.config['css_format']
 
     def needs_rebuild(self):
         hash_line = '/* glue: %s hash: %s */\n' % (__version__, self.sprite.hash)
