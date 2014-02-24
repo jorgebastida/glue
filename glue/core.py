@@ -32,6 +32,11 @@ class ConfigurableFromFile(object):
             return {}
         return dict([[k, clean(config.get(section, k))] for k in keys])
 
+class ProjectConfig(ConfigurableFromFile):
+    def __init__(self,config_path):
+        self.config_path = config_path
+    def items(self):
+        return self._get_config_from_file('sprite.conf','sprite')
 
 class Image(ConfigurableFromFile):
 
