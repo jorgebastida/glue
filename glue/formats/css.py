@@ -18,22 +18,20 @@ class CssFormat(JinjaTextFormat):
 
     template = u"""
         /* glue: {{ version }} hash: {{ hash }} */
-        {% for image in images %}.{{ image.label }}{{ image.pseudo }}{%- if not image.last %}, {%- endif %}{%- endfor %}{
-            background-image:url('{{ sprite_path }}');
-            background-repeat:no-repeat;
+        {% for image in images %}.{{ image.label }}{{ image.pseudo }}{%- if not image.last %},{{"\n"}}{%- endif %}{%- endfor %} {
+            background-image: url('{{ sprite_path }}');
+            background-repeat: no-repeat;
         }
         {% for image in images %}
-        .{{ image.label }}{{ image.pseudo }}{
-            background-position:{{ image.x ~ ('px' if image.x) }} {{ image.y ~ ('px' if image.y) }};
-            width:{{ image.width }}px;
-            height:{{ image.height }}px;
+        .{{ image.label }}{{ image.pseudo }} {
+            background-position: {{ image.x ~ ('px' if image.x) }} {{ image.y ~ ('px' if image.y) }};
+            width: {{ image.width }}px;
+            height: {{ image.height }}px;
         }
-        {% endfor %}
-        {% for r, ratio in ratios.iteritems() %}
-        @media screen and (-webkit-min-device-pixel-ratio: {{ ratio.ratio }}), screen and (min--moz-device-pixel-ratio: {{ ratio.ratio }}),screen and (-o-min-device-pixel-ratio: {{ ratio.fraction }}),screen and (min-device-pixel-ratio: {{ ratio.ratio }}),screen and (min-resolution: {{ ratio.ratio }}dppx){
-            {% for image in images %}.{{ image.label }}{{ image.pseudo }}{% if not image.last %}, {% endif %}
-            {% endfor %}{
-                background-image:url('{{ ratio.sprite_path }}');
+        {% endfor %}{% for r, ratio in ratios.iteritems() %}
+        @media screen and (-webkit-min-device-pixel-ratio: {{ ratio.ratio }}), screen and (min--moz-device-pixel-ratio: {{ ratio.ratio }}), screen and (-o-min-device-pixel-ratio: {{ ratio.fraction }}), screen and (min-device-pixel-ratio: {{ ratio.ratio }}), screen and (min-resolution: {{ ratio.ratio }}dppx) {
+            {% for image in images %}.{{ image.label }}{{ image.pseudo }}{% if not image.last %},{{"\n"}}    {% endif %}{% endfor %} {
+                background-image: url('{{ ratio.sprite_path }}');
                 -webkit-background-size: {{ width }}px {{ height }}px;
                 -moz-background-size: {{ width }}px {{ height }}px;
                 background-size: {{ width }}px {{ height }}px;
