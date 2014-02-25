@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.9.3
+^^^^^^
+* Make the css output prettier #137 (Thanks uberrobert).
+
 0.9.2
 ^^^^^^
 * Fix transparent images cropping #133 (Thanks lzubiaur).
