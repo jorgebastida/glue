@@ -34,12 +34,18 @@ class Cocos2dFormat(BasePlistFormat):
                              'textureFileName': ratio_context['sprite_filename']
                 }
         }
+
+        # frame: sprite location within the sprite-sheet as position and size values
+        # offset: difference between the original center of the sprite and the center of the cropped sprite
+        # rotated: whether or not the sprite has been rotated within the sprite-sheet
+        # sourceColorRect: rectangle with actual color information inside your source sprite
+        # sourceSize: size of the original sprite
         for i in context['images']:
             image_context = i['ratios'][ratio]
             rect = '{{{{{abs_x}, {abs_y}}}, {{{width}, {height}}}}}'.format(**image_context)
             data['frames'][i['filename']] = {'frame': rect,
-                                             'offset': '{0,0}',
+                                             'offset': '{{{offsetX},{offsetY}}}'.format(**image_context),
                                              'rotated': False,
                                              'sourceColorRect': rect,
-                                             'sourceSize': '{{{width}, {height}}}'.format(**image_context)}
+                                             'sourceSize': '{{{original_width}, {original_height}}}'.format(**image_context)}
         return data
