@@ -83,4 +83,5 @@ padding                      X              X              X
 margin                       X              X              X
 ============================ ============== ============== ==============
 
-
+.. note::
+    You can't enable output formats using configurations files. If for example you add ``less_dir`` to your ``sprite.conf`` this would only override ``less`` output fodler if less is already an enabled output format.
