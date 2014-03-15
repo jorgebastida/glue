@@ -11,16 +11,14 @@ tests_require=[
     'cssutils>=0.9,<1.0',
 ]
 
-PY_MAJOR, PY_MINOR = sys.version_info[:2]
-
 # as of Python >= 2.7 and >= 3.2, the argparse module is maintained
 # within the Python standard library.
-if (PY_MAJOR == 2 and PY_MINOR < 7) or (PY_MAJOR == 3 and PY_MINOR < 2):
+if sys.version_info >= (2, 7) or sys.version_info >= (3, 2):
     install_requires.append('argparse>=1.1')
 
 # mock is now part of the Python standard library, available as
 # unittest.mock in Python 3.3 onwards.
-if (PY_MAJOR == 2) or (PY_MAJOR == 3 and PY_MINOR < 3):
+if sys.version_info >= (3, 3):
     tests_require.append('mock>=1.0')
 
 
