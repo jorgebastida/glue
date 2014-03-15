@@ -5,6 +5,7 @@ Changelog
 ^^^^^^
 * Make glue only require argparse if sys.version_info is < 2.7 (Thanks Lorenzo)
 * Make glue read project-level configuration files #139 (Thanks Ady Liu)
+* Fix ``--less-template`` and ``--scss-template`` options.
 
 0.9.3
 ^^^^^^

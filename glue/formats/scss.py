@@ -18,3 +18,9 @@ class ScssFormat(CssFormat):
                            default=os.environ.get('GLUE_SCSS', False),
                            metavar='DIR',
                            help="Generate SCSS files and optionally where")
+
+        group.add_argument("--scss-template",
+                           dest="scss_template",
+                           default=os.environ.get('GLUE_SCSS_TEMPLATE', None),
+                           metavar='DIR',
+                           help="Template to use to generate the SCSS output.")

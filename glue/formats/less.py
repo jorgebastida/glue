@@ -40,3 +40,9 @@ class LessFormat(CssFormat):
                            default=os.environ.get('GLUE_LESS', False),
                            metavar='DIR',
                            help="Generate LESS files and optionally where")
+
+        group.add_argument("--less-template",
+                           dest="less_template",
+                           default=os.environ.get('GLUE_LESS_TEMPLATE', None),
+                           metavar='DIR',
+                           help="Template to use to generate the LESS output.")

@@ -962,7 +962,7 @@ class TestGlue(unittest.TestCase):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)
         with open('template.jinja', 'w') as f:
-            f.write("custom template for {{ hash }}")
+            f.write("custom css template for {{ hash }}")
 
         code = self.call("glue simple output --css-template=template.jinja")
         self.assertEqual(code, 0)
@@ -974,7 +974,47 @@ class TestGlue(unittest.TestCase):
 
         with codecs.open('output/simple.css', 'r', 'utf-8-sig') as f:
             content = f.read()
-            self.assertEqual(content, u"custom template for {0}".format(12345))
+            self.assertEqual(content, u"custom css template for {0}".format(12345))
+
+    @patch('glue.core.Sprite.hash')
+    def test_less_template(self, mocked_hash):
+        mocked_hash.__get__ = Mock(return_value="12345")
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        with open('template.jinja', 'w') as f:
+            f.write("custom less template for {{ hash }}")
+
+        code = self.call("glue simple output --less --less-template=template.jinja")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.less")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
+
+        with codecs.open('output/simple.less', 'r', 'utf-8-sig') as f:
+            content = f.read()
+            self.assertEqual(content, u"custom less template for {0}".format(12345))
+
+    @patch('glue.core.Sprite.hash')
+    def test_scss_template(self, mocked_hash):
+        mocked_hash.__get__ = Mock(return_value="12345")
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+        with open('template.jinja', 'w') as f:
+            f.write("custom scss template for {{ hash }}")
+
+        code = self.call("glue simple output --scss --scss-template=template.jinja")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.scss")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
+
+        with codecs.open('output/simple.scss', 'r', 'utf-8-sig') as f:
+            content = f.read()
+            self.assertEqual(content, u"custom scss template for {0}".format(12345))
 
     def test_html(self):
         self.create_image("simple/red.png", RED)
