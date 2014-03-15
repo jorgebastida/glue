@@ -91,9 +91,3 @@ Here you have some examples:
 * New Formats (After 0.9, ``glue`` is ready to accept new output formats - If you want to create a new format, contact me).
 * Binary packaging for OSX and Windows (For some users it would be really cool if they were able to download an already packaged binary version).
 * Python 3 support.
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/jorgebastida/glue/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
-
