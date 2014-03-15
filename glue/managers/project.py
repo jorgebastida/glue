@@ -2,7 +2,7 @@ import os
 
 from glue.exceptions import NoSpritesFoldersFoundError
 from .base import BaseManager
-
+from glue.core import ProjectConfig
 
 class ProjectManager(BaseManager):
     """Process a path searching for folders that contain images.
@@ -11,6 +11,8 @@ class ProjectManager(BaseManager):
        the ``--project`` argument."""
 
     def find_sprites(self):
+
+        self.config.update( ProjectConfig(self.config['source']).items() )
 
         for filename in sorted(os.listdir(self.config['source'])):
 
