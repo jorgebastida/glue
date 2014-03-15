@@ -2,17 +2,21 @@ import os
 
 from glue.exceptions import NoSpritesFoldersFoundError
 from .base import BaseManager
-from glue.core import ProjectConfig
+from glue.core import ConfigurableFromFile
 
-class ProjectManager(BaseManager):
+
+class ProjectManager(BaseManager, ConfigurableFromFile):
     """Process a path searching for folders that contain images.
        Every folder will be a new sprite with all the images inside.
        This is not the default manager. It is only used if you use
        the ``--project`` argument."""
 
-    def find_sprites(self):
+    def __init__(self, *args, **kwargs):
+        super(ProjectManager, self).__init__(*args, **kwargs)
+        self.config_path = self.config['source']
+        self.config.update(self._get_config_from_file('sprite.conf', 'sprite'))
 
-        self.config.update( ProjectConfig(self.config['source']).items() )
+    def find_sprites(self):
 
         for filename in sorted(os.listdir(self.config['source'])):
 

@@ -1,5 +1,3 @@
-import hashlib
-
 from glue.core import Sprite
 from glue.formats import formats
 

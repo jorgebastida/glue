@@ -4,7 +4,7 @@ Changelog
 0.9.4
 ^^^^^^
 * Make glue only require argparse if sys.version_info is < 2.7 (Thanks Lorenzo)
-
+* Make glue read project-level configuration files #139 (Thanks Ady Liu)
 
 0.9.3
 ^^^^^^

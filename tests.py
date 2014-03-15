@@ -291,6 +291,29 @@ class TestGlue(unittest.TestCase):
                         u'width': u'64px',
                         u'height': u'64px'})
 
+    def test_project_config_file(self):
+
+        os.mkdir("sprites")
+
+        with open('sprites/sprite.conf', 'w') as f:
+            f.write("[sprite]\ncss_dir=css\n")
+
+        self.create_image("sprites/icons/red.png", RED)
+        self.create_image("sprites/icons/blue.png", BLUE)
+        self.create_image("sprites/menu/green.png", GREEN)
+        self.create_image("sprites/menu/yellow.png", YELLOW)
+        self.create_image("sprites/.ignore/pink.png", PINK)
+        code = self.call("glue sprites output --project")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/icons.png")
+        self.assertExists("css/icons.css")
+        self.assertExists("output/menu.png")
+        self.assertExists("css/menu.css")
+        self.assertDoesNotExists("output/ignore.png")
+        self.assertDoesNotExists("output/ignore.css")
+        self.assertDoesNotExists("css/ignore.css")
+
     def test_algorithm_diagonal(self):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)
