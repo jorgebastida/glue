@@ -11,20 +11,18 @@ tests_require=[
     'cssutils>=0.9,<1.0',
 ]
 
-# as of Python >= 2.7 and >= 3.2, the argparse module is maintained
-# within the Python standard library.
+# as of Python >= 2.7 argparse module is maintained within Python.
 if sys.version_info >= (2, 7) or sys.version_info >= (3, 2):
     install_requires.append('argparse>=1.1')
 
-# mock is now part of the Python standard library, available as
-# unittest.mock in Python 3.3 onwards.
+# as of Python >= 3.3 unittest.mock module is maintained within Python.
 if sys.version_info >= (3, 3):
     tests_require.append('mock>=1.0')
 
 
 setup(
     name='glue',
-    version='0.9.3',
+    version='0.9.4',
     url='http://github.com/jorgebastida/glue',
     license='BSD',
     author='Jorge Bastida',
