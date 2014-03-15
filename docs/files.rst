@@ -59,9 +59,6 @@ force                        X              X
 algorithm                    X              X
 algorithm_ordering           X              X
 css_dir                      X              X
-css_format                   X              X
-less_format                  X              X
-scss_format                  X              X
 css_namespace                X              X
 css_sprite_namespace         X              X
 css_url                      X              X
@@ -70,6 +67,8 @@ css_cachebuster_filename     X              X
 css_separator                X              X
 css_template                 X              X
 css_pseudo_class_separator   X              X
+less_dir                     X              X
+scss_dir                     X              X
 img_dir                      X              X
 generate_image               X              X
 png8                         X              X
