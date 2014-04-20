@@ -4,3 +4,4 @@ dist
 build
 .DS_Store
 tests_tmp
+*.egg
