@@ -40,12 +40,13 @@ setup(
     tests_require=tests_require,
     test_suite='tests',
     classifiers=[
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
         'Topic :: Utilities'
     ],
     entry_points = {
@@ -53,5 +54,6 @@ setup(
             'glue = glue.bin:main',
         ]
     },
-    zip_safe = False
+    zip_safe = False,
+    use_2to3=True
 )

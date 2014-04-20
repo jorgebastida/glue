@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import codecs
 import plistlib
@@ -168,7 +169,9 @@ class BasePlistFormat(BaseTextFormat):
 
     def render(self, *args, **kwargs):
         context = self.get_context(*args, **kwargs)
-        return plistlib.writePlistToString(context)
+        if sys.version < '3':
+            return plistlib.writePlistToString(context)
+        return plistlib.writePlistToBytes(context).decode('unicode_escape')
 
     def needs_rebuild(self):
         for ratio in self.sprite.config['ratios']:

@@ -53,9 +53,14 @@ class Image(ConfigurableFromFile):
     @cached_property
     def image(self):
         """Return a Pil representation of this image """
-        io = StringIO.StringIO(self._image_data)
+
+        if sys.version < '3':
+            imageio = StringIO.StringIO(self._image_data)
+        else:
+            imageio = StringIO.BytesIO(self._image_data)
+
         try:
-            source_image = PILImage.open(io)
+            source_image = PILImage.open(imageio)
             img = PILImage.new('RGBA', source_image.size, (0, 0, 0, 0))
 
             if source_image.mode == 'L':
@@ -68,7 +73,7 @@ class Image(ConfigurableFromFile):
         except IOError, e:
             raise PILUnavailableError(e.args[0].split()[1])
         finally:
-            io.close()
+            imageio.close()
 
         self.original_width, self.original_height = img.size
 
@@ -147,7 +152,7 @@ class Image(ConfigurableFromFile):
         ordering = ordering[1:] if ordering.startswith('-') else ordering
 
         if ordering == "filename":
-            return cmp(self.filename, img.filename) > 0
+            return sorted([self.filename, img.filename])[0] == img.filename
         if ordering == 'width':
             return self.absolute_width <= img.absolute_width
         elif ordering == 'height':
@@ -156,7 +161,6 @@ class Image(ConfigurableFromFile):
             return self.absolute_width * self.absolute_height <= img.absolute_width * img.absolute_height
         else:
             return max(self.absolute_width, self.absolute_height) <= max(img.absolute_width, img.absolute_height)
-
 
 
 class Sprite(ConfigurableFromFile):
@@ -220,7 +224,9 @@ class Sprite(ConfigurableFromFile):
             hash_list.append(key)
             hash_list.append(value)
 
-        return hashlib.sha1(''.join(map(str, hash_list))).hexdigest()[:10]
+        if sys.version < '3':
+            return hashlib.sha1(''.join(map(str, hash_list))).hexdigest()[:10]
+        return hashlib.sha1(''.join(map(str, hash_list)).encode('utf-8')).hexdigest()[:10]
 
     @cached_property
     def canvas_size(self):

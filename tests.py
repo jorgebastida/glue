@@ -5,12 +5,21 @@ import codecs
 import shutil
 import unittest
 import logging
-from StringIO import StringIO
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 from plistlib import readPlist
 
 from PIL import Image as PILImage
 import cssutils
-from mock import patch, Mock
+
+try:
+    from mock import patch, Mock
+except ImportError:
+    from unittest.mock import patch, Mock
 
 from glue.bin import main
 from glue.core import Image
@@ -100,8 +109,8 @@ class TestGlue(unittest.TestCase):
             os.makedirs(dirname)
         image = PILImage.new('RGB', size, color)
         if margin:
-            background = PILImage.new('RGBA', map(lambda x: x + margin, size), margin_color)
-            background.paste(image, (margin / 2, margin / 2))
+            background = PILImage.new('RGBA', list(map(lambda x: x + margin, size)), margin_color)
+            background.paste(image, tuple(map(int, (margin / 2, margin / 2))))
             background.save(path)
         else:
             image.save(path)
@@ -1559,8 +1568,8 @@ class TestGlue(unittest.TestCase):
         self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
 
         meta = readPlist("output/simple.plist")
-        self.assertEqual(meta.keys(), ['frames', 'metadata'])
-        self.assertEqual(meta['frames'].keys(), ['blue.png', 'red.png'])
+        self.assertEqual(set(meta.keys()), set(['frames', 'metadata']))
+        self.assertEqual(set(meta['frames'].keys()), set(['blue.png', 'red.png']))
 
         code = self.call("glue simple output --cocos2d")
         self.assertEqual(code, 0)
