@@ -64,13 +64,11 @@ class BaseFormat(object):
     def apply_parser_contraints(cls, parser, options):
         pass
 
-    def scale_down(self, value, ratio):
-        return round_up(value / ratio)
-
     def fix_windows_path(self, path):
         if os.name == 'nt':
             path = path.replace('\\', '/')
         return path
+
 
 class BaseTextFormat(BaseFormat):
 
