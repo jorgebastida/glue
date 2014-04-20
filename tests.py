@@ -1047,6 +1047,10 @@ class TestGlue(unittest.TestCase):
             data = json.loads(f.read())
             assert isinstance(data['frames'], list)
 
+        # Rebuild in order to test the ``needs_rebuild`` method
+        code = self.call("glue simple output --json")
+        self.assertEqual(code, 0)
+
     def test_json_ratios(self):
         self.create_image("simple/red.png", RED)
         self.create_image("simple/blue.png", BLUE)
