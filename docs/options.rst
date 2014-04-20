@@ -135,8 +135,10 @@ Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`
 
 --css-template
 --------------
-While using ``--css`` you can use your own css template using ``--css-template=<FILE>``. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+While using ``--css`` you can use your own css template using ``--css-template=<FILE>``.
 
+.. note::
+    By default glue will use it's own internal ``css`` template, so this command **is not required** unless you want to super-customize glue's ``css`` output using **your own** template. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
 
 .. code-block:: bash
 
@@ -215,10 +217,13 @@ This files contain exactly the same CSS code. This option only changes the file 
 
     $ glue source output --less
 
---less-template
---------------
-While using ``--less'` you can use your own less template using ``--less-template=<FILE>``. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
 
+--less-template
+----------------
+While using ``--less`` you can use your own less template using ``--less-template=<FILE>``.
+
+.. note::
+    By default glue will use it's own internal ``less`` template, so this command **is not required** unless you want to super-customize glue's ``less`` output using **your own** template. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
 
 .. code-block:: bash
 
@@ -438,9 +443,11 @@ This files contain exactly the same CSS code. This option only changes the file 
 
 
 --scss-template
---------------
-While using ``--scss'` you can use your own less template using ``--scss-template=<FILE>``. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+----------------
+While using ``--scss`` you can use your own less template using ``--scss-template=<FILE>``.
 
+.. note::
+    By default glue will use it's own internal ``scss`` template, so this command **is not required** unless you want to super-customize glue's ``scss`` output using **your own** template. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
 
 .. code-block:: bash
 
