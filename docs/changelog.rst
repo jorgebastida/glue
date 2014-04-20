@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.10.0
+^^^^^^
+* Added support to ``python 3.3+``
+
 0.9.4
 ^^^^^^
 * Make glue only require argparse if sys.version_info is < 2.7 (Thanks Lorenzo)

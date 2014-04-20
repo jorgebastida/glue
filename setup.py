@@ -22,7 +22,7 @@ if sys.version_info < (3, 3):
 
 setup(
     name='glue',
-    version='0.9.4',
+    version='0.10.0',
     url='http://github.com/jorgebastida/glue',
     license='BSD',
     author='Jorge Bastida',

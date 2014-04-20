@@ -90,4 +90,3 @@ Here you have some examples:
 * Cocos2d Format (Already exists, but we need somebody to give it some love).
 * New Formats (After 0.9, ``glue`` is ready to accept new output formats - If you want to create a new format, contact me).
 * Binary packaging for OSX and Windows (For some users it would be really cool if they were able to download an already packaged binary version).
-* Python 3 support.
