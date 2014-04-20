@@ -23,12 +23,12 @@ class JSONFormat(BaseJSONFormat):
                            help="Generate JSON files and optionally where")
 
         group.add_argument("--json-format",
-                   dest="json_format",
-                   metavar='NAME',
-                   type=unicode,
-                   default=os.environ.get('GLUE_JSON_FORMAT', 'array'),
-                    choices=['array', 'hash'],
-                   help=("JSON structure format (array, hash)"))
+                           dest="json_format",
+                           metavar='NAME',
+                           type=unicode,
+                           default=os.environ.get('GLUE_JSON_FORMAT', 'array'),
+                           choices=['array', 'hash'],
+                           help=("JSON structure format (array, hash)"))
 
     def get_context(self, *args, **kwargs):
         context = super(JSONFormat, self).get_context(*args, **kwargs)
