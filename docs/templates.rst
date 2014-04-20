@@ -95,7 +95,7 @@ CSS Template Example
         height:{{ image.height }}px;
     }
     {% endfor %}
-    {% for ratio in ratios %}
+    {% for r, ratio in ratios.iteritems() %}
     @media screen and (-webkit-min-device-pixel-ratio: {{ ratio.ratio }}), screen and (min--moz-device-pixel-ratio: {{ ratio.ratio }}),screen and (-o-min-device-piratio: {{ ratio.fraction }}),screen and (min-device-pixel-ratio: {{ ratio.ratio }}){
         {% for image in images %}.{{ image.label }}{{ image.pseudo }}{% if not image.last %}, {% endif %}
         {% endfor %}{
