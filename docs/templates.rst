@@ -4,9 +4,16 @@ Templates
 Introduction
 ------------
 
-``glue`` formats based on templates can be customized with your own templates from the command line. By convention every format (i.e ``css``) will define an optional  ``--css-template`` with wich you can override the template the format will use.
+``glue`` formats based on templates can be customized usign your own templates. By convention, every format (i.e ``css``) will define an optional  ``--css-template`` with wich you can override the default template.
 
-These templates are simple `Jinja2 templates <http://jinja.pocoo.org/docs/>`_ you can customize a far as you want using the following context variables.
+These templates are simple `Jinja2 templates <http://jinja.pocoo.org/docs/>`_, so you can customize a far as you want using the following context variables.
+
+.. note::
+    By default glue will use it's own internal templates, so you don't need to provide a template unless you want to super-customize glue's output.
+
+.. note::
+    If you don't know if you need a custom template, you **don't** need a custom template.
+
 
 BaseTextFormat
 --------------
@@ -78,31 +85,8 @@ Variable                     Value
 css_path                     Path where the css file is
 ============================ ======================================================
 
-CSS Template Example
+
+Templates Examples
 --------------------
 
-.. code-block:: jinja
-
-    /* glue: {{ version }} hash: {{ hash }} */
-    {% for image in images %}.{{ image.label }}{{ image.pseudo }}{%- if not image.last %}, {%- endif %}{%- endfor %}{
-        background-image:url('{{ sprite_path }}');
-        background-repeat:no-repeat;
-    }
-    {% for image in images %}
-    .{{ image.label }}{{ image.pseudo }}{
-        background-position:{{ image.x ~ ('px' if image.x) }} {{ image.y ~ ('px' if image.y) }};
-        width:{{ image.width }}px;
-        height:{{ image.height }}px;
-    }
-    {% endfor %}
-    {% for ratio in ratios %}
-    @media screen and (-webkit-min-device-pixel-ratio: {{ ratio.ratio }}), screen and (min--moz-device-pixel-ratio: {{ ratio.ratio }}),screen and (-o-min-device-piratio: {{ ratio.fraction }}),screen and (min-device-pixel-ratio: {{ ratio.ratio }}){
-        {% for image in images %}.{{ image.label }}{{ image.pseudo }}{% if not image.last %}, {% endif %}
-        {% endfor %}{
-            background-image:url('{{ ratio.sprite_path }}');
-            -webkit-background-size: {{ width }}px {{ height }}px;
-            -moz-background-size: {{ width }}px {{ height }}px;
-            background-size: {{ width }}px {{ height }}px;
-        }
-    }
-    {% endfor %}
+If you are going to create a new template from scratch or if you want to do some changes to an existing output, a good starting point would be to read some of the existing templates in the ``formats`` `folder <https://github.com/jorgebastida/glue/tree/master/glue/formats>`_.
