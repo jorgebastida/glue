@@ -43,7 +43,7 @@ Features
 * CSS: Optional .less/.scss output format.
 * CSS: Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
 * CSS: Customizable `class names <http://glue.readthedocs.org/en/latest/options.html#separator>`_.
-* Python ``2.6``, ``2.7`` and ``3.3+`` supported
+* Python ``2.6``, ``2.7`` and ``3.3+`` supported.
 * Really `well tested <https://coveralls.io/r/jorgebastida/glue?branch=master>`_.
 
 Example
