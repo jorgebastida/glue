@@ -1,179 +1,6 @@
 Command line arguments
 ======================
 
---project
------------
-As it's explained at the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is to handle one unique sprite folder. If you need to generate several sprites for a project, you can use the ``--project`` option to handle multiple folders with only one command.
-
-The suggested setup is to create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder::
-
-    images
-    ├── actions
-    │   ├── add.png
-    │   └── remove.png
-    ├── borders
-    │   ├── top_left.png
-    │   └── top_right.png
-    └── icons
-        ├── comment.png
-        ├── new.png
-        └── rss.png
-
-.. code-block:: bash
-
-    $ glue source output --project
-
-.. note::
-    This was the default behaviour prior to the version ``0.2``, after ``2.0`` is not.
-
--r --recursive
---------------
-
-Read directories recursively and add all the images to the same sprite.
-
-Example structure::
-
-    source
-    ├── actions
-    │   ├── add.png
-    │   └── remove.png
-    ├── borders
-    │   ├── top_left.png
-    │   └── top_right.png
-    └── icons
-        ├── comment.png
-        ├── new.png
-        ├── rss.png
-        └── blog
-            ├── rss.png
-            └── atom.png
-
-If you want to create only one sprite image you should use.
-
-.. code-block:: bash
-
-    $ glue source output --recursive
-
-On the other hand if you want to create three different sprites (one per folder) you can combine ``--project`` and ``--recursive``.
-
-.. code-block:: bash
-
-    $ glue source output --recursive --project
-
--c --crop
----------
-
-Usually designers add some unnecessary transparent space around the images because it is easier for them to work with a larger canvas. ``glue`` can optimize our sprite by croping all the unnecessary transparent spaces that the original images could have.
-
-.. image:: img/crop.png
-
-.. code-block:: bash
-
-    $ glue source output --crop
-
--l --less
----------
-`less <http://lesscss.org/>`_  is a dynamic stylesheet language that extends CSS with dynamic behaviors.
-``glue`` can also create ``.less`` files adding the ``--less`` option.
-This files contain exactly the same CSS code. This option only changes the file format.
-
-.. code-block:: bash
-
-    $ glue source output --less
-
--u --url
----------
-By default ``glue`` adds to the PNG file name the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace its suggested one with your url.
-
-.. code-block:: bash
-
-    $ glue source output --url=http://static.example.com/
-
--q --quiet
-----------
-This flag will make ``glue`` suppress all console output.
-
-.. code-block:: bash
-
-    $ glue source output -q
-
--p --padding
-------------
-If you want to add the same padding around all images you can use the ``--padding`` option:
-
-.. code-block:: bash
-
-    $ glue source output --padding=10
-    $ glue source output --padding=10 20
-    $ glue source output --padding=10 20 30 40
-
---ratios
-------------
-``Glue`` can automatically scale down your sprites to automatically fit them into low-dpi devices. ``Glue`` assumes that the source images are the biggests you want to serve, then ``glue`` will create one sprite for each ratio you set in this command. For more information, read :doc:`ratios`.
-
-.. code-block:: bash
-
-    $ glue source output --ratios=2,1
-    $ glue source output --ratios=2,1.5,1
-
---retina
-------------
-The option ``--retina`` is only a shortcut for ``--ratios=2,1``.
-
-.. code-block:: bash
-
-    $ glue source output --retina
-
-
---imagemagick
--------------
-The option ``--imagemagick`` will make ``glue`` scale down your bigger sprite to the appropriate ratio size using ``ImageMagick`` instead of ``Pillow``. In some situations ``Pillow`` scaling algorithm perform really bad and it generates some horrible shades / gray borders.
-
-In order to avoid them you should use the ``--imagemagick`` option.
-
-.. code-block:: bash
-
-    $ glue source output --imagemagick
-
-
---imagemagickpath
------------------
-If ``convert`` (ImageMagick) is not in your computer ``PATH``, you can choose the imagemagick path using this option.
-
-.. code-block:: bash
-
-    $ glue source output --imagemagick --imagemagickpath=<dir>
-
---watch
-------------
-While you are developing a site it could be quite frustrating running ``Glue`` once and another every time you change a source image or a filename. ``--watch`` will allow you to keep ``Glue`` running in the background and it'll rebuild the sprite every time it detects changes on the source directory.
-
-.. code-block:: bash
-
-    $ glue source output --watch
-
-.. note::
-    New in version 0.2.5
-
---css --img
------------
-Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`. If you want to choose an individual folder for each type of file you can use the ``--img=<dir> --css=<dir>`` options together to customize where the output files will be created.
-
-.. code-block:: bash
-
-    $ glue source --img=images/compiled --css=css/compiled
-
---html
------------
-Using the ``--html`` option, ``Glue`` will also generate a test html per sprite using all the available CSS classes. This option is only useful for testing purposes. Glue generate the ``html`` file in the same directory as the CSS file.
-
-.. code-block:: bash
-
-    $ glue source --html
-
-.. note::
-    New in version 0.2.5
-
 -a --algorithm
 --------------
 The criteria that ``glue`` uses to order the images before adding them to the canvas can be tunned. By default the algorithm is `square`, but in some situations using another ordering like `vertical` or `horizontal` could be useful depending on the kind of images you are spriting.
@@ -190,168 +17,26 @@ The criteria that ``glue`` uses to order the images before adding them to the ca
     $ glue source output --algorithm=[square|vertical|hortizontal|diagonal|vertical-right|horizontal-bottom]
 
 
---ordering
---------------
-Before processing the images using the `algorithm` glue orders the images. The default ordering is `maxside` but you can configure it using the ``--ordering`` option.
-
-.. code-block:: bash
-
-    $ glue source output --ordering=[maxside|width|height|area]
-
-You can reverse how any of the available algorithms works prepending a `-`.
-
-.. code-block:: bash
-
-    $ glue source output --ordering=[-maxside|-width|-height|-area]
-
---margin
-------------
-If you want to spread the images around the sprite but you don't want to count this space as image width/height (as happens using `--padding``), you can use the ``--margin`` option followed by the margin you want to add:
-
-.. code-block:: bash
-
-    $ glue source output --margin=20
-
-.. note::
-    New in version 0.2.5
-
---namespace
------------
-By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class names. If you want to use your own namespace you can override the default one using the ``--namespace`` option.
-
-.. code-block:: bash
-
-    $ glue source output --namespace=my-namespace
-
-
-If you want to completely remove the namespace (both the global and the sprite part) you can use:
-
-.. code-block:: bash
-
-    $ glue source output --sprite-namespace= --namespace=
-
-
---sprite-namespace
-------------------
-By default ``glue`` adds the sprite's name as past of the CSS class namespace. If you want to use your own namespace you can override the default one using the ``--sprite-namespace`` option.
-
-.. code-block:: bash
-
-    $ glue source output --sprite-namespace=custom
-
-
-As part of the new sprite namespace you can use the key ``%(sprite)s`` to refer to the original namespace.
-
-If you want to completely remove the namespace (both the global and the sprite part) you can use:
-
-.. code-block:: bash
-
-    $ glue source output --sprite-namespace= --namespace=
-
-
---png8
-------
-By using the flag ``png8`` the output image format will be png8 instead of png32.
-
-.. code-block:: bash
-
-    $ glue source output --png8
-
-.. note::
-    New in version 0.1.9
-
-.. note::
-    This feature is unstable in OSX > 10.7 because a bug in PIL.
-
---ignore-filename-paddings
---------------------------
-``glue`` by default uses the end of each filename to discover if you want to add some padding to that image. If for any reason you want to disable this behavior (e.g. legacy purposes), you can use the ``--ignore-filename-paddings`` option to disable it.
-
-.. code-block:: bash
-
-    $ glue source output --ignore-filename-paddings
-
-
---debug
---------------------------
-By default ``glue`` catch all unexpected errors and fails gracefully. If you want to look under the hood use ``--debug`` and ``glue`` will raise some debugging information about the error. If you want to report a bug, please provide a reproducable example as well as the output of the command failing using ``--debug``.
-
-.. code-block:: bash
-
-    $ glue source output --debug
-
---separator
---------------------------
-``glue`` by default uses ``-`` as separator for the CSS class names. If you want to customize this behaviour you can use ``--separator`` to specify your own
-one:
-
-.. code-block:: bash
-
-    $ glue source output --separator=_
-
-If you want to use `camelCase <http://en.wikipedia.org/wiki/CamelCase>`_ instead of a separator, choose ``camelcase`` as separator.
-
-.. code-block:: bash
-
-    $ glue source output --separator=camelcase
-
---global-template
-------------------
-If you want to customize the output CSS you can use this option to tune the global section of the output CSS. This template is going to be only added **once per sprite**. Usually you'll not need to change this template.
-
-.. code-block:: bash
-
-    $ glue source output --global-template=<template>
-
-
-For example if you want to add quotes around the sprite image:
-
-.. code-block:: bash
-
-    $ glue source output --global-template="%(all_classes)s{background-image:url('%(sprite_url)s');background-repeat:no-repeat}"
-
-.. note::
-    New in version 0.2.1
-
---each-template
-------------------
-If you want to customize the output CSS, you can use this option to tune the output CSS generated for each image. This template is going to be added **once per image** present in the sprite. Usually you'll change this template if you want to remove the block size from the output CSS or make any other fine tune.
-
-.. code-block:: bash
-
-    $ glue source output --each-template=<template>
-
-
-For example if you want to remove the block size from the output CSS (old ``--no-size`` option):
-
-.. code-block:: bash
-
-    $ glue source output --each-template="%(class_name)s{background-position:%(x)s %(y)s;}"
-
-.. note::
-    New in version 0.2.1
-
---optipng
+-c --crop
 ---------
 
-OptiPNG is a PNG optimizer that recompresses image files to a smaller size, without losing any information.
+Usually designers add some unnecessary transparent space around the images because it is easier for them to work with a larger canvas. ``glue`` can optimize our sprite by croping all the unnecessary transparent spaces that the original images could have.
 
-OptiPNG is not a glue requirement but is hardly recommended to optimize the output PNG files to make them as small as possible.
-
-If you have ``optipng`` installed on your computer you can use the  ``--optipng`` option to automatically optimize all the sprites that ``glue`` generates. If you don't know how to install it, read the :doc:`optipng page <optipng>`.
+.. image:: img/crop.png
 
 .. code-block:: bash
 
-    $ glue source output --optipng
+    $ glue source output --crop
 
 
---optipngpath
--------------
-If ``optipng`` is not in your computer ``PATH``, you can choose the optipng path using this option.
+--caat
+-----------
+Using the ``--caat`` option, ``Glue`` will generate both a sprite image and a caat metadata file.
 
 .. code-block:: bash
 
-    $ glue source output --optipng --optipngpath=<dir>
+    $ glue source output --caat
+
 
 --cachebuster
 -------------
@@ -409,17 +94,55 @@ After --cachebuster:
     .sprite-icons-wrench_orange{ background:url('sprites/icons/icons_p3c54d.png'); top:0; left:-16; no-repeat;}
     ...
 
---follow-links
---------------
 
-Follow symbolic links.
+--cachebuster-filename-only-sprites
+------------------------------------
+Unlike ``--cachebuster-filename``, glue will only apply filename cachebusting to the sprite image and not to both the ``CSS`` and the sprite image.
 
 .. code-block:: bash
 
-    $ glue source output --follow-links
+    $ glue source output --cachebuster-filename-only-sprites
+
 
 .. note::
-    Be aware that following links can lead to infinite recursion if a link points to a parent directory of itself. ``glue`` does not keep track of the directories it visited already.
+    New in version 0.9.2
+
+
+--cocos2d
+-----------
+Using the ``--cocos2d`` option, ``Glue`` will generate both a sprite image and a xml metadata file compatible with cocos2d.
+
+.. code-block:: bash
+
+    $ glue source output --cocos2d
+
+
+.. note::
+    New in version 0.9
+
+.. note::
+    The output of this format has not been deeply tested and we are looking for a cocos2d-champion who can sponsor this feature.
+
+
+--css --img
+-----------
+Usually both CSS and PNG files reside on different folders, e.g. `css` and `img`. If you want to choose an individual folder for each type of file you can use the ``--img=<dir> --css=<dir>`` options together to customize where the output files will be created.
+
+.. code-block:: bash
+
+    $ glue source --img=images/compiled --css=css/compiled
+
+
+--css-template
+--------------
+While using ``--css`` you can use your own css template using ``--css-template=<FILE>``.
+
+.. note::
+    By default glue will use it's own internal ``css`` template, so this command **is not required** unless you want to super-customize glue's ``css`` output using **your own** template. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+
+.. code-block:: bash
+
+    $ glue source output --css-template=my_template.jinja
 
 --force
 -------
@@ -432,6 +155,115 @@ In order to avoid this behaviour you can use ``--force`` and ``glue`` will alway
 
     $ glue source output --force
 
+
+--follow-links
+--------------
+
+Follow symbolic links.
+
+.. code-block:: bash
+
+    $ glue source output --follow-links
+
+.. note::
+    Be aware that following links can lead to infinite recursion if a link points to a parent directory of itself. ``glue`` does not keep track of the directories it visited already.
+
+--html
+-----------
+Using the ``--html`` option, ``Glue`` will also generate a test html per sprite using all the available CSS classes. This option is only useful for testing purposes. Glue generate the ``html`` file in the same directory as the CSS file.
+
+.. code-block:: bash
+
+    $ glue source output --html
+
+--json
+-----------
+Using the ``--json`` option, ``Glue`` will generate both a sprite image and a json metadata file.
+
+.. code-block:: bash
+
+    $ glue source output --json
+
+--json-format
+--------------
+Using the ``--json-format`` option you can customize how the generated ``JSON`` will look. You can choose between ``array`` and ``hash``.
+
+
+.. code-block:: bash
+
+    $ glue source output --json --json-format=hash
+
+
+Example ``array`` output:
+
+.. code-block:: json
+
+     {"frames": [{"filename": "apple.png", width": 128, "height": 128, ...}, {...}], "meta": {...}}
+
+
+Example ``hash`` output:
+
+.. code-block:: json
+
+     {"frames": {"apple.png": {"width": 128, "height": 128, ...}, "orange.png": {...}, "meta": {...}}
+
+-l --less
+---------
+`less <http://lesscss.org/>`_  is a dynamic stylesheet language that extends CSS with dynamic behaviors.
+``glue`` can also create ``.less`` files adding the ``--less`` option.
+This files contain exactly the same CSS code. This option only changes the file format.
+
+.. code-block:: bash
+
+    $ glue source output --less
+
+
+--less-template
+----------------
+While using ``--less`` you can use your own less template using ``--less-template=<FILE>``.
+
+.. note::
+    By default glue will use it's own internal ``less`` template, so this command **is not required** unless you want to super-customize glue's ``less`` output using **your own** template. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+
+.. code-block:: bash
+
+    $ glue source output --less-template=my_template.jinja
+
+.. note::
+    New in version 0.9.2
+
+
+--margin
+------------
+If you want to spread the images around the sprite but you don't want to count this space as image width/height (as happens using `--padding``), you can use the ``--margin`` option followed by the margin you want to add:
+
+.. code-block:: bash
+
+    $ glue source output --margin=10
+    $ glue source output --margin=10 20
+    $ glue source output --margin=10 20 30 40
+
+
+.. note::
+    New in version 0.9
+
+
+--namespace
+-----------
+By default ``glue`` adds the namespace ``sprite`` to all the generated CSS class names. If you want to use your own namespace you can override the default one using the ``--namespace`` option.
+
+.. code-block:: bash
+
+    $ glue source output --namespace=my-namespace
+
+
+If you want to completely remove the namespace (both the global and the sprite part) you can use:
+
+.. code-block:: bash
+
+    $ glue source output --sprite-namespace= --namespace=
+
+
 --no-img
 --------
 
@@ -440,6 +272,7 @@ Don't create any sprite image.
 .. code-block:: bash
 
     $ glue source output --no-img
+
 
 --no-css
 --------
@@ -450,3 +283,226 @@ Don't create any CSS file.
 
     $ glue source output --no-css
 
+
+--ordering
+--------------
+Before processing the images using the `algorithm` glue orders the images. The default ordering is `maxside` but you can configure it using the ``--ordering`` option.
+
+.. code-block:: bash
+
+    $ glue source output --ordering=[maxside|width|height|area|filename]
+
+You can reverse how any of the available algorithms works prepending a `-`.
+
+.. code-block:: bash
+
+    $ glue source output --ordering=[-maxside|-width|-height|-area|-filename]
+
+
+-p --padding
+------------
+If you want to add the same padding around all images you can use the ``--padding`` option:
+
+.. code-block:: bash
+
+    $ glue source output --padding=10
+    $ glue source output --padding=10 20
+    $ glue source output --padding=10 20 30 40
+
+
+--png8
+------
+By using the flag ``png8`` the output image format will be png8 instead of png32.
+
+.. code-block:: bash
+
+    $ glue source output --png8
+
+
+.. note::
+    This feature is unstable in OSX > 10.7 because a bug in PIL.
+
+
+--project
+-----------
+As it's explained at the :doc:`quickstart page <quickstart>` the default behaviour of ``glue`` is to handle one unique sprite folder. If you need to generate several sprites for a project, you can use the ``--project`` option to handle multiple folders with only one command.
+
+The suggested setup is to create a new folder for every sprite, and add inside all the images you need for each one. ``glue`` will create a new sprite for every folder::
+
+    images
+    ├── actions
+    │   ├── add.png
+    │   └── remove.png
+    ├── borders
+    │   ├── top_left.png
+    │   └── top_right.png
+    └── icons
+        ├── comment.png
+        ├── new.png
+        └── rss.png
+
+.. code-block:: bash
+
+    $ glue source output --project
+
+
+--pseudo-class-separator
+-------------------------
+As it's explained at the :doc:`pseudo-classes page <pseudoclasses>` using the filename of the source images you can customize the pseudo class related to the images, so if you simply append ``__hover`` to the filename ``glue`` will add ``:hover`` to the CSS class name.
+
+Since ``glue 0.9`` this separator is ``__`` but for previous version it use to be only ``_``. In order to not make ``glue < 0.9`` users rename their images, ``glue 0.9`` introduces this new option so you can customize the separator.
+
+.. code-block:: bash
+
+    $ glue source output --pseudo-class-separator=_
+
+
+-q --quiet
+----------
+This flag will make ``glue`` suppress all console output.
+
+.. code-block:: bash
+
+    $ glue source output -q
+
+
+-r --recursive
+--------------
+
+Read directories recursively and add all the images to the same sprite.
+
+Example structure::
+
+    source
+    ├── actions
+    │   ├── add.png
+    │   └── remove.png
+    ├── borders
+    │   ├── top_left.png
+    │   └── top_right.png
+    └── icons
+        ├── comment.png
+        ├── new.png
+        ├── rss.png
+        └── blog
+            ├── rss.png
+            └── atom.png
+
+If you want to create only one sprite image you should use.
+
+.. code-block:: bash
+
+    $ glue source output --recursive
+
+On the other hand if you want to create three different sprites (one per folder) you can combine ``--project`` and ``--recursive``.
+
+.. code-block:: bash
+
+    $ glue source output --recursive --project
+
+--ratios
+------------
+``Glue`` can automatically scale down your sprites to automatically fit them into low-dpi devices. ``Glue`` assumes that the source images are the biggests you want to serve, then ``glue`` will create one sprite for each ratio you set in this command. For more information, read :doc:`ratios`.
+
+.. code-block:: bash
+
+    $ glue source output --ratios=2,1
+    $ glue source output --ratios=2,1.5,1
+
+
+--retina
+------------
+The option ``--retina`` is only a shortcut for ``--ratios=2,1``.
+
+.. code-block:: bash
+
+    $ glue source output --retina
+
+
+-s --source -o --output
+------------------------
+There are two ways to choose which are the ``source`` and the ``output`` directories. Using the first and the second positional arguments is the traditional way of using ``glue`` but in order to standardize how configuration is handled ``glue 0.9`` intruduced these two new options.
+
+.. code-block:: bash
+
+    $ glue output --source=DIR --output=DIR
+
+
+--scss
+---------
+`scss/sass <http://sass-lang.com/>`_  is another dynamic stylesheet language that extends CSS with dynamic behaviors.
+``glue`` can also create ``.scss`` files adding the ``--scss`` option.
+This files contain exactly the same CSS code. This option only changes the file format.
+
+.. code-block:: bash
+
+    $ glue source output --scss
+
+.. note::
+    New in version 0.9
+
+
+--scss-template
+----------------
+While using ``--scss`` you can use your own less template using ``--scss-template=<FILE>``.
+
+.. note::
+    By default glue will use it's own internal ``scss`` template, so this command **is not required** unless you want to super-customize glue's ``scss`` output using **your own** template. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+
+.. code-block:: bash
+
+    $ glue source output --scss-template=my_template.jinja
+
+.. note::
+    New in version 0.9.2
+
+--separator
+--------------------------
+``glue`` by default uses ``-`` as separator for the CSS class names. If you want to customize this behaviour you can use ``--separator`` to specify your own
+one:
+
+.. code-block:: bash
+
+    $ glue source output --separator=_
+
+If you want to use `camelCase <http://en.wikipedia.org/wiki/CamelCase>`_ instead of a separator, choose ``camelcase`` as separator.
+
+.. code-block:: bash
+
+    $ glue source output --separator=camelcase
+
+
+--sprite-namespace
+------------------
+By default ``glue`` adds the sprite's name as past of the CSS class namespace. If you want to use your own namespace you can override the default one using the ``--sprite-namespace`` option.
+
+.. code-block:: bash
+
+    $ glue source output --sprite-namespace=custom
+
+
+As part of the new sprite namespace you can use the key ``%(sprite)s`` to refer to the original namespace.
+
+If you want to completely remove the namespace (both the global and the sprite part) you can use:
+
+.. code-block:: bash
+
+    $ glue source output --sprite-namespace= --namespace=
+
+
+-u --url
+---------
+By default ``glue`` adds to the PNG file name the relative url between the CSS and the PNG file. If for any reason you need to change this behaviour, you can use ``url=<your-static-url-to-the-png-file>`` and ``glue`` will replace its suggested one with your url.
+
+.. code-block:: bash
+
+    $ glue source output --url=http://static.example.com/
+
+
+--watch
+------------
+While you are developing a site it could be quite frustrating running ``Glue`` once and another every time you change a source image or a filename. ``--watch`` will allow you to keep ``Glue`` running in the background and it'll rebuild the sprite every time it detects changes on the source directory.
+
+.. code-block:: bash
+
+    $ glue source output --watch

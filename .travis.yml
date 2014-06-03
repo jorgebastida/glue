@@ -1,10 +1,13 @@
 language: python
 python:
+  - "3.3"
   - "2.7"
   - "2.6"
 install:
   - sudo apt-get install zlib1g-dev
   - sudo ln -s /usr/lib/i386-linux-gnu/libz.so /usr/lib
-  - python setup.py install
+  - pip install coveralls
 script:
-  - python tests.py
+  - coverage run --source=glue setup.py test
+after_success:
+  coveralls

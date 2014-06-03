@@ -96,70 +96,45 @@ Is up to you, but using ``2`` and ``1.5`` should be enough for most of the devic
 
 Here you have a list of suggested ratios for some famous devices, `(full list) <http://en.wikipedia.org/wiki/List_of_displays_by_pixel_density>`_:
 
-===================== ================ ============ ================
-Device                Screen size      dpi          Suggested ratio
-===================== ================ ============ ================
-iPhone 5 / iPod Touch **1136 × 640**     **326ppi**   **2**
-**iPhone 4**          **960 × 640**    **326ppi**   **2**
-**iPhone 4S**         **960 × 640**    **326ppi**   **2**
-**iPad (3rd gen)**    **2048 × 1536**  **264ppi**   **2**
-**MacBook Retina**    **2880 x 1800**  **220ppi**   **2**
-**Xperia S**          **720 × 1280**   **342ppi**   **2**
-**One X**             **720 × 1280**   **312ppi**   **2**
-**EVO LTE**           **720 × 1280**   **312ppi**   **2**
-**Galaxy Note**       **800 × 1280**   **285ppi**   **2**
-**Galaxy SIII**       **720 × 1280**   **306ppi**   **2**
-**Galaxy Nexus**      **720 × 1280**   **316ppi**   **2**
-HTC Desire            480 × 800        252ppi       1.5
-Nexus One             480 × 800        252ppi       1.5
-Sensation             960 × 540        256ppi       1.5
-Evo 3D                960 × 540        256ppi       1.5
-Sensation XE          960 × 540        256ppi       1.5
-LG Optimus 2X         480 × 800        233ppi       1.5
-Defy+                 854 × 480        265ppi       1.5
-Milestone             480 × 854        265ppi       1.5
-Nexus S SAMOLED       480 × 800        235ppi       1.5
-Nexus S LCD           480 × 800        235ppi       1.5
-Galaxy S Plus         480 x 800        233ppi       1.5
-Galaxy SII            480 × 800        219ppi       1.5
-Galaxy Tab            600 × 1024       171ppi       1.5
-iPad mini             1024 × 768       163ppi       1
-iPhone                480 × 320        163ppi       1
-iPhone 3G             480 × 320        163ppi       1
-iPhone 3GS            480 × 320        163ppi       1
-iPad (1st gen)        1024 × 768       132ppi       1
-iPad 2                1024 × 768       132ppi       1
-Kidle Fire            1024 × 600       169ppi       1
-Galaxy Y (S5360)      240 × 320        133ppi       0.75
-===================== ================ ============ ================
-
-Avoiding undesired shades with small images
--------------------------------------------
-
-After creating your bigger sprite, ``glue`` scale down the image to the appropriate ratio size using ``Pillow``. In some situations ``Pillow`` scaling algorithm perform really bad and it generates some horrible shades / gray borders.
-
-In order to avoid them you should use the ``--imagemagick`` option. This option will make ``glue`` use ``ImageMagick`` to scale down images instead of ``Pillow``.
-
-As you can see in the next example not using ``--imagemagick`` will make your scaled sprite look quite bad.
-
-.. figure:: img/retina_borders.png
-
-
-Installing ImageMagick
-----------------------
-
-OS X
-++++
-You can install ``ImageMagick`` using ``brew``
-
-.. code-block:: bash
-
-    $ brew install imagemagick
-
-Debian / Ubuntu
-+++++++++++++++
-``ImageMagick`` is available in ``apt``.
-
-.. code-block:: bash
-
-    $ apt-get install imagemagick
+========================= =================== =============== ================
+Device                    Screen size         dpi             Suggested ratio
+========================= =================== =============== ================
+**iPad**                  **2048 × 1536**     **264ppi**      **2**
+**iPhone 5/5S/5C**        **1136 × 640**      **326ppi**      **2**
+**iPhone 4**              **960 × 640**       **326ppi**      **2**
+**iPhone 4S**             **960 × 640**       **326ppi**      **2**
+**iPad (3rd gen)**        **2048 × 1536**     **264ppi**      **2**
+**MacBook Retina**        **2880 x 1800**     **220ppi**      **2**
+**Xperia S**              **720 × 1280**      **342ppi**      **2**
+**One X**                 **720 × 1280**      **312ppi**      **2**
+**EVO LTE**               **720 × 1280**      **312ppi**      **2**
+**Galaxy Note**           **800 × 1280**      **285ppi**      **2**
+**Galaxy SIII**           **720 × 1280**      **306ppi**      **2**
+**Galaxy S4**             **1080 × 1920**     **441ppi**      **3**
+**Galaxy Nexus**          **720 × 1280**      **316ppi**      **2**
+**Nexus 4**               **768 × 1280**      **320ppi**      **2**
+**Nexus 5**               **1920 x 1080**     **445ppi**      **3**
+**Kindle Fire HDX 8.9**   **2560 x 1600**     **339ppi**      **1.5**
+**Kindle Fire HD  8.9**   **1920 x 1200**     **254ppi**      **1.5**
+HTC Desire                480 × 800           252ppi          1.5
+Nexus One                 480 × 800           252ppi          1.5
+Sensation                 960 × 540           256ppi          1.5
+Evo 3D                    960 × 540           256ppi          1.5
+Sensation XE              960 × 540           256ppi          1.5
+LG Optimus 2X             480 × 800           233ppi          1.5
+Defy+                     854 × 480           265ppi          1.5
+Milestone                 480 × 854           265ppi          1.5
+Nexus S SAMOLED           480 × 800           235ppi          1.5
+Nexus S LCD               480 × 800           235ppi          1.5
+Galaxy S Plus             480 x 800           233ppi          1.5
+Galaxy SII                480 × 800           219ppi          1.5
+Galaxy Tab                600 × 1024          171ppi          1.5
+iPad mini                 1024 × 768          163ppi          1
+iPhone                    480 × 320           163ppi          1
+iPhone 3G                 480 × 320           163ppi          1
+iPhone 3GS                480 × 320           163ppi          1
+iPad (1st gen)            1024 × 768          132ppi          1
+iPad 2                    1024 × 768          132ppi          1
+Kidle Fire                1024 × 600          169ppi          1
+Galaxy Y (S5360)          240 × 320           133ppi          0.75
+========================= =================== =============== ================

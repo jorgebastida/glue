@@ -3,35 +3,14 @@ Configuration files
 
 Introduction
 ------------
-``glue`` has around fifteen command line arguments, so adding all of them every time
-you need to rebuild your sprites could be really annoying.
+``glue`` has around 30 command line options. Remember all of them every time you need to rebuild your sprites could be really annoying. If you are using glue as part of your assets rebuild process and you want consistent executions over time, using configuration files could be a good idea.
 
-You can add to your sprites container or to your sprite folder a configuration file named ``sprite.conf`` and add inside
-all the configuration you need::
+The only thing you need to do is create a file named ``sprite.conf`` inside your sprite folder (or project folder if you want to apply this settings to your entire project) and glue will override your command line options using these settings. Project-level and sprite-level configuration files can coexist::
 
-    images
+    sprites
         ├── actions
         │   ├── add.png
-        │   └── remove.png
-        └── icons
-        │   ├── comment.png
-        │   ├── new.png
-        │   └── rss.png
-        └── sprite.conf
-
-If for example you want to change the namespace and the default padding to all your sprites you can add this to your ``sprite.conf``::
-
-    [sprite]
-    namespace=my-sprites
-    padding=20
-
-
-If the ``actions`` images needs to be cropped and have a different padding, you can create a new ``sprite.conf`` file inside your ``actions`` folder::
-
-    images
-        ├── actions
-        │   ├── add.png
-        │   ├── remove.png
+        │   ├── remove.png
         │   └── sprite.conf
         └── icons
         │   ├── comment.png
@@ -39,44 +18,70 @@ If the ``actions`` images needs to be cropped and have a different padding, you 
         │   └── rss.png
         └── sprite.conf
 
-All the configuration you add there will override the first configuration file::
+If for example you want to change the namespace and the default padding to all your sprites you can add this to your project-level ``sprite.conf``::
+
+    [sprite]
+    namespace=my-sprites
+    padding=20
+
+
+If the ``actions`` images needs to be cropped and have a different padding, you can create add the following settings to your new ``actions/sprite.conf`` file::
 
     [sprite]
     crop=true
     padding=10
 
+If the ``remove.png`` image needs to have ``10px`` margin and ``0px`` padding you can append a new section to your ``actions/sprite.conf`` like the following::
+
+    [remove.png]
+    margin=10
+    padding=0
+
+This will override any previous setting about ``margin`` or ``padding`` affecting ``remove.png``.
+
 .. note::
-    All the configuration you specify using the command line will override the configuration that comes from any configuration file.
+    project-level, sprite-level and image-level settings override any environmnet or command-line settings. More information in the `settings section <http://glue.readthedocs.org/en/latest/settings.html>`_
 
 Available configuration
 -----------------------
 
-This is all the available configuration you can add to your ``sprite.conf`` files.
+============================ ============== ============== ==============
+Configuration File setting   Project-level  Sprite-level   Image-level
+============================ ============== ============== ==============
+source
+output
+quiet
+watch
+project
+recursive                    X              X
+follow_links                 X              X
+force                        X              X
+algorithm                    X              X
+algorithm_ordering           X              X
+css_dir                      X              X
+css_namespace                X              X
+css_sprite_namespace         X              X
+css_url                      X              X
+css_cachebuster              X              X
+css_cachebuster_filename     X              X
+css_separator                X              X
+css_template                 X              X
+css_pseudo_class_separator   X              X
+less_dir                     X              X
+scss_dir                     X              X
+img_dir                      X              X
+generate_image               X              X
+png8                         X              X
+ratios                       X              X
+html_dir                     X              X
+cocos2d_dir                  X              X
+caat_dir                     X              X
+json_dir                     X              X
+json_format                  X              X
+crop                         X              X              X
+padding                      X              X              X
+margin                       X              X              X
+============================ ============== ============== ==============
 
-======================== ======================================================================================
-name                     default value
-======================== ======================================================================================
-padding                  '0'
-margin                   '0'
-algorithm                'maxside'
-namespace                'sprite'
-crop                     False
-url                      ''
-less                     False
-optipng                  False
-html                     False
-ignore_filename_paddings False
-size                     True
-png8                     False
-optipngpath              'optipng'
-optipng                  False
-separator                '-'
-project                  False
-quiet                    False
-cachebuster              False
-cachebuster-filename     False
-global_template          '%(all_classes)s{background-image:url(%(sprite_url)s);background-repeat:no-repeat}\\n'
-each_template            '%(class_name)s{background-position:%(x)s %(y)s;width:%(width)s;height:%(height)s;}\\n'
-ratio_template           '\@media only screen and (-webkit-min-device-pixel-ratio: %(ratio)s), only screen and (min--moz-device-pixel-ratio: %(ratio)s), only screen and (-o-min-device-pixel-ratio: %(ratio_fraction)s), only screen and (min-device-pixel-ratio: %(ratio)s) {%(all_classes)s{background-image:url(%(sprite_url)s);-webkit-background-size: %(width)s %(height)s;-moz-background-size: %(width)s %(height)s;background-size: %(width)s %(height)s;}}\\n'
-======================== ======================================================================================
-
+.. note::
+    You can't enable output formats using configurations files. If for example you add ``less_dir`` to your ``sprite.conf`` this would only override ``less`` output fodler if less is already an enabled output format.
