@@ -16,7 +16,7 @@ def main(argv=None):
 
     argv = (argv or sys.argv)[1:]
 
-    parser = argparse.ArgumentParser(usage=("usage: %(prog)s [source | --source | -s] [output | --output | -o]"))
+    parser = argparse.ArgumentParser(usage=("%(prog)s [source | --source | -s] [output | --output | -o]"))
 
     parser.add_argument("--source", "-s",
                         dest="source",
