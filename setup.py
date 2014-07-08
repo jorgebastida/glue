@@ -8,7 +8,7 @@ install_requires=[
 ]
 
 tests_require=[
-    'cssutils>=0.9,<1.0',
+    'cssutils>=0.9.10,<1.0',
 ]
 
 # as of Python >= 2.7 argparse module is maintained within Python.

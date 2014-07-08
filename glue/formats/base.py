@@ -136,7 +136,7 @@ class BaseTextFormat(BaseFormat):
         if not os.path.exists(self.output_dir(*args, **kwargs)):
             os.makedirs(self.output_dir(*args, **kwargs))
 
-        with codecs.open(self.output_path(*args, **kwargs), 'w', 'utf-8-sig') as f:
+        with codecs.open(self.output_path(*args, **kwargs), 'w', 'utf-8') as f:
             f.write(self.render(*args, **kwargs))
 
 
@@ -148,7 +148,7 @@ class BaseJSONFormat(BaseTextFormat):
         for ratio in self.sprite.config['ratios']:
             json_path = self.output_path(ratio)
             if os.path.exists(json_path):
-                with codecs.open(json_path, 'r', 'utf-8-sig') as f:
+                with codecs.open(json_path, 'r', 'utf-8') as f:
                     try:
                         data = json.loads(f.read())
                         assert data[self.meta_key]['hash'] == self.sprite.hash

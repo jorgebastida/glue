@@ -1,6 +1,5 @@
 import os
 import json
-import codecs
 
 from base import BaseJSONFormat
 
