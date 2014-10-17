@@ -17,7 +17,7 @@ Basically, provide two different version of each image.
 
 **And... how can we detect wich image should we use?** CSS Media Queries. Modern browsers `(anything after IE 8.0) <http://caniuse.com/#feat=css-mediaqueries>`_ supports them, and they allow us to specify different styles based on the ``device-pixel-ratio`` of the browser.
 
-**Can glue help?** Yes, using ``--ratios`` you can choose different ratios you want to build of each sprite. Glue will create one sprite for each ratio and will add all the neccesary CSS magic to make the browser use the high DPI image if the browser needs it. You can also use ``--retina``, it's a shortcut for ``--ration=2,1``.
+**Can glue help?** Yes, using ``--ratios`` you can choose different ratios you want to build of each sprite. Glue will create one sprite for each ratio and will add all the neccesary CSS magic to make the browser use the high DPI image if the browser needs it. You can also use ``--retina``, it's a shortcut for ``--ratios=2,1``.
 
 
 How --retina and --ratios work?
