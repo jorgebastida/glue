@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import os
 import json
 import codecs
@@ -33,7 +34,7 @@ class JSONFormat(BaseJSONFormat):
     def get_context(self, *args, **kwargs):
         context = super(JSONFormat, self).get_context(*args, **kwargs)
 
-        frames = dict([[i['filename'], {'filename': i['filename'],
+        frames = OrderedDict([[i['filename'], {'filename': i['filename'],
                                         'frame': {'x': i['x'],
                                                   'y': i['y'],
                                                   'w': i['width'],
@@ -47,7 +48,7 @@ class JSONFormat(BaseJSONFormat):
                                         'sourceSize': {'w': i['original_width'],
                                                        'h': i['original_height']}}] for i in context['images']])
 
-        data = dict(frames=None, meta={'version': context['version'],
+        data = OrderedDict(frames=None, meta={'version': context['version'],
                                        'hash': context['hash'],
                                        'name': context['name'],
                                        'sprite_path': context['sprite_path'],

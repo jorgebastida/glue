@@ -158,7 +158,7 @@ class BaseJSONFormat(BaseTextFormat):
         return False
 
     def render(self, *args, **kwargs):
-        return json.dumps(self.get_context(*args, **kwargs))
+        return json.dumps(self.get_context(*args, **kwargs), indent=4)
 
 
 class BasePlistFormat(BaseTextFormat):
