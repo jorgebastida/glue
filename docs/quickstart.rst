@@ -133,5 +133,4 @@ And now?
 * Glue can also read the configuration from :doc:`static config files <files>`.
 * We support `less <http://lesscss.org/>`_! It's easy, add ``--less`` and ``glue`` will generate the CSS file with the ``.less`` extension.
 * Cache Busting? Yes! Add ``--cachebuster`` and ``glue`` will add the ``SHA1`` of the PNG sprite as a queryarg on the CSS files. Read the :doc:`options` page.
-* We support `OptiPNG <http://optipng.sourceforge.net/>`_ to automatically optimize the PNG sprites. Read the :doc:`options` page.
 * Still hungry? Read the :doc:`options` page to discover all the available settings.

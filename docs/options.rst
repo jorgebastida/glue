@@ -65,7 +65,7 @@ After --cachebuster:
 
 .. code-block:: css
 
-    .sprite-icons-zoom{ background:url('sprites/icons/icons.png=p3c54d'); top:0; left:0; no-repeat;}
+    .sprite-icons-zoom{ background:url('sprites/icons/icons.png?p3c54d'); top:0; left:0; no-repeat;}
     .sprite-icons-wrench_orange{ background:url('sprites/icons/icons.png?p3c54d'); top:0; left:-16; no-repeat;}
     ...
 
@@ -240,8 +240,8 @@ If you want to spread the images around the sprite but you don't want to count t
 .. code-block:: bash
 
     $ glue source output --margin=10
-    $ glue source output --margin=10 20
-    $ glue source output --margin=10 20 30 40
+    $ glue source output --margin='10 20'
+    $ glue source output --margin='10 20 30 40'
 
 
 .. note::
