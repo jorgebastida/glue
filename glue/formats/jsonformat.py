@@ -1,7 +1,11 @@
-from collections import OrderedDict
 import os
 import json
 import codecs
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 
 from base import BaseJSONFormat
 
