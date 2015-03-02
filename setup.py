@@ -14,6 +14,8 @@ tests_require=[
 # as of Python >= 2.7 argparse module is maintained within Python.
 if sys.version_info < (2, 7):
     install_requires.append('argparse>=1.1')
+    install_requires.append('ordereddict>=1.1')
+
 
 # as of Python >= 3.3 unittest.mock module is maintained within Python.
 if sys.version_info < (3, 3):
