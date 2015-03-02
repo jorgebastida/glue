@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.11.0
+^^^^^^
+* Fix incorrect order in JSON output #186
+
 0.10.0
 ^^^^^^
 * Added support to ``python 3.3+``
