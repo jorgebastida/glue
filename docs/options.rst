@@ -240,8 +240,8 @@ If you want to spread the images around the sprite but you don't want to count t
 .. code-block:: bash
 
     $ glue source output --margin=10
-    $ glue source output --margin=10 20
-    $ glue source output --margin=10 20 30 40
+    $ glue source output --margin='10 20'
+    $ glue source output --margin='10 20 30 40'
 
 
 .. note::
