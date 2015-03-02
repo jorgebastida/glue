@@ -4,6 +4,8 @@ Changelog
 0.11.0
 ^^^^^^
 * Fix incorrect order in JSON output #186
+* Stop using utf-8-sig #162
+* Fix several typos in the documentation #165 #181 #182
 
 0.10.0
 ^^^^^^
