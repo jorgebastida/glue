@@ -1,6 +1,5 @@
 import os
 import json
-import codecs
 
 try:
     from collections import OrderedDict
