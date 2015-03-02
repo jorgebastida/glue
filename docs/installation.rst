@@ -12,7 +12,7 @@ Before installing ``Homebrew`` you'll need to install Xcode, then you can follow
 
 .. code-block:: bash
 
-    $ sudo brew install jpeg
+    $ brew install jpeg
     $ sudo pip install glue
 
 .. note::
