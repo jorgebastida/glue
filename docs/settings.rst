@@ -41,6 +41,8 @@ Command-line arg             Environment Variable                Configuration F
 --less-template              GLUE_LESS_TEMPLATE                  less_template
 --scss                       GLUE_SCSS                           scss_format
 --scss-template              GLUE_SCSS_TEMPLATE                  scss_template
+--styl                       GLUE_STYL                           styl_dir
+--styl-template              GLUE_STYL_TEMPLATE                  styl_template
 --namespace                  GLUE_CSS_NAMESPACE                  css_namespace
 --sprite-namespace           GLUE_CSS_SPRITE_NAMESPACE           css_sprite_namespace
 -u --url                     GLUE_CSS_URL                        css_url

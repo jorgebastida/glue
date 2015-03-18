@@ -69,6 +69,7 @@ css_template                 X              X
 css_pseudo_class_separator   X              X
 less_dir                     X              X
 scss_dir                     X              X
+styl_dir                     X              X
 img_dir                      X              X
 generate_image               X              X
 png8                         X              X
