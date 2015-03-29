@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.11.1
+^^^^^^
+* Fix packaging issue. #192
+
 0.11.0
 ^^^^^^
 * Fix incorrect order in JSON output #186

@@ -1,0 +1,5 @@
+recursive-include docs *
+prune docs/_build
+include AUTHORS
+include COPYING
+include README.rst
