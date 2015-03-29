@@ -1,5 +1,6 @@
 recursive-include docs *
 prune docs/_build
+exclude docs/make.bat
 include AUTHORS
 include COPYING
 include README.rst
