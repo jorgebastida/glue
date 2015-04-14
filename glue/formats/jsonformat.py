@@ -34,18 +34,27 @@ class JSONFormat(BaseJSONFormat):
                            choices=['array', 'hash'],
                            help=("JSON structure format (array, hash)"))
 
+        group.add_argument("--output_abs_xy",
+                           dest="output_abs_xy",
+                           nargs='?',
+                           const=True,
+                           default=os.environ.get('GLUE_JSON', False),
+                           metavar='DIR',
+                           help="Output x,y as positive values")
+
     def get_context(self, *args, **kwargs):
         context = super(JSONFormat, self).get_context(*args, **kwargs)
 
+        output_abs_xy = self.sprite.config.get('output_abs_xy')
         frames = OrderedDict([[i['filename'], {'filename': i['filename'],
-                                        'frame': {'x': i['x'],
-                                                  'y': i['y'],
+                                        'frame': {'x': i['abs_x'] if output_abs_xy else i['x'],
+                                                  'y': i['abs_y'] if output_abs_xy else i['y'],
                                                   'w': i['width'],
                                                   'h': i['height']},
                                         'rotated': False,
                                         'trimmed': False,
-                                        'spriteSourceSize': {'x': i['x'],
-                                                             'y': i['y'],
+                                        'spriteSourceSize': {'x': i['abs_x'] if output_abs_xy else i['x'],
+                                                             'y': i['abs_y'] if output_abs_xy else i['y'],
                                                              'w': i['width'],
                                                              'h': i['height']},
                                         'sourceSize': {'w': i['original_width'],
