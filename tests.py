@@ -1814,7 +1814,7 @@ class TestGlue(unittest.TestCase):
             data = json.loads(f.read())
             self.assertEqual(data['meta'], {
                 u'app': u'https://github.com/jorgebastida/glue/',
-                u'version': unicode(__version__),
+                u'version': __version__,
                 u'format': u'RGBA8888',
                 u'image': u'simple.png',
                 u'size': {
@@ -1859,7 +1859,7 @@ class TestGlue(unittest.TestCase):
 
             self.assertEqual(data['meta'], {
                 u'app': u'https://github.com/jorgebastida/glue/',
-                u'version': unicode(__version__),
+                u'version': __version__,
                 u'format': u'RGBA8888',
                 u'image': u'simple.png',
                 u'size': {
@@ -1893,7 +1893,7 @@ class TestGlue(unittest.TestCase):
 
             self.assertEqual(data['meta'], {
                 u'app': u'https://github.com/jorgebastida/glue/',
-                u'version': unicode(__version__),
+                u'version': __version__,
                 u'format': u'RGBA8888',
                 u'image': u'simple.png',
                 u'size': {
