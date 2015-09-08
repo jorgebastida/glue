@@ -26,8 +26,9 @@ class BaseFormat(object):
         if self.build_per_ratio:
             if ratio is None:
                 raise AttributeError("Format {0} output_filename requires a ratio.".format(self.__class__))
-            ratio_suffix = '@%.1fx' % ratio if int(ratio) != ratio else '@%ix' % ratio
-            if ratio_suffix == '@1x':
+            delimiter = self.sprite.config.get('ratio_delimiter')
+            ratio_suffix = delimiter + '%.1fx' % ratio if int(ratio) != ratio else delimiter + '%ix' % ratio
+            if ratio_suffix == delimiter + '1x':
                 ratio_suffix = ''
             return '{0}{1}'.format(self.sprite.name, ratio_suffix)
         return self.sprite.name

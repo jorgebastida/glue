@@ -1801,5 +1801,52 @@ class TestGlue(unittest.TestCase):
             data = json.loads(f.read())
             assert isinstance(data['sprites'], dict)
 
+
+    def test_delimiter(self):
+        self.create_image("simple/red.png", RED)
+        self.create_image("simple/blue.png", BLUE)
+
+        # Custom ratio delimiter
+        code = self.call('glue simple output --retina --ratio-delimiter=-')
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple-2x.png")
+        self.assertExists("output/simple.css")
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-red',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'32px',
+                        u'height': u'32px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-32px 0',
+                        u'width': u'32px',
+                        u'height': u'32px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-red',
+                       {u'background-image': u"url(simple-2x.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'background-size': u'64px 32px',
+                        u'-webkit-background-size': u'64px 32px',
+                        u'-moz-background-size': u'64px 32px',
+                        u'width': u'32px',
+                        u'height': u'32px'}, ratio=2)
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-blue',
+                       {u'background-image': u"url(simple-2x.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-32px 0',
+                        u'background-size': u'64px 32px',
+                        u'-webkit-background-size': u'64px 32px',
+                        u'-moz-background-size': u'64px 32px',
+                        u'width': u'32px',
+                        u'height': u'32px'}, ratio=2)
+
 if __name__ == '__main__':
     unittest.main()
