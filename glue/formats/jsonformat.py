@@ -1,12 +1,12 @@
 import os
-import json
 
 try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict
 
-from base import BaseJSONFormat
+from glue.compat import text_type
+from .base import BaseJSONFormat
 
 
 class JSONFormat(BaseJSONFormat):
@@ -29,7 +29,7 @@ class JSONFormat(BaseJSONFormat):
         group.add_argument("--json-format",
                            dest="json_format",
                            metavar='NAME',
-                           type=unicode,
+                           type=text_type,
                            default=os.environ.get('GLUE_JSON_FORMAT', 'array'),
                            choices=['array', 'hash'],
                            help=("JSON structure format (array, hash)"))
@@ -60,7 +60,7 @@ class JSONFormat(BaseJSONFormat):
                                        'height': context['height']})
 
         if self.sprite.config['json_format'] == 'array':
-            data['frames'] = frames.values()
+            data['frames'] = list(frames.values())
         else:
             data['frames'] = frames
 
