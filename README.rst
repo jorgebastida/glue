@@ -18,8 +18,8 @@ Glue is a simple command line tool to generate sprites::
 
     $ glue source output
 
-* The latest documentation is available at: http://glue.readthedocs.org
-* Installation instructions: http://glue.readthedocs.org/en/latest/installation.html
+* The latest documentation is available at: https://glue.readthedocs.io
+* Installation instructions: https://glue.readthedocs.io/en/latest/installation.html
 * Glue-users mailing list: https://groups.google.com/forum/#!forum/glue-users
 
 Features
@@ -31,18 +31,18 @@ Features
   - json (array, hash)
   - CAAT
 
-* Automatic multi-dpi `retina <http://glue.readthedocs.org/en/latest/ratios.html>`_ sprite creation.
+* Automatic multi-dpi `retina <https://glue.readthedocs.io/en/latest/ratios.html>`_ sprite creation.
 * Support for multi-sprite projects.
 * Create sprites from multiple folders (recursively).
-* Multiple `algorithms <http://glue.readthedocs.org/en/latest/options.html#a-algorithm>`_ available.
-* Automatic `crop of unnecessary transparent borders <http://glue.readthedocs.org/en/latest/quickstart.html#crop-unnecessary-transparent-spaces>`_ around source images.
-* Configurable `paddings and margin per image, sprite or project <http://glue.readthedocs.org/en/latest/paddings.html>`_.
+* Multiple `algorithms <https://glue.readthedocs.io/en/latest/options.html#a-algorithm>`_ available.
+* Automatic `crop of unnecessary transparent borders <https://glue.readthedocs.io/en/latest/quickstart.html#crop-unnecessary-transparent-spaces>`_ around source images.
+* Configurable `paddings and margin per image, sprite or project <https://glue.readthedocs.io/en/latest/options.html#p-padding>`_.
 * Watch option to keep glue running watching for file changes.
 * Project-, Sprite- and Image-level configuration via static config files.
-* Customizable `output <http://glue.readthedocs.org/en/latest/options.html#global-template>`_ using jinja templates.
+* Customizable `output <https://glue.readthedocs.io/en/latest/options.html#global-template>`_ using jinja templates.
 * CSS: Optional .less/.scss output format.
-* CSS: Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
-* CSS: Customizable `class names <http://glue.readthedocs.org/en/latest/options.html#separator>`_.
+* CSS: Configurable `cache busting for sprite images <https://glue.readthedocs.io/en/latest/options.html#cachebuster>`_.
+* CSS: Customizable `class names <https://glue.readthedocs.io/en/latest/options.html#separator>`_.
 * Python ``2.6``, ``2.7`` and ``3.3+`` supported.
 * Really `well tested <https://coveralls.io/r/jorgebastida/glue?branch=master>`_.
 
@@ -63,7 +63,7 @@ And also an ``icons.css`` with all the necessary CSS classes for this sprite::
     ...
 
 
-Do you want to know more? Visit the quickstart guide: http://glue.readthedocs.org/en/latest/quickstart.html
+Do you want to know more? Visit the quickstart guide: https://glue.readthedocs.io/en/latest/quickstart.html
 
 Contribute
 -----------
