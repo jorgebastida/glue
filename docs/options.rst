@@ -421,7 +421,7 @@ The option ``--retina`` is only a shortcut for ``--ratios=2,1``.
 
 -s --source -o --output
 ------------------------
-There are two ways to choose which are the ``source`` and the ``output`` directories. Using the first and the second positional arguments is the traditional way of using ``glue`` but in order to standardize how configuration is handled ``glue 0.9`` intruduced these two new options.
+There are two ways to choose which are the ``source`` and the ``output`` directories. Using the first and the second positional arguments is the traditional way of using ``glue`` but in order to standardize how configuration is handled ``glue 0.9`` introduced these two new options.
 
 .. code-block:: bash
 

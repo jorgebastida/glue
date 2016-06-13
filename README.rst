@@ -84,7 +84,7 @@ We are creating a list of companies using glue in production. If your company us
 We need your help
 ------------------
 
-There are several features that ``glue`` users would love to have... but they require a substancial amount of work and dedication, so we are looking for feature-sponsors! If you want to lead the development/testing of any of the following features, please contact `Jorge Bastida <mailto:me@jorgebastida.com>`_.
+There are several features that ``glue`` users would love to have... but they require a substantial amount of work and dedication, so we are looking for feature-sponsors! If you want to lead the development/testing of any of the following features, please contact `Jorge Bastida <mailto:me@jorgebastida.com>`_.
 
 Here you have some examples:
 

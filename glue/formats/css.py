@@ -76,7 +76,7 @@ class CssFormat(JinjaTextFormat):
                            default=os.environ.get('GLUE_CSS_CACHEBUSTER', False),
                            action='store_true',
                            help=("Use the sprite's sha1 first 6 characters as a "
-                                 "queryarg everytime that file is referred "
+                                 "queryarg every time that file is referred "
                                  "from the css"))
 
         group.add_argument("--cachebuster-filename",
