@@ -57,7 +57,7 @@ class JSONFormat(BaseJSONFormat):
                                        'sprite_path': context['sprite_path'],
                                        'sprite_filename': context['sprite_filename'],
                                        'width': context['width'],
-                                       'height': context['height']
+                                       'height': context['height'],
                                        'image': context['sprite_filename']})
 
         if self.sprite.config['json_format'] == 'array':
