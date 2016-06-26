@@ -62,16 +62,17 @@ class JSONFormat(BaseJSONFormat):
 
         if self.sprite.config['json_format'] == 'array':
             data['frames'] = frames.values()
-        else:
+        elif self.sprite.config['json_format'] == 'hash':
             data['frames'] = frames
-            if self.sprite.config['json_format'] == 'txtpkr':
-                for d in data['frames']:
-                    x = int(d['frame']['x'])
-                    y = int(d['frame']['y'])
-                    # Make the x,y coordinates grow in positive numbers
-                    d['frame']['x'] = x*-1
-                    d['frame']['y'] = y*-1
-                    d['spriteSourceSize']['x'] = x*-1
-                    d['spriteSourceSize']['y'] = y*-1
+        else: 
+            for k,v in frames:
+                x = frames[k]['frame']['x']
+                y = frames[k]['frame']['y']
+                # Make the x,y coordinates grow in positive numbers
+                frames[k]['frame']['x'] = x*-1
+                frames[k]['frame']['y'] = y*-1
+                frames[k]['spriteSourceSize']['x'] = x*-1
+                frames[k]['spriteSourceSize']['y'] = y*-1
+            data['frames'] = frames
 
         return data
