@@ -65,7 +65,7 @@ class JSONFormat(BaseJSONFormat):
         elif self.sprite.config['json_format'] == 'hash':
             data['frames'] = frames
         else: 
-            for k,v in frames:
+            for k,v in frames.items():
                 x = frames[k]['frame']['x']
                 y = frames[k]['frame']['y']
                 # Make the x,y coordinates grow in positive numbers
