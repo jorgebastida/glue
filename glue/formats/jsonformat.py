@@ -66,8 +66,8 @@ class JSONFormat(BaseJSONFormat):
             data['frames'] = frames
             if self.sprite.config['json_format'] == 'txtpkr':
                 for d in data['frames']:
-                    x = d['frame']['x']
-                    y = d['frame']['y']
+                    x = int(d['frame']['x'])
+                    y = int(d['frame']['y'])
                     # Make the x,y coordinates grow in positive numbers
                     d['frame']['x'] = x*-1
                     d['frame']['y'] = y*-1
