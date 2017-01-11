@@ -122,6 +122,12 @@ class CssFormat(JinjaTextFormat):
                            default=os.environ.get('GLUE_GENERATE_CSS', True),
                            help="Don't genereate CSS files.")
 
+        group.add_argument("--hierarchical",
+                           dest="hierarchical",
+                           action="store_true",
+                           default=os.environ.get('GLUE_HIERARCHICAL', False),
+                           help="This will add the directory path in class name.")
+
     @classmethod
     def apply_parser_contraints(cls, parser, options):
         cachebusters = (options.css_cachebuster, options.css_cachebuster_filename, options.css_cachebuster_only_sprites)
@@ -139,10 +145,10 @@ class CssFormat(JinjaTextFormat):
         return False
 
     def validate(self):
-        class_names = [':'.join(self.generate_css_name(i.filename)) for i in self.sprite.images]
+        class_names = [':'.join(self.generate_css_name(i.filename, i.path, self.sprite.path)) for i in self.sprite.images]
         if len(set(class_names)) != len(self.sprite.images):
-            dup = [i for i in self.sprite.images if class_names.count(':'.join(self.generate_css_name(i.filename))) > 1]
-            duptext = '\n'.join(['\t{0} => .{1}'.format(os.path.relpath(d.path), ':'.join(self.generate_css_name(d.filename))) for d in dup])
+            dup = [i for i in self.sprite.images if class_names.count(':'.join(self.generate_css_name(i.filename, i.path, self.sprite.path))) > 1]
+            duptext = '\n'.join(['\t{0} => .{1}'.format(os.path.relpath(d.path), ':'.join(self.generate_css_name(d.filename, i.path, self.sprite.path))) for d in dup])
             raise ValidationError("Error: Some images will have the same class name:\n{0}".format(duptext))
         return True
 
@@ -158,7 +164,8 @@ class CssFormat(JinjaTextFormat):
 
         # Generate css labels
         for image in context['images']:
-            image['label'], image['pseudo'] = self.generate_css_name(image['filename'])
+            
+            image['label'], image['pseudo'] = self.generate_css_name(image['filename'], image['path'], context['path'])
 
         if self.sprite.config['css_url']:
             context['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], context['sprite_filename'])
@@ -179,10 +186,18 @@ class CssFormat(JinjaTextFormat):
 
         return context
 
-    def generate_css_name(self, filename):
+    def generate_css_name(self, filename, filepath, spritePath):
         filename = filename.rsplit('.', 1)[0]
         separator = self.sprite.config['css_separator']
         namespace = [re.sub(r'[^\w\-_]', '', filename)]
+
+        # Add sub directory
+        if self.sprite.config['hierarchical']:
+            dirPath = os.path.split(os.path.relpath(filepath, spritePath))[0]
+            while dirPath != '':
+                (dirPath, dirName) = os.path.split(dirPath)
+                dirName = re.sub(r'[^\w\-_]', '', dirName)
+                namespace.insert(0, dirName)
 
         # Add sprite namespace if required
         if self.sprite.config['css_sprite_namespace']:

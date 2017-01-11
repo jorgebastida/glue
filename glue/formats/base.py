@@ -79,6 +79,7 @@ class BaseTextFormat(BaseFormat):
                    'hash': self.sprite.hash,
                    'name': self.sprite.name,
                    'sprite_path': sprite_path,
+                   'path': self.sprite.path,
                    'sprite_filename': os.path.basename(sprite_path),
                    'width': round_up(self.sprite.canvas_size[0] / self.sprite.max_ratio),
                    'height': round_up(self.sprite.canvas_size[1] / self.sprite.max_ratio),
@@ -101,7 +102,8 @@ class BaseTextFormat(BaseFormat):
                          width=round_up((img.width / self.sprite.max_ratio) + img.padding[1] + img.padding[3]),
                          original_width=img.original_width,
                          original_height=img.original_height,
-                         ratios={})
+                         ratios={},
+                         path=img.path)
 
             for r in self.sprite.ratios:
                 image['ratios'][r] = dict(filename=img.filename,
