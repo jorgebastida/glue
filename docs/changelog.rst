@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.12
+^^^^^^
+* Update Jinja version
+
 0.11.1
 ^^^^^^
 * Fix packaging issue. #192
