@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 install_requires=[
     'Pillow>=2.2.2',
-    'Jinja2>=2.7,<2.8',
+    'Jinja2>2.8,<2.9',
 ]
 
 tests_require=[
