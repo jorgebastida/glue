@@ -68,6 +68,12 @@ class ImageFormat(BaseFormat):
                            const='2,1',
                            help="Shortcut for --ratios=2,1")
 
+        group.add_argument("--ratio-delimiter",
+                           dest="ratio_delimiter",
+                           type=unicode,
+                           default="@",
+                           help="Ratio symbol delimiter")
+
     def output_filename(self, *args, **kwargs):
         filename = super(ImageFormat, self).output_filename(*args, **kwargs)
         if self.sprite.config['css_cachebuster_filename'] or self.sprite.config['css_cachebuster_only_sprites']:
