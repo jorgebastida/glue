@@ -206,6 +206,7 @@ class CssFormat(JinjaTextFormat):
         pseudo = ''
 
         css_pseudo_class_separator = self.sprite.config['css_pseudo_class_separator']
+        filename = re.sub(r'[^\x00-\x7F]+',' ', filename)
         if css_pseudo_class_separator in filename:
             pseudo_classes = [p for p in filename.split(css_pseudo_class_separator) if p in self.css_pseudo_classes]
 
