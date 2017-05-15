@@ -7,7 +7,7 @@ Glue is a simple command line tool to generate sprites::
 
 * Automatic Sprite (Image + Metadata) creation including:
 
-  - css (less, scss)
+  - css (less, scss, stylus)
   - cocos2d
   - json (array, hash)
   - CAAT
@@ -21,7 +21,7 @@ Glue is a simple command line tool to generate sprites::
 * Watch option to keep glue running watching for file changes.
 * Project-, Sprite- and Image-level configuration via static config files.
 * Customizable `output <http://glue.readthedocs.org/en/latest/templates.html>`_ using jinja templates.
-* CSS: Optional .less/.scss output format.
+* CSS: Optional .less/.scss/.styl output format.
 * CSS: Configurable `cache busting for sprite images <http://glue.readthedocs.org/en/latest/options.html#cachebuster>`_.
 * CSS: Customizable `class names <http://glue.readthedocs.org/en/latest/options.html#separator>`_.
 

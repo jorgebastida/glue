@@ -233,6 +233,30 @@ While using ``--less`` you can use your own less template using ``--less-templat
     New in version 0.9.2
 
 
+--styl
+---------
+`stylus <http://learnboost.github.io/stylus/>`_  is a dynamic stylesheet language that extends CSS with dynamic behaviors.
+``glue`` can also create ``.styl`` files adding the ``--styl`` option.
+This files contain exactly the same CSS code. This option only changes the file format.
+
+.. code-block:: bash
+
+    $ glue source output --styl
+
+
+--styl-template
+----------------
+While using ``--styl`` you can use your own stylus template using ``--styl-template=<FILE>``.
+
+.. note::
+    By default glue will use it's own internal ``stylus`` template, so this command **is not required** unless you want to super-customize glue's ``stylus`` output using **your own** template. You can find further documentation about how templates work in the :doc:`templates documentation page. <templates>`
+
+.. code-block:: bash
+
+    $ glue source output --styl-template=my_template.jinja
+
+
+
 --margin
 ------------
 If you want to spread the images around the sprite but you don't want to count this space as image width/height (as happens using `--padding``), you can use the ``--margin`` option followed by the margin you want to add:

@@ -6,6 +6,7 @@ from .jsonformat import JSONFormat
 from .caat import CAATFormat
 from .less import LessFormat
 from .scss import ScssFormat
+from .styl import StylFormat
 
 
 formats = {'css': CssFormat,
@@ -15,4 +16,5 @@ formats = {'css': CssFormat,
            'json': JSONFormat,
            'caat': CAATFormat,
            'less': LessFormat,
+           'styl': StylFormat,
            'scss': ScssFormat}
