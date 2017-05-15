@@ -31,8 +31,8 @@ class JSONFormat(BaseJSONFormat):
                            metavar='NAME',
                            type=unicode,
                            default=os.environ.get('GLUE_JSON_FORMAT', 'array'),
-                           choices=['array', 'hash'],
-                           help=("JSON structure format (array, hash)"))
+                           choices=['array', 'hash','txtpkr'],
+                           help=("JSON structure format (array, hash, txtpkr)"))
 
     def get_context(self, *args, **kwargs):
         context = super(JSONFormat, self).get_context(*args, **kwargs)
@@ -57,11 +57,22 @@ class JSONFormat(BaseJSONFormat):
                                        'sprite_path': context['sprite_path'],
                                        'sprite_filename': context['sprite_filename'],
                                        'width': context['width'],
-                                       'height': context['height']})
+                                       'height': context['height'],
+                                       'image': context['sprite_filename']})
 
         if self.sprite.config['json_format'] == 'array':
             data['frames'] = frames.values()
-        else:
+        elif self.sprite.config['json_format'] == 'hash':
+            data['frames'] = frames
+        else: 
+            for k,v in frames.items():
+                x = frames[k]['frame']['x']
+                y = frames[k]['frame']['y']
+                # Make the x,y coordinates grow in positive numbers
+                frames[k]['frame']['x'] = x*-1
+                frames[k]['frame']['y'] = y*-1
+                frames[k]['spriteSourceSize']['x'] = x*-1
+                frames[k]['spriteSourceSize']['y'] = y*-1
             data['frames'] = frames
 
         return data
