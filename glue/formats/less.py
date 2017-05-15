@@ -14,7 +14,7 @@ class LessFormat(CssFormat):
             -webkit-background-size: {{ width }}px {{ height }}px;
             -moz-background-size: {{ width }}px {{ height }}px;
             background-size: {{ width }}px {{ height }}px;
-            {% for r, ratio in ratios.items() %}
+            {% for r, ratio in ratios.items()|sort %}
             @media screen and (-webkit-min-device-pixel-ratio: {{ ratio.ratio }}), screen and (min--moz-device-pixel-ratio: {{ ratio.ratio }}),screen and (-o-min-device-pixel-ratio: {{ ratio.fraction }}),screen and (min-device-pixel-ratio: {{ ratio.ratio }}),screen and (min-resolution: {{ ratio.ratio }}dppx){
                 background-image:url('{{ ratio.sprite_path }}');
             }
