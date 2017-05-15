@@ -24,6 +24,7 @@ except ImportError:
 from glue.bin import main
 from glue.core import Image
 from glue.helpers import redirect_stdout
+from glue import __version__
 
 
 RED = (255, 0, 0, 255)
@@ -1800,6 +1801,126 @@ class TestGlue(unittest.TestCase):
         with codecs.open('output/simple@2x.json', 'r', 'utf-8-sig') as f:
             data = json.loads(f.read())
             assert isinstance(data['sprites'], dict)
+
+    def test_phaser(self):
+        self.create_image("simple/red.png", RED, size=(64,64))
+        self.create_image("simple/blue.png", BLUE, size=(64,64))
+        code = self.call("glue simple output --phaser")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.json")
+        with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+            self.assertEqual(data['meta'], {
+                u'app': u'https://github.com/jorgebastida/glue/',
+                u'version': __version__,
+                u'format': u'RGBA8888',
+                u'image': u'simple.png',
+                u'size': {
+                    u'w': 128,
+                    u'h': 64
+                },
+                u'scale': 1
+            })
+
+            self.assertEqual(data['frames'], {
+                u'red.png': {
+                    u'frame': {
+                        u'x': 0,
+                        u'y': 0,
+                        u'w': 64,
+                        u'h': 64
+                    }
+                },
+                u'blue.png': {
+                    u'frame': {
+                        u'x': 64,
+                        u'y': 0,
+                        u'w': 64,
+                        u'h': 64
+                    }
+                }
+            })
+
+    def test_phaser_ratios(self):
+        self.create_image("simple/red.png", RED, size=(64,64))
+        self.create_image("simple/blue.png", BLUE, size=(64,64))
+        code = self.call("glue simple output --phaser --retina")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.json")
+        self.assertExists("output/simple@2x.png")
+        self.assertExists("output/simple@2x.json")
+
+        with codecs.open('output/simple.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+
+            self.assertEqual(data['meta'], {
+                u'app': u'https://github.com/jorgebastida/glue/',
+                u'version': __version__,
+                u'format': u'RGBA8888',
+                u'image': u'simple.png',
+                u'size': {
+                    u'w': 64,
+                    u'h': 32
+                },
+                u'scale': 1
+            })
+
+            self.assertEqual(data['frames'], {
+                u'red.png': {
+                    u'frame': {
+                        u'x': 0,
+                        u'y': 0,
+                        u'w': 32,
+                        u'h': 32
+                    }
+                },
+                u'blue.png': {
+                    u'frame': {
+                        u'x': 32,
+                        u'y': 0,
+                        u'w': 32,
+                        u'h': 32
+                    }
+                }
+            })
+
+        with codecs.open('output/simple@2x.json', 'r', 'utf-8-sig') as f:
+            data = json.loads(f.read())
+
+            self.assertEqual(data['meta'], {
+                u'app': u'https://github.com/jorgebastida/glue/',
+                u'version': __version__,
+                u'format': u'RGBA8888',
+                u'image': u'simple.png',
+                u'size': {
+                    u'w': 128,
+                    u'h': 64
+                },
+                u'scale': 1
+            })
+
+            self.assertEqual(data['frames'], {
+                u'red.png': {
+                    u'frame': {
+                        u'x': 0,
+                        u'y': 0,
+                        u'w': 64,
+                        u'h': 64
+                    }
+                },
+                u'blue.png': {
+                    u'frame': {
+                        u'x': 64,
+                        u'y': 0,
+                        u'w': 64,
+                        u'h': 64
+                    }
+                }
+            })
 
 if __name__ == '__main__':
     unittest.main()
