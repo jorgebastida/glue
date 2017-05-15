@@ -40,7 +40,7 @@ If the ``remove.png`` image needs to have ``10px`` margin and ``0px`` padding yo
 This will override any previous setting about ``margin`` or ``padding`` affecting ``remove.png``.
 
 .. note::
-    project-level, sprite-level and image-level settings override any environmnet or command-line settings. More information in the `settings section <http://glue.readthedocs.org/en/latest/settings.html>`_
+    project-level, sprite-level and image-level settings override any environmnet or command-line settings. More information in the `settings section <https://glue.readthedocs.io/en/latest/settings.html>`_
 
 Available configuration
 -----------------------
