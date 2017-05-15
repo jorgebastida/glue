@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 install_requires=[
     'Pillow>=2.2.2',
-    'Jinja2>2.8,<2.9',
+    'Jinja2>=2.7,<2.10',
 ]
 
 tests_require=[
@@ -24,7 +24,7 @@ if sys.version_info < (3, 3):
 
 setup(
     name='glue',
-    version='0.12',
+    version='0.13',
     url='http://github.com/jorgebastida/glue',
     license='BSD',
     author='Jorge Bastida',

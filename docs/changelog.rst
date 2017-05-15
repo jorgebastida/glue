@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.13
+^^^^^^
+* Update Jinja version
+
 0.12
 ^^^^^^
 * Update Jinja version
