@@ -44,6 +44,8 @@ class Image(ConfigurableFromFile):
 
         self.x = self.y = None
         self.original_width = self.original_height = 0
+        # Cocos2dx offset
+        self.offsetX = self.offsetY = 0
 
         with open(self.path, "rb") as img:
             self._image_data = img.read()
@@ -81,7 +83,10 @@ class Image(ConfigurableFromFile):
         # without losing any non-transparent pixel.
         # This crop is only used if the crop flag is set in the config.
         if self.config['crop']:
-            img = img.crop(img.split()[-1].getbbox())
+            croppedBox = img.split()[-1].getbbox()
+            img = img.crop(croppedBox)
+            self.offsetX = croppedBox[0] + (img.size[0]/2) - (self.original_width/2)
+            self.offsetY = (self.original_height/2) - croppedBox[1] - (img.size[1]/2)
         return img
 
     @property

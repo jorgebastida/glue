@@ -110,6 +110,10 @@ class BaseTextFormat(BaseFormat):
                                           y=round_up(base_y / self.sprite.max_ratio * r),
                                           abs_x=round_up(base_abs_x / self.sprite.max_ratio * r),
                                           abs_y=round_up(base_abs_y / self.sprite.max_ratio * r),
+                                          original_width=round_up(img.original_width / r),
+                                          original_height=round_up(img.original_height / r),
+                                          offsetX=round_up(img.offsetX / r),
+                                          offsetY=round_up(img.offsetY / r),
                                           height=round_up((img.height + img.padding[0] + img.padding[2]) / self.sprite.max_ratio * r),
                                           width=round_up((img.width + img.padding[1] + img.padding[3]) / self.sprite.max_ratio * r))
 
