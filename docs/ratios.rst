@@ -15,7 +15,7 @@ Basically, provide two different version of each image.
 
 .. image:: img/retina.png
 
-**And... how can we detect wich image should we use?** CSS Media Queries. Modern browsers `(anything after IE 8.0) <http://caniuse.com/#feat=css-mediaqueries>`_ supports them, and they allow us to specify different styles based on the ``device-pixel-ratio`` of the browser.
+**And... how can we detect which image should we use?** CSS Media Queries. Modern browsers `(anything after IE 8.0) <http://caniuse.com/#feat=css-mediaqueries>`_ supports them, and they allow us to specify different styles based on the ``device-pixel-ratio`` of the browser.
 
 **Can glue help?** Yes, using ``--ratios`` you can choose different ratios you want to build of each sprite. Glue will create one sprite for each ratio and will add all the neccesary CSS magic to make the browser use the high DPI image if the browser needs it. You can also use ``--retina``, it's a shortcut for ``--ration=2,1``.
 
@@ -89,10 +89,10 @@ For example you can use ``--ratios=2,1.5,1`` to make glue build three diferent s
     ├── icons@1.5.png
     └── icons@2x.png
 
-Wich ratios should I target?
+Which ratios should I target?
 ----------------------------
 
-Is up to you, but using ``2`` and ``1.5`` should be enough for most of the devices.
+It's up to you, but using ``2`` and ``1.5`` should be enough for most of the devices.
 
 Here you have a list of suggested ratios for some famous devices, `(full list) <http://en.wikipedia.org/wiki/List_of_displays_by_pixel_density>`_:
 
