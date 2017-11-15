@@ -3,6 +3,7 @@ import sys
 import time
 import signal
 import hashlib
+import unicodedata
 
 
 class WatchManager(object):
@@ -29,6 +30,7 @@ class WatchManager(object):
         hash_list = []
         for root, dirs, files in os.walk(self.options['source']):
             for f in sorted([f for f in files if not f.startswith('.')]):
+                f = unicodedata.normalize('NFC', f)
                 hash_list.append(os.path.join(root, f))
                 hash_list.append(str(os.path.getmtime(os.path.join(root, f))))
         hash_list = ''.join(hash_list)

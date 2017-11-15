@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import os
 import sys
@@ -5,6 +6,7 @@ import copy
 import hashlib
 import StringIO
 import ConfigParser
+import unicodedata
 
 from PIL import Image as PILImage
 
@@ -48,7 +50,7 @@ class Image(ConfigurableFromFile):
         with open(self.path, "rb") as img:
             self._image_data = img.read()
 
-        print "\t{0} added to sprite".format(self.filename)
+        print u"\t{0} added to sprite".format(self.filename)
 
     @cached_property
     def image(self):
@@ -225,7 +227,7 @@ class Sprite(ConfigurableFromFile):
             hash_list.append(value)
 
         if sys.version < '3':
-            return hashlib.sha1(''.join(map(str, hash_list))).hexdigest()[:10]
+            return hashlib.sha1(''.join([h.encode('utf-8') if isinstance(h, unicode) else str(h) for h in hash_list])).hexdigest()[:10]
         return hashlib.sha1(''.join(map(str, hash_list)).encode('utf-8')).hexdigest()[:10]
 
     @cached_property
@@ -258,11 +260,12 @@ class Sprite(ConfigurableFromFile):
         """
         extensions = '|'.join(self.valid_extensions)
         extension_re = re.compile('.+\.(%s)$' % extensions, re.IGNORECASE)
-        files = sorted(os.listdir(self.path))
 
         images = []
         for root, dirs, files in os.walk(self.path, followlinks=self.config['follow_links']):
             for filename in sorted(files):
+                # normalize different unicode representations, see https://stackoverflow.com/a/33647372/193886
+                filename = unicodedata.normalize('NFC', filename)
                 if not filename.startswith('.') and extension_re.match(filename):
                     images.append(Image(path=os.path.join(root, filename), config=self.config))
             if not self.config['recursive']:
