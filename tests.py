@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import json
@@ -199,6 +200,31 @@ class TestGlue(unittest.TestCase):
                         u'height': u'64px'})
 
         self.assertCSS(u"output/simple.css", u'.sprite-simple-blue',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'-64px 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+    def test_unicode_input_output(self):
+        self.create_image(u"simple/redöåä.png", RED)
+        self.create_image(u"simple/blueöåä.png", BLUE)
+        code = self.call("glue simple output")
+        self.assertEqual(code, 0)
+
+        self.assertExists("output/simple.png")
+        self.assertExists("output/simple.css")
+        self.assertColor("output/simple.png", RED, ((0, 0), (63, 63)))
+        self.assertColor("output/simple.png", BLUE, ((64, 0), (127, 63)))
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-redöåä',
+                       {u'background-image': u"url(simple.png)",
+                        u'background-repeat': u'no-repeat',
+                        u'background-position': u'0 0',
+                        u'width': u'64px',
+                        u'height': u'64px'})
+
+        self.assertCSS(u"output/simple.css", u'.sprite-simple-blueöåä',
                        {u'background-image': u"url(simple.png)",
                         u'background-repeat': u'no-repeat',
                         u'background-position': u'-64px 0',
@@ -1800,6 +1826,7 @@ class TestGlue(unittest.TestCase):
         with codecs.open('output/simple@2x.json', 'r', 'utf-8-sig') as f:
             data = json.loads(f.read())
             assert isinstance(data['sprites'], dict)
+
 
 if __name__ == '__main__':
     unittest.main()

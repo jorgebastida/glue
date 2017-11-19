@@ -182,7 +182,7 @@ class CssFormat(JinjaTextFormat):
     def generate_css_name(self, filename):
         filename = filename.rsplit('.', 1)[0]
         separator = self.sprite.config['css_separator']
-        namespace = [re.sub(r'[^\w\-_]', '', filename)]
+        namespace = [re.sub(r'[^\w\-_]', '', filename, flags=re.UNICODE)]
 
         # Add sprite namespace if required
         if self.sprite.config['css_sprite_namespace']:

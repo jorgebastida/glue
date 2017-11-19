@@ -154,12 +154,12 @@ def main(argv=None):
     extra = 0
     # Get the source from the source option or the first positional argument
     if not options.source and args:
-        options.source = args[0]
+        options.source = unicode(args[0])
         extra += 1
 
     # Get the output from the output option or the second positional argument
     if not options.output and args[extra:]:
-        options.output = args[extra]
+        options.output = unicode(args[extra])
 
     # Check if source is available
     if options.source is None:
