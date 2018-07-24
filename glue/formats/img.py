@@ -61,6 +61,12 @@ class ImageFormat(BaseFormat):
                            default=os.environ.get('GLUE_RATIOS', '1'),
                            help="Create sprites based on these ratios")
 
+        group.add_argument("--scaling",
+                           dest="scaling",
+                           type=int,
+                           default=1,                                                      
+                           help="Change the scaling algorithm for ratios")
+
         group.add_argument("--retina",
                            dest="ratios",
                            default=os.environ.get('GLUE_RETINA', False),
@@ -136,11 +142,11 @@ class ImageFormat(BaseFormat):
 
             # If this canvas isn't the biggest one scale it using the ratio
             if self.sprite.max_ratio != ratio:
-
+                
                 reduced_canvas = canvas.resize(
                                     (round_up((width / self.sprite.max_ratio) * ratio),
                                      round_up((height / self.sprite.max_ratio) * ratio)),
-                                     PILImage.ANTIALIAS)
+                                     self.sprite.config['scaling'])
                 reduced_canvas.save(image_path, **kwargs)
                 # TODO: Use Imagemagick if it's available
             else:
