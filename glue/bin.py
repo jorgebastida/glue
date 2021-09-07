@@ -5,6 +5,7 @@ import argparse
 
 from PIL import Image as PImage
 
+from glue.compat import itervalues, iterkeys, text_type
 from glue.formats import formats
 from glue.helpers import redirect_stdout
 from glue import exceptions
@@ -20,13 +21,13 @@ def main(argv=None):
 
     parser.add_argument("--source", "-s",
                         dest="source",
-                        type=unicode,
+                        type=text_type,
                         default=os.environ.get('GLUE_SOURCE', None),
                         help="Source path")
 
     parser.add_argument("--output", "-o",
                         dest="output",
-                        type=unicode,
+                        type=text_type,
                         default=os.environ.get('GLUE_OUTPUT', None),
                         help="Output path")
 
@@ -80,7 +81,7 @@ def main(argv=None):
     group.add_argument("-a", "--algorithm",
                        dest="algorithm",
                        metavar='NAME',
-                       type=unicode,
+                       type=text_type,
                        default=os.environ.get('GLUE_ALGORITHM', 'square'),
                        choices=['square', 'vertical', 'horizontal',
                                 'vertical-right', 'horizontal-bottom',
@@ -92,7 +93,7 @@ def main(argv=None):
     group.add_argument("--ordering",
                        dest="algorithm_ordering",
                        metavar='NAME',
-                       type=unicode,
+                       type=text_type,
                        default=os.environ.get('GLUE_ORDERING', 'maxside'),
                        choices=['maxside', 'width', 'height', 'area', 'filename',
                                 '-maxside', '-width', '-height', '-area', '-filename'],
@@ -100,7 +101,7 @@ def main(argv=None):
                              "filename (default: maxside)"))
 
     # Populate the parser with options required by other formats
-    for format in formats.itervalues():
+    for format in itervalues(formats):
         format.populate_argument_parser(parser)
 
     #
@@ -146,7 +147,7 @@ def main(argv=None):
         options.enabled_formats.remove('img')
 
     # Fail if any of the deprecated arguments is used
-    for argument in deprecated_arguments.iterkeys():
+    for argument in iterkeys(deprecated_arguments):
         if getattr(options, argument, None):
             parser.error(("{0} argument is deprectated "
                           "since v0.3").format(deprecated_arguments[argument]))
@@ -233,16 +234,16 @@ def main(argv=None):
                 manager.process()
         else:
             manager.process()
-    except exceptions.ValidationError, e:
+    except exceptions.ValidationError as e:
         sys.stderr.write(e.args[0])
         return e.error_code
-    except exceptions.SourceImagesNotFoundError, e:
+    except exceptions.SourceImagesNotFoundError as e:
         sys.stderr.write("Error: No images found in %s.\n" % e.args[0])
         return e.error_code
-    except exceptions.NoSpritesFoldersFoundError, e:
+    except exceptions.NoSpritesFoldersFoundError as e:
         sys.stderr.write("Error: No sprites folders found in %s.\n" % e.args[0])
         return e.error_code
-    except exceptions.PILUnavailableError, e:
+    except exceptions.PILUnavailableError as e:
         sys.stderr.write(("Error: PIL {0} decoder is unavailable"
                           "Please read the documentation and "
                           "install it before spriting this kind of "

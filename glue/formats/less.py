@@ -1,6 +1,6 @@
 import os
 
-from css import CssFormat
+from .css import CssFormat
 
 
 class LessFormat(CssFormat):

@@ -1,6 +1,6 @@
 import os
 
-from base import BasePlistFormat
+from .base import BasePlistFormat
 
 
 class Cocos2dFormat(BasePlistFormat):

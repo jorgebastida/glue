@@ -4,6 +4,7 @@ from PIL import Image as PILImage
 from PIL import PngImagePlugin
 
 from glue import __version__
+from glue.compat import text_type
 from glue.helpers import round_up, cached_property
 from .base import BaseFormat
 
@@ -19,7 +20,7 @@ class ImageFormat(BaseFormat):
 
         group.add_argument("--img",
                            dest="img_dir",
-                           type=unicode,
+                           type=text_type,
                            default=os.environ.get('GLUE_IMG', True),
                            metavar='DIR',
                            help="Output directory for img files")
@@ -38,13 +39,13 @@ class ImageFormat(BaseFormat):
 
         group.add_argument("-p", "--padding",
                            dest="padding",
-                           type=unicode,
+                           type=text_type,
                            default=os.environ.get('GLUE_PADDING', '0'),
                            help="Force this padding in all images")
 
         group.add_argument("--margin",
                            dest="margin",
-                           type=unicode,
+                           type=text_type,
                            default=os.environ.get('GLUE_MARGIN', '0'),
                            help="Force this margin in all images")
 
@@ -57,7 +58,7 @@ class ImageFormat(BaseFormat):
 
         group.add_argument("--ratios",
                            dest="ratios",
-                           type=unicode,
+                           type=text_type,
                            default=os.environ.get('GLUE_RATIOS', '1'),
                            help="Create sprites based on these ratios")
 
