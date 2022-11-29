@@ -1,6 +1,6 @@
 import os
 
-from base import BaseJSONFormat
+from .base import BaseJSONFormat
 
 
 class CAATFormat(BaseJSONFormat):

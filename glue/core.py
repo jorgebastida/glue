@@ -3,8 +3,8 @@ import os
 import sys
 import copy
 import hashlib
-import StringIO
-import ConfigParser
+from io import StringIO, BytesIO
+import configparser as ConfigParser
 
 from PIL import Image as PILImage
 
@@ -48,16 +48,16 @@ class Image(ConfigurableFromFile):
         with open(self.path, "rb") as img:
             self._image_data = img.read()
 
-        print "\t{0} added to sprite".format(self.filename)
+        print("\t{0} added to sprite".format(self.filename))
 
     @cached_property
     def image(self):
         """Return a Pil representation of this image """
 
         if sys.version < '3':
-            imageio = StringIO.StringIO(self._image_data)
+            imageio = StringIO(self._image_data)
         else:
-            imageio = StringIO.BytesIO(self._image_data)
+            imageio = BytesIO(self._image_data)
 
         try:
             source_image = PILImage.open(imageio)
@@ -70,7 +70,7 @@ class Image(ConfigurableFromFile):
                 img.paste(source_image, (0, 0), mask=mask)
             else:
                 img.paste(source_image, (0, 0))
-        except IOError, e:
+        except IOError as e:
             raise PILUnavailableError(e.args[0].split()[1])
         finally:
             imageio.close()
@@ -119,7 +119,7 @@ class Image(ConfigurableFromFile):
         else:
             data = [0] * 4
 
-        return map(int, data)
+        return list(map(int, data))
 
     @cached_property
     def horizontal_spacing(self):
@@ -196,7 +196,7 @@ class Sprite(ConfigurableFromFile):
             if ratio_output_key not in self.config:
                 self.config[ratio_output_key] = img_format.output_path(ratio)
 
-        print "Processing '{0}':".format(self.name)
+        print("Processing '{0}':".format(self.name))
 
         # Generate sprite map
         self.process()
@@ -220,7 +220,7 @@ class Sprite(ConfigurableFromFile):
             hash_list.append(os.path.relpath(image.path))
             hash_list.append(image._image_data)
 
-        for key, value in self.config.iteritems():
+        for key, value in self.config.items():
             hash_list.append(key)
             hash_list.append(value)
 

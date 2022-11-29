@@ -6,7 +6,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
-from base import BaseJSONFormat
+from .base import BaseJSONFormat
 
 
 class JSONFormat(BaseJSONFormat):
@@ -29,7 +29,7 @@ class JSONFormat(BaseJSONFormat):
         group.add_argument("--json-format",
                            dest="json_format",
                            metavar='NAME',
-                           type=unicode,
+                           type=str,
                            default=os.environ.get('GLUE_JSON_FORMAT', 'array'),
                            choices=['array', 'hash'],
                            help=("JSON structure format (array, hash)"))

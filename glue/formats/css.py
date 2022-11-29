@@ -3,7 +3,7 @@ import os
 import codecs
 
 from glue import __version__
-from base import JinjaTextFormat
+from .base import JinjaTextFormat
 
 from ..exceptions import ValidationError
 
@@ -54,20 +54,20 @@ class CssFormat(JinjaTextFormat):
 
         group.add_argument("--namespace",
                            dest="css_namespace",
-                           type=unicode,
+                           type=str,
                            default=os.environ.get('GLUE_CSS_NAMESPACE', 'sprite'),
                            help="Namespace for all css classes (default: sprite)")
 
         group.add_argument("--sprite-namespace",
                            dest="css_sprite_namespace",
-                           type=unicode,
+                           type=str,
                            default=os.environ.get('GLUE_CSS_SPRITE_NAMESPACE',
                                                   '{sprite_name}'),
                            help="Namespace for all sprites (default: {sprite_name})")
 
         group.add_argument("-u", "--url",
                            dest="css_url",
-                           type=unicode,
+                           type=str,
                            default=os.environ.get('GLUE_CSS_URL', ''),
                            help="Prepend this string to the sprites path")
 
@@ -94,7 +94,7 @@ class CssFormat(JinjaTextFormat):
 
         group.add_argument("--separator",
                            dest="css_separator",
-                           type=unicode,
+                           type=str,
                            default=os.environ.get('GLUE_CSS_SEPARATOR', '-'),
                            metavar='SEPARATOR',
                            help=("Customize the separator used to join CSS class "
@@ -103,7 +103,7 @@ class CssFormat(JinjaTextFormat):
 
         group.add_argument("--pseudo-class-separator",
                            dest="css_pseudo_class_separator",
-                           type=unicode,
+                           type=str,
                            default=os.environ.get('GLUE_CSS_PSEUDO_CLASS_SEPARATOR', '__'),
                            metavar='SEPARATOR',
                            help=("Customize the separator glue will use in order "
@@ -163,7 +163,7 @@ class CssFormat(JinjaTextFormat):
         if self.sprite.config['css_url']:
             context['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], context['sprite_filename'])
 
-            for r, ratio in context['ratios'].iteritems():
+            for r, ratio in context['ratios'].items():
                 ratio['sprite_path'] = '{0}{1}'.format(self.sprite.config['css_url'], ratio['sprite_filename'])
 
         # Add cachebuster if required
@@ -174,7 +174,7 @@ class CssFormat(JinjaTextFormat):
 
             context['sprite_path'] = apply_cachebuster(context['sprite_path'])
 
-            for r, ratio in context['ratios'].iteritems():
+            for r, ratio in context['ratios'].items():
                 ratio['sprite_path'] = apply_cachebuster(ratio['sprite_path'])
 
         return context

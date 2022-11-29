@@ -39,5 +39,5 @@ class WatchManager(object):
 
     def signal_handler(self, signal, frame):
         """ Gracefully close the app if Ctrl+C is pressed."""
-        print 'You pressed Ctrl+C!'
+        print('You pressed Ctrl+C!')
         sys.exit(0)
