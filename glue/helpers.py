@@ -1,7 +1,12 @@
 import os
 import sys
 import contextlib
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
+
 
 
 def round_up(value):
